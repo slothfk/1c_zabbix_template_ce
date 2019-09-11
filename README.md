@@ -1,0 +1,1 @@
+# 1c_zabbix_template_ce
