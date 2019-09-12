@@ -1,0 +1,30 @@
+<config xmlns="http://v8.1c.ru/v8/tech-log">
+    <dump create="false"/>
+    <log location="/var/log/1C/zabbix/locks" history="1">
+        <event>
+            <eq property="name" value="tlock"/>
+        </event>
+        <event>
+            <eq property="name" value="ttimeout"/>
+        </event>
+        <event>
+            <eq property="name" value="tdeadlock"/>
+        </event>
+        <property name="p:processname"/>
+        <property name="t:connectid"/>
+        <property name="waitconnections"/>
+        <property name="deadlockconnectionintersections"/>
+        <property name="regions"/>
+        <property name="locks"/>
+        <property name="context"/>
+    </log>
+    <log location="/var/log/1C/zabbix/calls" history="1">
+        <event>
+            <eq property="name" value="call"/>
+            <ne property="context" value=""/>
+        </event>
+        <property name="p:processname"/>
+        <property name="context"/>
+        <property name="cputime"/>
+    </log>
+</config>
