@@ -84,6 +84,6 @@ do
         [[ ${DUMP_RESULT} -gt 1 ]] && DUMP_TEXT="ОШИБКА: не удалось сохранить файлы технологического журнала!" ||
             DUMP_TEXT="Файлы технологического журнала сохранены (${LOG_DIR}/${LOG_SUBDIR%/*}/problem_log/${LOG_FILE}.tgz)"
 
-        [[ -n ${DUMP_RESULT} ]] && echo "[${CURR_RPHOST} (${DUMP_RESULT})] ${DUMP_TEXT}"
+        [[ -n ${DUMP_RESULT} ]] && echo "[${CURR_RPHOST} (${DUMP_RESULT})] ${DUMP_TEXT}" && unset DUMP_RESULT
     done
 done
