@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.0</version>
-    <date>2019-06-04T14:18:59Z</date>
+    <date>2019-09-17T10:14:23Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -27,7 +27,7 @@
             </applications>
             <items>
                 <item>
-                    <name>[1C/Серверные вызовы]  ТОП по суммарному количеству</name>
+                    <name>[1C/Серверные вызовы] ТОП по суммарному количеству</name>
                     <type>0</type>
                     <snmp_community/>
                     <snmp_oid/>
@@ -86,7 +86,7 @@
                     <master_item/>
                 </item>
                 <item>
-                    <name>[1C/Серверные вызовы]  ТОП  по суммарному процессорному времени</name>
+                    <name>[1C/Серверные вызовы] ТОП  по суммарному процессорному времени</name>
                     <type>0</type>
                     <snmp_community/>
                     <snmp_oid/>
@@ -145,7 +145,7 @@
                     <master_item/>
                 </item>
                 <item>
-                    <name>[1C/Серверные вызовы]  ТОП по суммарной длительности</name>
+                    <name>[1C/Серверные вызовы] ТОП по суммарной длительности</name>
                     <type>0</type>
                     <snmp_community/>
                     <snmp_oid/>
@@ -204,7 +204,7 @@
                     <master_item/>
                 </item>
                 <item>
-                    <name>[1C/Управляемые блокировки]  Количество взаимоблокировок</name>
+                    <name>[1C/Управляемые блокировки] Количество взаимоблокировок</name>
                     <type>18</type>
                     <snmp_community/>
                     <snmp_oid/>
@@ -271,7 +271,7 @@
                     </master_item>
                 </item>
                 <item>
-                    <name>[1C/Управляемые блокировки]  Количество таймаутов</name>
+                    <name>[1C/Управляемые блокировки] Количество таймаутов</name>
                     <type>18</type>
                     <snmp_community/>
                     <snmp_oid/>
@@ -338,7 +338,7 @@
                     </master_item>
                 </item>
                 <item>
-                    <name>[1C/Управляемые блокировки]  Общее ожидание на блокировках</name>
+                    <name>[1C/Управляемые блокировки] Общее ожидание на блокировках</name>
                     <type>18</type>
                     <snmp_community/>
                     <snmp_oid/>
@@ -409,7 +409,7 @@
                     <type>0</type>
                     <snmp_community/>
                     <snmp_oid/>
-                    <key>1c.rphost.locks[{$LOG_DIR}]</key>
+                    <key>1c.rphost.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
                     <delay>60m</delay>
                     <history>90d</history>
                     <trends>0</trends>
@@ -467,6 +467,10 @@
             <discovery_rules/>
             <httptests/>
             <macros>
+                <macro>
+                    <macro>{$RAS_PORT}</macro>
+                    <value>1545</value>
+                </macro>
                 <macro>
                     <macro>{$LOG_DIR}</macro>
                     <value>/var/log/1C</value>
