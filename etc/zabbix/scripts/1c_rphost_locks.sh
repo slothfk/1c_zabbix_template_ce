@@ -77,7 +77,7 @@ do
                 DUMP_RESULT=${DUMP_CODE_0} || DUMP_RESULT=${DUMP_CODE_2}
             fi
         else
-            zabbix_get -s ${CURR_RPHOST} -k 1c.rphost.locks[${LOG_DIR},${RAS_PORT},dump] 2>/dev/null || \
+            zabbix_get -s ${CURR_RPHOST} -k 1c.rphost.locks[${LOG_DIR},${WAIT_LIMIT},${RAS_PORT},dump] 2>/dev/null || \
                 DUMP_RESULT=${DUMP_CODE_3}
         fi
 
