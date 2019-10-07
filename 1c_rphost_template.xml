@@ -267,7 +267,7 @@
                     <verify_peer>0</verify_peer>
                     <verify_host>0</verify_host>
                     <master_item>
-                        <key>1c.rphost.locks[{$LOG_DIR}]</key>
+                        <key>1c.rphost.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
                     </master_item>
                 </item>
                 <item>
@@ -334,7 +334,7 @@
                     <verify_peer>0</verify_peer>
                     <verify_host>0</verify_host>
                     <master_item>
-                        <key>1c.rphost.locks[{$LOG_DIR}]</key>
+                        <key>1c.rphost.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
                     </master_item>
                 </item>
                 <item>
@@ -401,7 +401,7 @@
                     <verify_peer>0</verify_peer>
                     <verify_host>0</verify_host>
                     <master_item>
-                        <key>1c.rphost.locks[{$LOG_DIR}]</key>
+                        <key>1c.rphost.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
                     </master_item>
                 </item>
                 <item>
