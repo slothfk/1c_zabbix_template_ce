@@ -8,10 +8,19 @@
 #
 
 #LIC_DIR="/var/1C/licenses"
+TM_MODULE="1c_common_ts.sh"
+
 CACHE_DIR="/var/tmp/1C"
+CLSTR_CACHE="${CACHE_DIR}/1c.rmngr.lst"
+LIC_COUNT_CACHE="${CACHE_DIR}/1c.license.log"
+
 RAS_PORT=1545
 
+G_BINDIR=$(ls -d /opt/1C/v8*/x*)
+
 [[ ! -d ${CACHE_DIR} ]] && mkdir -p ${CACHE_DIR}
+
+[[ -f ${0%/*}/${TM_MODULE} ]] && source ${0%/*}/${TM_MODULE} 2>/dev/null && TM_AVAILABLE=1
 
 function licenses_info {
 
@@ -20,7 +29,7 @@ function licenses_info {
     
     [[ -z ${LIC_TOOL} ]] && echo "ОШИБКА: Не установлена утилита license-tools!" && exit 1
 
-    RING_TOOL=${LIC_TOOL%\/*\/*}"/ring/ring"
+    RING_TOOL=${LIC_TOOL%\/*\/*}"/*ring*/ring"
     
     #[[ -n ${2} ]] && LIC_DIR=${2}
 
@@ -41,50 +50,67 @@ function licenses_info {
 
 }
 
+function get_cluster_uuid {
+    CURR_CLSTR=$(${G_BINDIR}/rac cluster list ${1}:${RAS_PORT} | grep cluster | sed 's/.*: //')
+    echo ${1}:${CURR_CLSTR// /,} >> ${CLSTR_CACHE}
+}
+
+function get_license_counts {
+    CLSTR_LIST=${1##*:}
+    for CURR_CLSTR in ${CLSTR_LIST//,/ }
+    do
+        ${G_BINDIR}/rac session list --licenses --cluster=${CURR_CLSTR} ${1%%:*}:${RAS_PORT} 2>/dev/null | \
+            grep -Pe "(user-name|rmngr-address)" | perl -pe 's/ //g; s/\n/|/; s/rmngr-address:(\"(.*)\"|)\||/\2/; s/user-name:/\n/' | \
+            awk -F"|" -v hostname=$(hostname -s) 'BEGIN {sc=0; hc=0; cc=0; } { if ($1 != "") {sc+=1; uc[$1]; \
+                if (tolower($2) == tolower(hostname)) {hc+=1;} if ($2 == "") { cc+=1 } } } END {print "UL:"hc; print "AS:"sc; \
+                print "UU:"length(uc); print "CL:"cc }' >> ${LIC_COUNT_CACHE}
+    done
+}
+
 function used_license {
 
-    G_BINDIR=$(ls -d /opt/1C/v8*/x*)
     RMNGR_LIST=($(pgrep -xa rmngr | sed -re "s/.*-(reg|)host /|/; s/ -(regport|range).*//; s/(^\||.*)(.*)/\2/; s/^$/$(hostname)/"))
-    CACHE_FILE="${CACHE_DIR}/1c.rmngr.lst"
     SRV_LIST=()
-    USED_LIC=0; ALL_SESS=0; UNIQ_USR=0
+    USED_LIC=0; ALL_SESS=0; UNIQ_USR=0; CLNT_LIC=0
 
     [[ -n ${1} ]] && RAS_PORT=${1}
 
-    if [[ ! -e ${CACHE_FILE} || 
-        ${#RMNGR_LIST[*]} -ne $(wc -l ${CACHE_FILE} | cut -f1 -d" ") ||
-        $(date -r ${CACHE_FILE} "+%s") -lt $(date -d "-1 hour" "+%s") ]]; then
+    if [[ ! -e ${CLSTR_CACHE} || 
+        ${#RMNGR_LIST[*]} -ne $(wc -l ${CLSTR_CACHE} | cut -f1 -d" ") ||
+        $(date -r ${CLSTR_CACHE} "+%s") -lt $(date -d "-1 hour" "+%s") ]]; then
 
-        cat /dev/null > ${CACHE_FILE}
-        for CURR_RMNGR in ${RMNGR_LIST[*]}
-        do
-            CURR_CLSTR=$(${G_BINDIR}/rac cluster list ${CURR_RMNGR}:${RAS_PORT} | grep cluster | sed 's/.*: //')
-            SRV_LIST+=(${CURR_RMNGR}:${CURR_CLSTR// /,})
-            echo ${SRV_LIST[${#SRV_LIST[*]}-1]} >> ${CACHE_FILE}
-        done
-    else
-        while read -r CURR_SRV
-        do
-            SRV_LIST+=(${CURR_SRV})
-        done < ${CACHE_FILE}
+        cat /dev/null > ${CLSTR_CACHE}
+        if [[ -z ${TM_AVAILABLE} ]]; then
+            for CURR_RMNGR in ${RMNGR_LIST[*]}
+            do
+                get_cluster_uuid ${CURR_RMNGR}
+            done
+        else
+            TASKS_LIST=(${RMNGR_LIST[*]})
+            tasks_manager get_cluster_uuid 0
+        fi
     fi
 
-    for CURR_SRV in ${SRV_LIST[*]}
+    while read -r CURR_SRV
     do
-        CLSTR_LIST=${CURR_SRV##*:}
-        for CURR_CLSTR in ${CLSTR_LIST//,/ }
-        do
-             CURR_COUNTS=($(${G_BINDIR}/rac session list --licenses --cluster=${CURR_CLSTR} ${CURR_SRV%%:*}:${RAS_PORT} 2>/dev/null | \
-                grep -Pe "(user-name|rmngr-address)" | perl -pe 's/ //g; s/\n/|/; s/rmngr-address:(\"(.*)\"|)\||/\2/; s/(user-name:)/\n/' | \
-                awk -F"|" -v hostname=$(hostname) 'BEGIN {sc=0; hc=0; cc=0; uc } { if ($1 != "") {sc+=1; uc[$1]; \
-                        if (tolower($2) == tolower(hostname)) {hc+=1;} } } END {print hc" "sc" "length(uc) }'))
-            USED_LIC=$(( ${USED_LIC} + ${CURR_COUNTS[0]} ))
-            ALL_SESS=$(( ${ALL_SESS} + ${CURR_COUNTS[1]} ))
-            UNIQ_USR=$(( ${UNIQ_USR} + ${CURR_COUNTS[2]} ))
-        done
-    done
+        SRV_LIST+=(${CURR_SRV})
+    done < ${CLSTR_CACHE}
 
-    echo ${USED_LIC}:${UNIQ_USR}:${ALL_SESS}
+    if [[ -z ${TM_AVAILABLE} ]]; then
+        for CURR_SRV in ${SRV_LIST[*]}
+        do
+            get_license_counts ${CURR_SRV}
+        done
+    else
+        TASKS_LIST=(${SRV_LIST[*]})
+        tasks_manager get_license_counts 0
+    fi
+
+    awk -F: 'BEGIN {ul=0; as=0; cl=0; uu=0} { switch ($1) { case "UL": ul+=$2; \
+        break; case "AS": as+=$2; break; case "UU": uu+=$2; break; \
+        case "CL": cl+=$2; } } END { print ul":"uu":"as":"cl }' ${LIC_COUNT_CACHE};
+
+    rm ${LIC_COUNT_CACHE}
 
 }
 
