@@ -60,9 +60,12 @@ function get_license_counts {
     for CURR_CLSTR in ${CLSTR_LIST//,/ }
     do
         ${G_BINDIR}/rac session list --licenses --cluster=${CURR_CLSTR} ${1%%:*}:${RAS_PORT} 2>/dev/null | \
-            grep -Pe "(user-name|rmngr-address)" | perl -pe 's/ //g; s/\n/|/; s/rmngr-address:(\"(.*)\"|)\||/\2/; s/user-name:/\n/' | \
-            awk -F"|" -v hostname=$(hostname -s) 'BEGIN {sc=0; hc=0; cc=0; } { if ($1 != "") {sc+=1; uc[$1]; \
-                if (tolower($2) == tolower(hostname)) {hc+=1;} if ($2 == "") { cc+=1 } } } END {print "UL:"hc; print "AS:"sc; \
+            grep -Pe "(user-name|rmngr-address)" | \
+            perl -pe 's/ //g; s/\n/|/; s/rmngr-address:(\"(.*)\"|)\||/\2/; s/app-id://; s/user-name:/\n/;' | \
+            awk -F"|" -v hostname=$(hostname -s) 'BEGIN { sc=0; hc=0; cc=0; wc=0 } \
+                { if ($1 != "") { sc+=1; uc[$1]; if ( tolower($3) == tolower(hostname) ) { hc+=1 } \
+                if ($2 == "WebClient") { wc+=1 } if ($3 == "") { cc+=1 } } } \
+                END {print "UL:"hc; print "AS:"sc; \
                 print "UU:"length(uc); print "CL:"cc }' >> ${LIC_COUNT_CACHE}
     done
 }
@@ -71,7 +74,6 @@ function used_license {
 
     RMNGR_LIST=($(pgrep -xa rmngr | sed -re "s/.*-(reg|)host /|/; s/ -(regport|range).*//; s/(^\||.*)(.*)/\2/; s/^$/$(hostname)/"))
     SRV_LIST=()
-    USED_LIC=0; ALL_SESS=0; UNIQ_USR=0; CLNT_LIC=0
 
     [[ -n ${1} ]] && RAS_PORT=${1}
 
@@ -106,9 +108,9 @@ function used_license {
         tasks_manager get_license_counts 0
     fi
 
-    awk -F: 'BEGIN {ul=0; as=0; cl=0; uu=0} { switch ($1) { case "UL": ul+=$2; \
-        break; case "AS": as+=$2; break; case "UU": uu+=$2; break; \
-        case "CL": cl+=$2; } } END { print ul":"uu":"as":"cl }' ${LIC_COUNT_CACHE};
+    awk -F: 'BEGIN {ul=0; as=0; cl=0; uu=0; wc=0} { switch ($1) { case "UL": ul+=$2; \
+        break; case "AS": as+=$2; break; case "UU": uu+=$2; break; case "WC": wc+=$2; break; \
+        case "CL": cl+=$2; } } END { print ul":"uu":"as":"cl":"wc }' ${LIC_COUNT_CACHE};
 
     rm ${LIC_COUNT_CACHE}
 
