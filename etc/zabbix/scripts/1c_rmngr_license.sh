@@ -60,12 +60,12 @@ function get_license_counts {
     for CURR_CLSTR in ${CLSTR_LIST//,/ }
     do
         ${G_BINDIR}/rac session list --licenses --cluster=${CURR_CLSTR} ${1%%:*}:${RAS_PORT} 2>/dev/null | \
-            grep -Pe "(user-name|rmngr-address)" | \
+            grep -Pe "(user-name|rmngr-address|app-id)" | \
             perl -pe 's/ //g; s/\n/|/; s/rmngr-address:(\"(.*)\"|)\||/\2/; s/app-id://; s/user-name:/\n/;' | \
             awk -F"|" -v hostname=$(hostname -s) 'BEGIN { sc=0; hc=0; cc=0; wc=0 } \
                 { if ($1 != "") { sc+=1; uc[$1]; if ( tolower($3) == tolower(hostname) ) { hc+=1 } \
                 if ($2 == "WebClient") { wc+=1 } if ($3 == "") { cc+=1 } } } \
-                END {print "UL:"hc; print "AS:"sc; \
+                END {print "UL:"hc; print "AS:"sc; print "WC:"wc; \
                 print "UU:"length(uc); print "CL:"cc }' >> ${LIC_COUNT_CACHE}
     done
 }
