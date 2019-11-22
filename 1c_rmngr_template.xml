@@ -1140,7 +1140,7 @@
         <trigger>
             <expression>{$LIC_CORP}=0 and {Template App 1C Enterprise License Server:1c.rmngr.license.used.last()}&gt;={Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}&#13;
 or &#13;
-{$LIC_CORP}=1 and  {Template App 1C Enterprise License Server:1c.rmngr.license.total.last()}&gt;=({Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}*1.1)</expression>
+{$LIC_CORP}=1 and  ({Template App 1C Enterprise License Server:1c.rmngr.license.used.last()}+{Template App 1C Enterprise License Server:1c.rmngr.license.client.last()})&gt;=({Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}*1.1)</expression>
             <recovery_mode>0</recovery_mode>
             <recovery_expression/>
             <name>[1C/Лицензии] Использованы все доступные клиентские лицензии</name>
