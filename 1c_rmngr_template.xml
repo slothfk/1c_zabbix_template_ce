@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.2</version>
-    <date>2019-11-14T07:28:48Z</date>
+    <date>2019-12-17T09:36:30Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -1140,7 +1140,7 @@
         <trigger>
             <expression>{$LIC_CORP}=0 and {Template App 1C Enterprise License Server:1c.rmngr.license.used.last()}&gt;={Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}&#13;
 or &#13;
-{$LIC_CORP}=1 and  ({Template App 1C Enterprise License Server:1c.rmngr.license.used.last()}+{Template App 1C Enterprise License Server:1c.rmngr.license.client.last()})&gt;=({Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}*1.1)</expression>
+{$LIC_CORP}=1 and  ({Template App 1C Enterprise License Server:1c.rmngr.license.uniq.last()})&gt;=({Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}*1.1)</expression>
             <recovery_mode>0</recovery_mode>
             <recovery_expression/>
             <name>[1C/Лицензии] Использованы все доступные клиентские лицензии</name>
@@ -1172,7 +1172,7 @@ or &#13;
             <tags/>
         </trigger>
         <trigger>
-            <expression>{$LIC_CORP}=0 and {Template App 1C Enterprise License Server:1c.rmngr.license.used.last()}/{Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}&gt;{$LIC_UTIL_LIMIT} or {$LIC_CORP}=1 and  {Template App 1C Enterprise License Server:1c.rmngr.license.total.last()}/({Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}*1.1)&gt;{$LIC_UTIL_LIMIT}</expression>
+            <expression>{$LIC_CORP}=0 and {Template App 1C Enterprise License Server:1c.rmngr.license.used.last()}/{Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}&gt;{$LIC_UTIL_LIMIT} or {$LIC_CORP}=1 and  {Template App 1C Enterprise License Server:1c.rmngr.license.uniq.last()}/({Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}*1.1)&gt;{$LIC_UTIL_LIMIT}</expression>
             <recovery_mode>0</recovery_mode>
             <recovery_expression/>
             <name>[1C/Лицензии] Количество использованных лицензий близко к максимальному</name>
@@ -1189,7 +1189,7 @@ or &#13;
                     <name>[1C/Лицензии] Использованы все доступные клиентские лицензии</name>
                     <expression>{$LIC_CORP}=0 and {Template App 1C Enterprise License Server:1c.rmngr.license.used.last()}&gt;={Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}&#13;
 or &#13;
-{$LIC_CORP}=1 and  {Template App 1C Enterprise License Server:1c.rmngr.license.total.last()}&gt;=({Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}*1.1)</expression>
+{$LIC_CORP}=1 and  ({Template App 1C Enterprise License Server:1c.rmngr.license.uniq.last()})&gt;=({Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}*1.1)</expression>
                     <recovery_expression/>
                 </dependency>
             </dependencies>
