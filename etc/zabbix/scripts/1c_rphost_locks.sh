@@ -7,7 +7,7 @@
 # Email: fedotov@kaminsoft.ru
 #
 
-TM_MODULE="1c_common_tm.sh"
+source ${0%/*}/1c_common_vars.sh 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_vars.sh!" ; exit 1; }
 
 DUMP_CODE_0=0   # Local or Remote copy successful
 DUMP_CODE_1=1   # Local copy exists
@@ -21,16 +21,12 @@ LOG_SUBDIR="zabbix/locks"
 
 WAIT_LIMIT=${2}
 
-[[ -f ${0%/*}/${TM_MODULE} ]] && source ${0%/*}/${TM_MODULE} 2>/dev/null && TM_AVAILABLE=1
-
 [[ ! -d ${LOG_DIR}/${LOG_SUBDIR} ]] && echo "ОШИБКА: Неверно задан каталог технологического журнала!" && exit 1
-
-G_BINDIR=$(ls -d /opt/1C/v8*/x*)
 
 LOG_FILE=$(date --date="@$(($(date "+%s") - 3600))" "+%y%m%d%H")
 
 function save_logs {
-    if [[ $(echo ${1} | grep -ic $(hostname)) -ne 0 ]]; then
+    if [[ $(echo ${1} | grep -ic $(hostname -s)) -ne 0 ]]; then
         if [[ -f ${LOG_DIR}/${LOG_SUBDIR%/*}/problem_log/${LOG_FILE}.tgz ]]; then
             DUMP_RESULT=${DUMP_CODE_1}
         else
@@ -52,7 +48,7 @@ if [[ ${4} != "dump" ]]; then
 
     [[ -n ${3} ]] && RAS_PORT=${3} || RAS_PORT=1545
 
-    RMNGR_LIST=($(pgrep -xa rphost | sed -re "s/.*-reghost //; s/ -regport.*//;" | uniq))
+    RMNGR_LIST=($(pgrep -xa rphost | sed -re "s/.*-reghost //; s/ -regport.*//;" | sort | uniq))
 
     RESULT=($(cat ${LOG_DIR}/${LOG_SUBDIR}/rphost_*/${LOG_FILE}.log 2>/dev/null | \
         grep -P "(TDEADLOCK|TTIMEOUT|TLOCK.*,WaitConnections=\d+)" | \
@@ -72,35 +68,27 @@ if [[ ${4} != "dump" ]]; then
 
         for CURR_RMNGR in ${RMNGR_LIST[*]}
         do
-            CURR_CLSTR=$(${G_BINDIR}/rac cluster list ${CURR_RMNGR}:${RAS_PORT} 2>/dev/null | grep cluster | sed 's/.*: //')
+            CURR_CLSTR=$(timeout -s HUP ${RAS_TIMEOUT} rac cluster list ${CURR_RMNGR}:${RAS_PORT} 2>/dev/null | grep cluster | sed 's/.*: //')
             CLSTR_LIST+=(${CURR_RMNGR}:${CURR_CLSTR// /,})
         done
 
         for CURR_CLSTR in ${CLSTR_LIST[*]}
         do
-            CURR_LIST=( $(${G_BINDIR}/rac server list --cluster=${CURR_CLSTR##*:} ${CURR_CLSTR%%:*}:${RAS_PORT} 2>/dev/null|\
+            CURR_LIST=( $(timeout -s HUP ${RAS_TIMEOUT} rac server list --cluster=${CURR_CLSTR##*:} ${CURR_CLSTR%%:*}:${RAS_PORT} 2>/dev/null|\
                 grep agent-host | uniq | perl -pe "s/.*:/:/; s/( |\n)//g;" | sed -e "s/^://; s/$/\n/;") )
-            [[ $(echo ${CURR_LIST} | grep -ic $(hostname)) -ne 0 ]] && [[ $(echo ${RPHOST_LIST[*]} | grep -ic ${CURR_LIST}) -eq 0 ]] && \
+            [[ $(echo ${CURR_LIST} | grep -ic $(hostname -s)) -ne 0 ]] && [[ $(echo ${RPHOST_LIST[*]} | grep -ic ${CURR_LIST}) -eq 0 ]] && \
                 RPHOST_LIST+=(${CURR_LIST})
         done
 
     fi
 
 else
-    RPHOST_LIST=($(hostname))
+    RPHOST_LIST=($(hostname -s))
 fi
 
 for CURR_LIST in ${RPHOST_LIST[*]}
 do
-    if [[ -z ${TM_AVAILABLE} ]]; then
-        for CURR_RPHOST in ${CURR_LIST//:/ }
-        do
-            save_logs ${CURR_RPHOST}
-        done
-    else
-        TASKS_LIST=(${CURR_LIST//:/ })
-        tasks_manager save_logs 0
-    fi
+    execute_tasks save_logs ${CURR_LIST//:/ }
 done
 
 find ${LOG_DIR}/${LOG_SUBDIR%/*}/problem_log/ -mtime +${STORE_PERIOD} -name "*.tgz" -exec rm -f {} \;

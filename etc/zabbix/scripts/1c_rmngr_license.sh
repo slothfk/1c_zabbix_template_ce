@@ -28,19 +28,11 @@ function licenses_summary {
     LIC_LIST=$(${RING_TOOL} license list | sed 's/(.*//')
     LIC_COUNT=0; LIC_USERS=0
 
-    if [[ -z ${TM_AVAILABLE} ]]; then
-       for CURR_LIC in ${LIC_LIST} 
-        do
-            license_info ${CURR_LIC}
-        done
-    else
-        TASKS_LIST=(${LIC_LIST[*]})
-        tasks_manager license_info 0
-    fi
+    execute_tasks license_info ${LIC_LIST[*]}
 
     while read -r CURR_COUNT
     do
-        ((LIC_COUNT++))
+        ((LIC_COUNT+=1))
         ((LIC_USERS+=${CURR_COUNT}))
     done < ${LIC_COUNT_CACHE}
 
@@ -54,7 +46,7 @@ function license_info {
 }
 
 function get_cluster_uuid {
-    CURR_CLSTR=$( timeout ${RAS_TIMEOUT} rac cluster list ${1%%:*}:${RAS_PORT} |grep -Pe '(cluster|name|port)' | \
+    CURR_CLSTR=$( timeout -s HUP ${RAS_TIMEOUT} rac cluster list ${1%%:*}:${RAS_PORT} |grep -Pe '(cluster|name|port)' | \
         perl -pe 's/[ "]//g; s/^name:(.*)$/\1\n/; s/^cluster:(.*)/\1,/; s/^port:(.*)/\1,/; s/\n//' | \
         grep -Pe ${1##*:} | perl -pe 's/(.*,)\d+,(.*)/\1\2/; s/\n/;/' )
     echo ${1%%:*}:${CURR_CLSTR} >> ${CLSTR_CACHE}
@@ -64,7 +56,7 @@ function get_license_counts {
     CLSTR_LIST=${1##*:}
     for CURR_CLSTR in ${CLSTR_LIST//;/ }
     do
-        timeout ${RAS_TIMEOUT} rac session list --licenses --cluster=${CURR_CLSTR%,*} ${1%%:*}:${RAS_PORT} 2>/dev/null | \
+        timeout -s HUP ${RAS_TIMEOUT} rac session list --licenses --cluster=${CURR_CLSTR%,*} ${1%%:*}:${RAS_PORT} 2>/dev/null | \
             grep -Pe "(user-name|rmngr-address|app-id)" | \
             perl -pe 's/ //g; s/\n/|/; s/rmngr-address:(\"(.*)\"|)\||/\2/; s/app-id://; s/user-name:/\n/;' | \
             awk -F"|" -v hostname=$(hostname -s) -v cluster=${CURR_CLSTR#*,} 'BEGIN { sc=0; hc=0; cc=0; wc=0 } \
@@ -88,15 +80,9 @@ function used_license {
         $(date -r ${CLSTR_CACHE} "+%s") -lt $(date -d "-1 hour" "+%s") ]]; then
 
         cat /dev/null > ${CLSTR_CACHE}
-        if [[ -z ${TM_AVAILABLE} ]]; then
-            for CURR_RMNGR in ${RMNGR_LIST[*]}
-            do
-                get_cluster_uuid ${CURR_RMNGR}
-            done
-        else
-            TASKS_LIST=(${RMNGR_LIST[*]})
-            tasks_manager get_cluster_uuid 0
-        fi
+
+        execute_tasks get_cluster_uuid ${RMNGR_LIST[*]}
+        
     fi
 
     while read -r CURR_SRV
@@ -104,15 +90,7 @@ function used_license {
         SRV_LIST+=(${CURR_SRV})
     done < ${CLSTR_CACHE}
 
-    if [[ -z ${TM_AVAILABLE} ]]; then
-        for CURR_SRV in ${SRV_LIST[*]}
-        do
-            get_license_counts ${CURR_SRV}
-        done
-    else
-        TASKS_LIST=(${SRV_LIST[*]})
-        tasks_manager get_license_counts 0
-    fi
+    execute_tasks get_license_counts ${SRV_LIST[*]}
 
     awk -F: 'BEGIN {ul=0; as=0; cl=0; uu=0; wc=0} { print $0; ul+=$2; uu+=$3; as+=$4; cl+=$5; wc+=$6; } \
        END { print "summary:"ul":"uu":"as":"cl":"wc }' ${LIC_COUNT_CACHE};
@@ -130,6 +108,8 @@ function get_clusters_list {
         perl -pe 's/\n//;' | perl -pe 's/(.*),]}/\1]}\n/'
 
 }
+
+[[ -f ${LIC_COUNT_CACHE} ]] && rm ${LIC_COUNT_CACHE}
 
 case ${1} in
     info) licenses_summary ;;
