@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>4.4</version>
+    <date>2020-02-03T07:57:16Z</date>
+    <groups>
+        <group>
+            <name>Templates (Kaminsoft)</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template App 1C Enterprise Central Server</template>
+            <name>Template App 1C Enterprise Central Server</name>
+            <groups>
+                <group>
+                    <name>Templates (Kaminsoft)</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>[1С] Доступность</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>[1С] Статус сервиса RAS</name>
+                    <type>SIMPLE</type>
+                    <key>net.tcp.service[tcp,,{$RAS_PORT}]</key>
+                    <delay>30s</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <applications>
+                        <application>
+                            <name>[1С] Доступность</name>
+                        </application>
+                    </applications>
+                    <valuemap>
+                        <name>Service state</name>
+                    </valuemap>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}=0</expression>
+                            <name>[1С] Недоступен сервис RAS на {HOST.NAME}</name>
+                            <priority>AVERAGE</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+            <macros>
+                <macro>
+                    <macro>{$LOGCFG_XML}</macro>
+                    <value>/opt/1C/v8.3/x86_64/conf/logcfg.xml</value>
+                </macro>
+                <macro>
+                    <macro>{$LOG_DIR}</macro>
+                    <value>/var/log/1C</value>
+                </macro>
+                <macro>
+                    <macro>{$RAS_PORT}</macro>
+                    <value>1545</value>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+    <value_maps>
+        <value_map>
+            <name>Service state</name>
+            <mappings>
+                <mapping>
+                    <value>0</value>
+                    <newvalue>Down</newvalue>
+                </mapping>
+                <mapping>
+                    <value>1</value>
+                    <newvalue>Up</newvalue>
+                </mapping>
+            </mappings>
+        </value_map>
+    </value_maps>
+</zabbix_export>
