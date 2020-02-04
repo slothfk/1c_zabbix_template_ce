@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
-    <version>4.2</version>
-    <date>2019-12-17T09:36:30Z</date>
+    <version>4.4</version>
+    <date>2020-02-04T09:00:11Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -11,7 +11,6 @@
         <template>
             <template>Template App 1C Enterprise License Server</template>
             <name>Template App 1C Enterprise License Server</name>
-            <description/>
             <groups>
                 <group>
                     <name>Templates (Kaminsoft)</name>
@@ -25,601 +24,198 @@
             <items>
                 <item>
                     <name>[1C/Лицензии] Сводная информация</name>
-                    <type>2</type>
-                    <snmp_community/>
-                    <snmp_oid/>
+                    <type>TRAP</type>
                     <key>1c.rmngr.license</key>
                     <delay>0</delay>
                     <history>2h</history>
                     <trends>0</trends>
-                    <status>0</status>
-                    <value_type>4</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
+                    <value_type>TEXT</value_type>
                     <applications>
                         <application>
                             <name>[1С] Программные лицензии</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
-                    <preprocessing/>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
-                    <master_item/>
                 </item>
                 <item>
                     <name>[1C/Лицензии] Количество лицензий на клиенте</name>
-                    <type>18</type>
-                    <snmp_community/>
-                    <snmp_oid/>
+                    <type>DEPENDENT</type>
                     <key>1c.rmngr.license.client</key>
                     <delay>0</delay>
                     <history>2w</history>
                     <trends>90d</trends>
-                    <status>0</status>
-                    <value_type>3</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
                     <applications>
                         <application>
                             <name>[1С] Программные лицензии</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
                     <preprocessing>
                         <step>
-                            <type>5</type>
+                            <type>REGEX</type>
                             <params>summary:\d+:\d+:\d+:(\d+):\d+
 \1</params>
-                            <error_handler>0</error_handler>
-                            <error_handler_params/>
                         </step>
                     </preprocessing>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
                     <master_item>
                         <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
                     </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&gt;0</expression>
+                            <name>[1C/Лицензии] Используются лицензии с клиентских компьютеров</name>
+                            <status>DISABLED</status>
+                            <priority>INFO</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>[1C/Лицензии] Количество файлов пользовательских лицензий</name>
-                    <type>18</type>
-                    <snmp_community/>
-                    <snmp_oid/>
+                    <type>DEPENDENT</type>
                     <key>1c.rmngr.license.count</key>
                     <delay>0</delay>
                     <history>2w</history>
                     <trends>90d</trends>
-                    <status>0</status>
-                    <value_type>3</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
                     <applications>
                         <application>
                             <name>[1С] Программные лицензии</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
                     <preprocessing>
                         <step>
-                            <type>5</type>
+                            <type>REGEX</type>
                             <params>(\d+):\d+
 \1</params>
-                            <error_handler>0</error_handler>
-                            <error_handler_params/>
                         </step>
                     </preprocessing>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
                     <master_item>
                         <key>1c.rmngr.license</key>
                     </master_item>
                 </item>
                 <item>
                     <name>[1C/Лицензии] Активные сеансы</name>
-                    <type>7</type>
-                    <snmp_community/>
-                    <snmp_oid/>
+                    <type>ZABBIX_ACTIVE</type>
                     <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
                     <delay>60s</delay>
                     <history>2h</history>
                     <trends>0</trends>
-                    <status>0</status>
-                    <value_type>4</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
+                    <value_type>TEXT</value_type>
                     <applications>
                         <application>
                             <name>[1С] Программные лицензии</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
-                    <preprocessing/>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
-                    <master_item/>
                 </item>
                 <item>
                     <name>[1C/Лицензии] Общее количество сеансов</name>
-                    <type>18</type>
-                    <snmp_community/>
-                    <snmp_oid/>
+                    <type>DEPENDENT</type>
                     <key>1c.rmngr.license.total</key>
                     <delay>0</delay>
                     <history>2w</history>
                     <trends>90d</trends>
-                    <status>0</status>
-                    <value_type>3</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
                     <applications>
                         <application>
                             <name>[1С] Программные лицензии</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
                     <preprocessing>
                         <step>
-                            <type>5</type>
+                            <type>REGEX</type>
                             <params>summary:\d+:\d+:(\d+):\d+:\d+
 \1</params>
-                            <error_handler>0</error_handler>
-                            <error_handler_params/>
                         </step>
                     </preprocessing>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
                     <master_item>
                         <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
                     </master_item>
                 </item>
                 <item>
                     <name>[1C/Лицензии] Количество уникальных пользователей</name>
-                    <type>18</type>
-                    <snmp_community/>
-                    <snmp_oid/>
+                    <type>DEPENDENT</type>
                     <key>1c.rmngr.license.uniq</key>
                     <delay>0</delay>
                     <history>2w</history>
                     <trends>90d</trends>
-                    <status>0</status>
-                    <value_type>3</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
                     <applications>
                         <application>
                             <name>[1С] Программные лицензии</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
                     <preprocessing>
                         <step>
-                            <type>5</type>
+                            <type>REGEX</type>
                             <params>summary:\d+:(\d+):\d+:\d+:\d+
 \1</params>
-                            <error_handler>0</error_handler>
-                            <error_handler_params/>
                         </step>
                     </preprocessing>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
                     <master_item>
                         <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
                     </master_item>
                 </item>
                 <item>
                     <name>[1C/Лицензии] Количество использованных лицензий</name>
-                    <type>18</type>
-                    <snmp_community/>
-                    <snmp_oid/>
+                    <type>DEPENDENT</type>
                     <key>1c.rmngr.license.used</key>
                     <delay>0</delay>
                     <history>2w</history>
                     <trends>90d</trends>
-                    <status>0</status>
-                    <value_type>3</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
                     <applications>
                         <application>
                             <name>[1С] Программные лицензии</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
                     <preprocessing>
                         <step>
-                            <type>5</type>
+                            <type>REGEX</type>
                             <params>summary:(\d+):\d+:\d+:\d+:\d+
 \1</params>
-                            <error_handler>0</error_handler>
-                            <error_handler_params/>
                         </step>
                     </preprocessing>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
                     <master_item>
                         <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
                     </master_item>
                 </item>
                 <item>
                     <name>[1C/Лицензии] Количество лицензированных сеансов</name>
-                    <type>18</type>
-                    <snmp_community/>
-                    <snmp_oid/>
+                    <type>DEPENDENT</type>
                     <key>1c.rmngr.license.user</key>
                     <delay>0</delay>
                     <history>2w</history>
                     <trends>90d</trends>
-                    <status>0</status>
-                    <value_type>3</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
                     <applications>
                         <application>
                             <name>[1С] Программные лицензии</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
                     <preprocessing>
                         <step>
-                            <type>5</type>
+                            <type>REGEX</type>
                             <params>\d+:(\d+)
 \1</params>
-                            <error_handler>0</error_handler>
-                            <error_handler_params/>
                         </step>
                     </preprocessing>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
                     <master_item>
                         <key>1c.rmngr.license</key>
                     </master_item>
                 </item>
                 <item>
                     <name>[1C/Лицензии] Количество веб-клиентов</name>
-                    <type>18</type>
-                    <snmp_community/>
-                    <snmp_oid/>
+                    <type>DEPENDENT</type>
                     <key>1c.rmngr.license.webclient</key>
                     <delay>0</delay>
                     <history>2w</history>
                     <trends>90d</trends>
-                    <status>0</status>
-                    <value_type>3</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
                     <applications>
                         <application>
                             <name>[1С] Программные лицензии</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
                     <preprocessing>
                         <step>
-                            <type>5</type>
+                            <type>REGEX</type>
                             <params>summary:\d+:\d+:\d+:\d+:(\d+)
 \1</params>
-                            <error_handler>0</error_handler>
-                            <error_handler_params/>
                         </step>
                     </preprocessing>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
                     <master_item>
                         <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
                     </master_item>
@@ -628,414 +224,133 @@
             <discovery_rules>
                 <discovery_rule>
                     <name>[1С/Лицензии] Кластеры</name>
-                    <type>0</type>
-                    <snmp_community/>
-                    <snmp_oid/>
                     <key>1c.rmngr.license.clusters.discovery</key>
                     <delay>1h</delay>
-                    <status>1</status>
-                    <allowed_hosts/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <filter>
-                        <evaltype>0</evaltype>
-                        <formula/>
-                        <conditions/>
-                    </filter>
+                    <status>DISABLED</status>
                     <lifetime>7d</lifetime>
-                    <description/>
                     <item_prototypes>
                         <item_prototype>
                             <name>[1С/Лицензии/{#CLSTR_NAME}] Количество лицензий на клиенте</name>
-                            <type>18</type>
-                            <snmp_community/>
-                            <snmp_oid/>
+                            <type>DEPENDENT</type>
                             <key>1c.rmngr.license.client[{#CLSTR_NAME}]</key>
                             <delay>0</delay>
                             <history>2w</history>
                             <trends>90d</trends>
-                            <status>0</status>
-                            <value_type>3</value_type>
-                            <allowed_hosts/>
-                            <units/>
-                            <snmpv3_contextname/>
-                            <snmpv3_securityname/>
-                            <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                            <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                            <snmpv3_authpassphrase/>
-                            <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                            <snmpv3_privpassphrase/>
-                            <params/>
-                            <ipmi_sensor/>
-                            <authtype>0</authtype>
-                            <username/>
-                            <password/>
-                            <publickey/>
-                            <privatekey/>
-                            <port/>
-                            <description/>
-                            <inventory_link>0</inventory_link>
                             <applications>
                                 <application>
                                     <name>[1С] Программные лицензии</name>
                                 </application>
                             </applications>
-                            <valuemap/>
-                            <logtimefmt/>
                             <preprocessing>
                                 <step>
-                                    <type>5</type>
+                                    <type>REGEX</type>
                                     <params>{#CLSTR_NAME}:\d+:\d+:\d+:(\d+):\d+
 \1</params>
-                                    <error_handler>0</error_handler>
-                                    <error_handler_params/>
                                 </step>
                             </preprocessing>
-                            <jmx_endpoint/>
-                            <timeout>3s</timeout>
-                            <url/>
-                            <query_fields/>
-                            <posts/>
-                            <status_codes>200</status_codes>
-                            <follow_redirects>1</follow_redirects>
-                            <post_type>0</post_type>
-                            <http_proxy/>
-                            <headers/>
-                            <retrieve_mode>0</retrieve_mode>
-                            <request_method>0</request_method>
-                            <output_format>0</output_format>
-                            <allow_traps>0</allow_traps>
-                            <ssl_cert_file/>
-                            <ssl_key_file/>
-                            <ssl_key_password/>
-                            <verify_peer>0</verify_peer>
-                            <verify_host>0</verify_host>
-                            <application_prototypes/>
                             <master_item>
                                 <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
                             <name>[1С/Лицензии/{#CLSTR_NAME}] Общее количество сеансов</name>
-                            <type>18</type>
-                            <snmp_community/>
-                            <snmp_oid/>
+                            <type>DEPENDENT</type>
                             <key>1c.rmngr.license.total[{#CLSTR_NAME}]</key>
                             <delay>0</delay>
                             <history>2w</history>
                             <trends>90d</trends>
-                            <status>0</status>
-                            <value_type>3</value_type>
-                            <allowed_hosts/>
-                            <units/>
-                            <snmpv3_contextname/>
-                            <snmpv3_securityname/>
-                            <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                            <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                            <snmpv3_authpassphrase/>
-                            <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                            <snmpv3_privpassphrase/>
-                            <params/>
-                            <ipmi_sensor/>
-                            <authtype>0</authtype>
-                            <username/>
-                            <password/>
-                            <publickey/>
-                            <privatekey/>
-                            <port/>
-                            <description/>
-                            <inventory_link>0</inventory_link>
                             <applications>
                                 <application>
                                     <name>[1С] Программные лицензии</name>
                                 </application>
                             </applications>
-                            <valuemap/>
-                            <logtimefmt/>
                             <preprocessing>
                                 <step>
-                                    <type>5</type>
+                                    <type>REGEX</type>
                                     <params>{#CLSTR_NAME}:\d+:\d+:(\d+):\d+:\d+
 \1</params>
-                                    <error_handler>0</error_handler>
-                                    <error_handler_params/>
                                 </step>
                             </preprocessing>
-                            <jmx_endpoint/>
-                            <timeout>3s</timeout>
-                            <url/>
-                            <query_fields/>
-                            <posts/>
-                            <status_codes>200</status_codes>
-                            <follow_redirects>1</follow_redirects>
-                            <post_type>0</post_type>
-                            <http_proxy/>
-                            <headers/>
-                            <retrieve_mode>0</retrieve_mode>
-                            <request_method>0</request_method>
-                            <output_format>0</output_format>
-                            <allow_traps>0</allow_traps>
-                            <ssl_cert_file/>
-                            <ssl_key_file/>
-                            <ssl_key_password/>
-                            <verify_peer>0</verify_peer>
-                            <verify_host>0</verify_host>
-                            <application_prototypes/>
                             <master_item>
                                 <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
                             <name>[1С/Лицензии/{#CLSTR_NAME}] Количество уникальных пользователей</name>
-                            <type>18</type>
-                            <snmp_community/>
-                            <snmp_oid/>
+                            <type>DEPENDENT</type>
                             <key>1c.rmngr.license.uniq[{#CLSTR_NAME}]</key>
                             <delay>0</delay>
                             <history>2w</history>
                             <trends>90d</trends>
-                            <status>0</status>
-                            <value_type>3</value_type>
-                            <allowed_hosts/>
-                            <units/>
-                            <snmpv3_contextname/>
-                            <snmpv3_securityname/>
-                            <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                            <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                            <snmpv3_authpassphrase/>
-                            <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                            <snmpv3_privpassphrase/>
-                            <params/>
-                            <ipmi_sensor/>
-                            <authtype>0</authtype>
-                            <username/>
-                            <password/>
-                            <publickey/>
-                            <privatekey/>
-                            <port/>
-                            <description/>
-                            <inventory_link>0</inventory_link>
                             <applications>
                                 <application>
                                     <name>[1С] Программные лицензии</name>
                                 </application>
                             </applications>
-                            <valuemap/>
-                            <logtimefmt/>
                             <preprocessing>
                                 <step>
-                                    <type>5</type>
+                                    <type>REGEX</type>
                                     <params>{#CLSTR_NAME}:\d+:(\d+):\d+:\d+:\d+
 \1</params>
-                                    <error_handler>0</error_handler>
-                                    <error_handler_params/>
                                 </step>
                             </preprocessing>
-                            <jmx_endpoint/>
-                            <timeout>3s</timeout>
-                            <url/>
-                            <query_fields/>
-                            <posts/>
-                            <status_codes>200</status_codes>
-                            <follow_redirects>1</follow_redirects>
-                            <post_type>0</post_type>
-                            <http_proxy/>
-                            <headers/>
-                            <retrieve_mode>0</retrieve_mode>
-                            <request_method>0</request_method>
-                            <output_format>0</output_format>
-                            <allow_traps>0</allow_traps>
-                            <ssl_cert_file/>
-                            <ssl_key_file/>
-                            <ssl_key_password/>
-                            <verify_peer>0</verify_peer>
-                            <verify_host>0</verify_host>
-                            <application_prototypes/>
                             <master_item>
                                 <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
                             <name>[1С/Лицензии/{#CLSTR_NAME}] Количество использованных лицензий</name>
-                            <type>18</type>
-                            <snmp_community/>
-                            <snmp_oid/>
+                            <type>DEPENDENT</type>
                             <key>1c.rmngr.license.used[{#CLSTR_NAME}]</key>
                             <delay>0</delay>
                             <history>2w</history>
                             <trends>90d</trends>
-                            <status>0</status>
-                            <value_type>3</value_type>
-                            <allowed_hosts/>
-                            <units/>
-                            <snmpv3_contextname/>
-                            <snmpv3_securityname/>
-                            <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                            <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                            <snmpv3_authpassphrase/>
-                            <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                            <snmpv3_privpassphrase/>
-                            <params/>
-                            <ipmi_sensor/>
-                            <authtype>0</authtype>
-                            <username/>
-                            <password/>
-                            <publickey/>
-                            <privatekey/>
-                            <port/>
-                            <description/>
-                            <inventory_link>0</inventory_link>
                             <applications>
                                 <application>
                                     <name>[1С] Программные лицензии</name>
                                 </application>
                             </applications>
-                            <valuemap/>
-                            <logtimefmt/>
                             <preprocessing>
                                 <step>
-                                    <type>5</type>
+                                    <type>REGEX</type>
                                     <params>{#CLSTR_NAME}:(\d+):\d+:\d+:\d+:\d+
 \1</params>
-                                    <error_handler>0</error_handler>
-                                    <error_handler_params/>
                                 </step>
                             </preprocessing>
-                            <jmx_endpoint/>
-                            <timeout>3s</timeout>
-                            <url/>
-                            <query_fields/>
-                            <posts/>
-                            <status_codes>200</status_codes>
-                            <follow_redirects>1</follow_redirects>
-                            <post_type>0</post_type>
-                            <http_proxy/>
-                            <headers/>
-                            <retrieve_mode>0</retrieve_mode>
-                            <request_method>0</request_method>
-                            <output_format>0</output_format>
-                            <allow_traps>0</allow_traps>
-                            <ssl_cert_file/>
-                            <ssl_key_file/>
-                            <ssl_key_password/>
-                            <verify_peer>0</verify_peer>
-                            <verify_host>0</verify_host>
-                            <application_prototypes/>
                             <master_item>
                                 <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
                             <name>[1С/Лицензии/{#CLSTR_NAME}] Количество веб-клиентов</name>
-                            <type>18</type>
-                            <snmp_community/>
-                            <snmp_oid/>
+                            <type>DEPENDENT</type>
                             <key>1c.rmngr.license.webclient[{#CLSTR_NAME}]</key>
                             <delay>0</delay>
                             <history>2w</history>
                             <trends>90d</trends>
-                            <status>0</status>
-                            <value_type>3</value_type>
-                            <allowed_hosts/>
-                            <units/>
-                            <snmpv3_contextname/>
-                            <snmpv3_securityname/>
-                            <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                            <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                            <snmpv3_authpassphrase/>
-                            <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                            <snmpv3_privpassphrase/>
-                            <params/>
-                            <ipmi_sensor/>
-                            <authtype>0</authtype>
-                            <username/>
-                            <password/>
-                            <publickey/>
-                            <privatekey/>
-                            <port/>
-                            <description/>
-                            <inventory_link>0</inventory_link>
                             <applications>
                                 <application>
                                     <name>[1С] Программные лицензии</name>
                                 </application>
                             </applications>
-                            <valuemap/>
-                            <logtimefmt/>
                             <preprocessing>
                                 <step>
-                                    <type>5</type>
+                                    <type>REGEX</type>
                                     <params>{#CLSTR_NAME}:\d+:\d+:\d+:\d+:(\d+)
 \1</params>
-                                    <error_handler>0</error_handler>
-                                    <error_handler_params/>
                                 </step>
                             </preprocessing>
-                            <jmx_endpoint/>
-                            <timeout>3s</timeout>
-                            <url/>
-                            <query_fields/>
-                            <posts/>
-                            <status_codes>200</status_codes>
-                            <follow_redirects>1</follow_redirects>
-                            <post_type>0</post_type>
-                            <http_proxy/>
-                            <headers/>
-                            <retrieve_mode>0</retrieve_mode>
-                            <request_method>0</request_method>
-                            <output_format>0</output_format>
-                            <allow_traps>0</allow_traps>
-                            <ssl_cert_file/>
-                            <ssl_key_file/>
-                            <ssl_key_password/>
-                            <verify_peer>0</verify_peer>
-                            <verify_host>0</verify_host>
-                            <application_prototypes/>
                             <master_item>
                                 <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
-                    <trigger_prototypes/>
                     <graph_prototypes>
                         <graph_prototype>
                             <name>[1С/Лицензии/{#CLSTR_NAME}] Использование активированных лицензий</name>
-                            <width>900</width>
-                            <height>200</height>
-                            <yaxismin>0.0000</yaxismin>
-                            <yaxismax>100.0000</yaxismax>
-                            <show_work_period>1</show_work_period>
-                            <show_triggers>1</show_triggers>
-                            <type>0</type>
-                            <show_legend>1</show_legend>
-                            <show_3d>0</show_3d>
-                            <percent_left>0.0000</percent_left>
-                            <percent_right>0.0000</percent_right>
-                            <ymin_type_1>0</ymin_type_1>
-                            <ymax_type_1>0</ymax_type_1>
-                            <ymin_item_1>0</ymin_item_1>
-                            <ymax_item_1>0</ymax_item_1>
                             <graph_items>
                                 <graph_item>
-                                    <sortorder>0</sortorder>
-                                    <drawtype>0</drawtype>
                                     <color>1B5E20</color>
-                                    <yaxisside>0</yaxisside>
-                                    <calc_fnc>2</calc_fnc>
-                                    <type>0</type>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
                                         <key>1c.rmngr.license.used[{#CLSTR_NAME}]</key>
@@ -1043,11 +358,7 @@
                                 </graph_item>
                                 <graph_item>
                                     <sortorder>1</sortorder>
-                                    <drawtype>0</drawtype>
                                     <color>2774A4</color>
-                                    <yaxisside>0</yaxisside>
-                                    <calc_fnc>2</calc_fnc>
-                                    <type>0</type>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
                                         <key>1c.rmngr.license.uniq[{#CLSTR_NAME}]</key>
@@ -1055,11 +366,7 @@
                                 </graph_item>
                                 <graph_item>
                                     <sortorder>2</sortorder>
-                                    <drawtype>0</drawtype>
                                     <color>FC6EA3</color>
-                                    <yaxisside>0</yaxisside>
-                                    <calc_fnc>2</calc_fnc>
-                                    <type>0</type>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
                                         <key>1c.rmngr.license.client[{#CLSTR_NAME}]</key>
@@ -1067,11 +374,7 @@
                                 </graph_item>
                                 <graph_item>
                                     <sortorder>3</sortorder>
-                                    <drawtype>0</drawtype>
                                     <color>6C59DC</color>
-                                    <yaxisside>0</yaxisside>
-                                    <calc_fnc>2</calc_fnc>
-                                    <type>0</type>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
                                         <key>1c.rmngr.license.webclient[{#CLSTR_NAME}]</key>
@@ -1079,11 +382,7 @@
                                 </graph_item>
                                 <graph_item>
                                     <sortorder>4</sortorder>
-                                    <drawtype>0</drawtype>
                                     <color>F7941D</color>
-                                    <yaxisside>0</yaxisside>
-                                    <calc_fnc>2</calc_fnc>
-                                    <type>0</type>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
                                         <key>1c.rmngr.license.total[{#CLSTR_NAME}]</key>
@@ -1092,31 +391,8 @@
                             </graph_items>
                         </graph_prototype>
                     </graph_prototypes>
-                    <host_prototypes/>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
-                    <lld_macro_paths/>
-                    <preprocessing/>
-                    <master_item/>
                 </discovery_rule>
             </discovery_rules>
-            <httptests/>
             <macros>
                 <macro>
                     <macro>{$LIC_CORP}</macro>
@@ -1131,9 +407,6 @@
                     <value>1545</value>
                 </macro>
             </macros>
-            <templates/>
-            <screens/>
-            <tags/>
         </template>
     </templates>
     <triggers>
@@ -1141,103 +414,39 @@
             <expression>{$LIC_CORP}=0 and {Template App 1C Enterprise License Server:1c.rmngr.license.used.last()}&gt;={Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}&#13;
 or &#13;
 {$LIC_CORP}=1 and  ({Template App 1C Enterprise License Server:1c.rmngr.license.uniq.last()})&gt;=({Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}*1.1)</expression>
-            <recovery_mode>0</recovery_mode>
-            <recovery_expression/>
             <name>[1C/Лицензии] Использованы все доступные клиентские лицензии</name>
-            <correlation_mode>0</correlation_mode>
-            <correlation_tag/>
-            <url/>
-            <status>0</status>
-            <priority>4</priority>
-            <description/>
-            <type>0</type>
-            <manual_close>1</manual_close>
-            <dependencies/>
-            <tags/>
-        </trigger>
-        <trigger>
-            <expression>{Template App 1C Enterprise License Server:1c.rmngr.license.client.last()}&gt;0</expression>
-            <recovery_mode>0</recovery_mode>
-            <recovery_expression/>
-            <name>[1C/Лицензии] Используются лицензии с клиентских компьютеров</name>
-            <correlation_mode>0</correlation_mode>
-            <correlation_tag/>
-            <url/>
-            <status>1</status>
-            <priority>1</priority>
-            <description/>
-            <type>0</type>
-            <manual_close>1</manual_close>
-            <dependencies/>
-            <tags/>
+            <priority>HIGH</priority>
+            <manual_close>YES</manual_close>
         </trigger>
         <trigger>
             <expression>{$LIC_CORP}=0 and {Template App 1C Enterprise License Server:1c.rmngr.license.used.last()}/{Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}&gt;{$LIC_UTIL_LIMIT} or {$LIC_CORP}=1 and  {Template App 1C Enterprise License Server:1c.rmngr.license.uniq.last()}/({Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}*1.1)&gt;{$LIC_UTIL_LIMIT}</expression>
-            <recovery_mode>0</recovery_mode>
-            <recovery_expression/>
             <name>[1C/Лицензии] Количество использованных лицензий близко к максимальному</name>
-            <correlation_mode>0</correlation_mode>
-            <correlation_tag/>
-            <url/>
-            <status>0</status>
-            <priority>2</priority>
-            <description/>
-            <type>0</type>
-            <manual_close>1</manual_close>
+            <priority>WARNING</priority>
+            <manual_close>YES</manual_close>
             <dependencies>
                 <dependency>
                     <name>[1C/Лицензии] Использованы все доступные клиентские лицензии</name>
                     <expression>{$LIC_CORP}=0 and {Template App 1C Enterprise License Server:1c.rmngr.license.used.last()}&gt;={Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}&#13;
 or &#13;
 {$LIC_CORP}=1 and  ({Template App 1C Enterprise License Server:1c.rmngr.license.uniq.last()})&gt;=({Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}*1.1)</expression>
-                    <recovery_expression/>
                 </dependency>
             </dependencies>
-            <tags/>
         </trigger>
         <trigger>
             <expression>{Template App 1C Enterprise License Server:1c.rmngr.license.client.last()}/{Template App 1C Enterprise License Server:1c.rmngr.license.total.last()}&gt;0.5</expression>
-            <recovery_mode>0</recovery_mode>
-            <recovery_expression/>
             <name>[1C/Лицензии] Количество лицензий с клиентских компьютеров &gt; 50%</name>
-            <correlation_mode>0</correlation_mode>
-            <correlation_tag/>
-            <url/>
-            <status>1</status>
-            <priority>2</priority>
-            <description/>
-            <type>0</type>
-            <manual_close>1</manual_close>
-            <dependencies/>
-            <tags/>
+            <status>DISABLED</status>
+            <priority>WARNING</priority>
+            <manual_close>YES</manual_close>
         </trigger>
     </triggers>
     <graphs>
         <graph>
             <name>[1C/Лицензии] Использование активированных лицензий</name>
-            <width>900</width>
-            <height>200</height>
-            <yaxismin>0.0000</yaxismin>
-            <yaxismax>100.0000</yaxismax>
-            <show_work_period>1</show_work_period>
-            <show_triggers>1</show_triggers>
-            <type>0</type>
-            <show_legend>1</show_legend>
-            <show_3d>0</show_3d>
-            <percent_left>0.0000</percent_left>
-            <percent_right>0.0000</percent_right>
-            <ymin_type_1>1</ymin_type_1>
-            <ymax_type_1>0</ymax_type_1>
-            <ymin_item_1>0</ymin_item_1>
-            <ymax_item_1>0</ymax_item_1>
+            <ymin_type_1>FIXED</ymin_type_1>
             <graph_items>
                 <graph_item>
-                    <sortorder>0</sortorder>
-                    <drawtype>0</drawtype>
                     <color>F63100</color>
-                    <yaxisside>0</yaxisside>
-                    <calc_fnc>2</calc_fnc>
-                    <type>0</type>
                     <item>
                         <host>Template App 1C Enterprise License Server</host>
                         <key>1c.rmngr.license.user</key>
@@ -1245,11 +454,7 @@ or &#13;
                 </graph_item>
                 <graph_item>
                     <sortorder>1</sortorder>
-                    <drawtype>0</drawtype>
                     <color>1B5E20</color>
-                    <yaxisside>0</yaxisside>
-                    <calc_fnc>2</calc_fnc>
-                    <type>0</type>
                     <item>
                         <host>Template App 1C Enterprise License Server</host>
                         <key>1c.rmngr.license.used</key>
@@ -1257,11 +462,7 @@ or &#13;
                 </graph_item>
                 <graph_item>
                     <sortorder>2</sortorder>
-                    <drawtype>0</drawtype>
                     <color>2774A4</color>
-                    <yaxisside>0</yaxisside>
-                    <calc_fnc>2</calc_fnc>
-                    <type>0</type>
                     <item>
                         <host>Template App 1C Enterprise License Server</host>
                         <key>1c.rmngr.license.uniq</key>
@@ -1269,11 +470,7 @@ or &#13;
                 </graph_item>
                 <graph_item>
                     <sortorder>3</sortorder>
-                    <drawtype>0</drawtype>
                     <color>FC6EA3</color>
-                    <yaxisside>0</yaxisside>
-                    <calc_fnc>2</calc_fnc>
-                    <type>0</type>
                     <item>
                         <host>Template App 1C Enterprise License Server</host>
                         <key>1c.rmngr.license.client</key>
@@ -1281,11 +478,7 @@ or &#13;
                 </graph_item>
                 <graph_item>
                     <sortorder>4</sortorder>
-                    <drawtype>0</drawtype>
                     <color>6C59DC</color>
-                    <yaxisside>0</yaxisside>
-                    <calc_fnc>2</calc_fnc>
-                    <type>0</type>
                     <item>
                         <host>Template App 1C Enterprise License Server</host>
                         <key>1c.rmngr.license.webclient</key>
@@ -1293,11 +486,7 @@ or &#13;
                 </graph_item>
                 <graph_item>
                     <sortorder>5</sortorder>
-                    <drawtype>0</drawtype>
                     <color>F7941D</color>
-                    <yaxisside>0</yaxisside>
-                    <calc_fnc>2</calc_fnc>
-                    <type>0</type>
                     <item>
                         <host>Template App 1C Enterprise License Server</host>
                         <key>1c.rmngr.license.total</key>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
-    <version>4.2</version>
-    <date>2020-01-14T11:17:42Z</date>
+    <version>4.4</version>
+    <date>2020-02-04T09:02:00Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -11,7 +11,6 @@
         <template>
             <template>Template App 1C Enterprise Work Server</template>
             <name>Template App 1C Enterprise Work Server</name>
-            <description/>
             <groups>
                 <group>
                     <name>Templates (Kaminsoft)</name>
@@ -24,632 +23,470 @@
                 <application>
                     <name>[1C] Производительность</name>
                 </application>
+                <application>
+                    <name>[1C] Устойчивость системы</name>
+                </application>
             </applications>
             <items>
                 <item>
                     <name>[1C/Серверные вызовы] ТОП по суммарному количеству</name>
-                    <type>0</type>
-                    <snmp_community/>
-                    <snmp_oid/>
                     <key>1c.rphost.calls[{$LOG_DIR},count,{$TOP_CALL_LIMIT}]</key>
                     <delay>1h</delay>
-                    <history>90d</history>
                     <trends>0</trends>
-                    <status>0</status>
-                    <value_type>4</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
+                    <value_type>TEXT</value_type>
                     <applications>
                         <application>
                             <name>[1C] Производительность</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
-                    <preprocessing/>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
-                    <master_item/>
                 </item>
                 <item>
                     <name>[1C/Серверные вызовы] ТОП  по суммарному процессорному времени</name>
-                    <type>0</type>
-                    <snmp_community/>
-                    <snmp_oid/>
                     <key>1c.rphost.calls[{$LOG_DIR},cpu,{$TOP_CALL_LIMIT}]</key>
                     <delay>1h</delay>
-                    <history>90d</history>
                     <trends>0</trends>
-                    <status>0</status>
-                    <value_type>4</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
+                    <value_type>TEXT</value_type>
                     <applications>
                         <application>
                             <name>[1C] Производительность</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
-                    <preprocessing/>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
-                    <master_item/>
                 </item>
                 <item>
                     <name>[1C/Серверные вызовы] ТОП по суммарной длительности</name>
-                    <type>0</type>
-                    <snmp_community/>
-                    <snmp_oid/>
                     <key>1c.rphost.calls[{$LOG_DIR},duration,{$TOP_CALL_LIMIT}]</key>
                     <delay>1h</delay>
-                    <history>90d</history>
                     <trends>0</trends>
-                    <status>0</status>
-                    <value_type>4</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
+                    <value_type>TEXT</value_type>
                     <applications>
                         <application>
                             <name>[1C] Производительность</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
-                    <preprocessing/>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
-                    <master_item/>
                 </item>
                 <item>
                     <name>[1C/Серверные вызовы] ТОП по средней длительности</name>
-                    <type>0</type>
-                    <snmp_community/>
-                    <snmp_oid/>
                     <key>1c.rphost.calls[{$LOG_DIR},dur_avg,{$TOP_CALL_LIMIT}]</key>
                     <delay>1h</delay>
-                    <history>90d</history>
                     <trends>0</trends>
-                    <status>0</status>
-                    <value_type>4</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
+                    <value_type>TEXT</value_type>
                     <applications>
                         <application>
                             <name>[1C] Производительность</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
-                    <preprocessing/>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
-                    <master_item/>
                 </item>
                 <item>
                     <name>[1C/Серверные вызовы] ТОП &quot;ленивых&quot; вызовов</name>
-                    <type>0</type>
-                    <snmp_community/>
-                    <snmp_oid/>
                     <key>1c.rphost.calls[{$LOG_DIR},lazy,{$TOP_CALL_LIMIT}]</key>
                     <delay>1h</delay>
-                    <history>90d</history>
                     <trends>0</trends>
-                    <status>0</status>
-                    <value_type>4</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
+                    <value_type>TEXT</value_type>
                     <applications>
                         <application>
                             <name>[1C] Производительность</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
-                    <preprocessing/>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
-                    <master_item/>
                 </item>
                 <item>
                     <name>[1C/Серверные вызовы] ТОП по максимальной памяти за вызов</name>
-                    <type>0</type>
-                    <snmp_community/>
-                    <snmp_oid/>
                     <key>1c.rphost.calls[{$LOG_DIR},memory,{$TOP_CALL_LIMIT}]</key>
                     <delay>1h</delay>
-                    <history>90d</history>
                     <trends>0</trends>
-                    <status>0</status>
-                    <value_type>4</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
+                    <value_type>TEXT</value_type>
                     <applications>
                         <application>
                             <name>[1C] Производительность</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
-                    <preprocessing/>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
-                    <master_item/>
                 </item>
                 <item>
-                    <name>[1C/Управляемые блокировки] Число взаимоблокировок</name>
-                    <type>18</type>
-                    <snmp_community/>
-                    <snmp_oid/>
-                    <key>1c.rphost.locks.deadlock</key>
+                    <name>[1C/Рабочий процесс] Число процессов</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.rphost.count</key>
                     <delay>0</delay>
                     <history>30d</history>
                     <trends>90d</trends>
-                    <status>0</status>
-                    <value_type>3</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
                     <applications>
                         <application>
                             <name>[1C] Производительность</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
                     <preprocessing>
                         <step>
-                            <type>5</type>
-                            <params>\d+.?\d*:\d+:(\d+)
+                            <type>REGEX</type>
+                            <params>(\d+):\d+:\d+
 \1</params>
-                            <error_handler>0</error_handler>
-                            <error_handler_params/>
                         </step>
                     </preprocessing>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
                     <master_item>
-                        <key>1c.rphost.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
+                        <key>1c.rphost.summary</key>
                     </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}=0</expression>
+                            <name>[1C/Рабочий процесс] Нет запущенных рабочих процессов</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
-                    <name>[1C/Управляемые блокировки] Число таймаутов</name>
-                    <type>18</type>
-                    <snmp_community/>
-                    <snmp_oid/>
-                    <key>1c.rphost.locks.timeout</key>
-                    <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
-                    <status>0</status>
-                    <value_type>3</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
-                    <applications>
-                        <application>
-                            <name>[1C] Производительность</name>
-                        </application>
-                    </applications>
-                    <valuemap/>
-                    <logtimefmt/>
-                    <preprocessing>
-                        <step>
-                            <type>5</type>
-                            <params>\d+.?\d*:(\d+):\d+
-\1</params>
-                            <error_handler>0</error_handler>
-                            <error_handler_params/>
-                        </step>
-                    </preprocessing>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
-                    <master_item>
-                        <key>1c.rphost.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
-                    </master_item>
-                </item>
-                <item>
-                    <name>[1C/Управляемые блокировки] Общее ожидание на блокировках</name>
-                    <type>18</type>
-                    <snmp_community/>
-                    <snmp_oid/>
-                    <key>1c.rphost.locks.wait</key>
-                    <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
-                    <status>0</status>
-                    <value_type>0</value_type>
-                    <allowed_hosts/>
-                    <units>s</units>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
-                    <applications>
-                        <application>
-                            <name>[1C] Производительность</name>
-                        </application>
-                    </applications>
-                    <valuemap/>
-                    <logtimefmt/>
-                    <preprocessing>
-                        <step>
-                            <type>5</type>
-                            <params>(\d+.?\d*):\d+:\d+
-\1</params>
-                            <error_handler>0</error_handler>
-                            <error_handler_params/>
-                        </step>
-                    </preprocessing>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
-                    <master_item>
-                        <key>1c.rphost.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
-                    </master_item>
-                </item>
-                <item>
-                    <name>[1C/Управляемые блокировки] Сводка</name>
-                    <type>0</type>
-                    <snmp_community/>
-                    <snmp_oid/>
-                    <key>1c.rphost.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
-                    <delay>1h</delay>
-                    <history>30d</history>
+                    <name>[1C/Рабочий процесс/IO] Сводка</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>1c.rphost.io</key>
+                    <delay>30s</delay>
+                    <history>0</history>
                     <trends>0</trends>
-                    <status>0</status>
-                    <value_type>4</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
+                    <value_type>TEXT</value_type>
                     <applications>
                         <application>
                             <name>[1C] Информация</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
-                    <preprocessing/>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
-                    <master_item/>
+                </item>
+                <item>
+                    <name>[1C/Рабочий процесс/IO] Операции чтения</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.rphost.io.mread</key>
+                    <delay>0</delay>
+                    <units>B/s</units>
+                    <applications>
+                        <application>
+                            <name>[1C] Производительность</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>(\d+):\d+:\d+:\d+
+\1</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.rphost.io</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>[1C/Рабочий процесс/IO] Операции записи</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.rphost.io.mwrite</key>
+                    <delay>0</delay>
+                    <units>B/s</units>
+                    <applications>
+                        <application>
+                            <name>[1C] Производительность</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>\d+:(\d+):\d+:\d+
+\1</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.rphost.io</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>[1C/Рабочий процесс/IO] Чтение с диска</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.rphost.io.read</key>
+                    <delay>0</delay>
+                    <units>B/s</units>
+                    <applications>
+                        <application>
+                            <name>[1C] Производительность</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>\d+:\d+:(\d+):\d+
+\1</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.rphost.io</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>[1C/Рабочий процесс/IO] Запись на диск</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.rphost.io.write</key>
+                    <delay>0</delay>
+                    <units>B/s</units>
+                    <applications>
+                        <application>
+                            <name>[1C] Производительность</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>\d+:\d+:\d+:(\d+)
+\1</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.rphost.io</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>[1C/Управляемые блокировки] Число взаимоблокировок</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.rphost.locks.deadlock</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <applications>
+                        <application>
+                            <name>[1C] Производительность</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>\d+.?\d*:\d+:(\d+)
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.rphost.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&gt;0</expression>
+                            <name>[1C/Управляемые блокировки] Обнаружены взаимоблокировки</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>[1C/Управляемые блокировки] Число таймаутов</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.rphost.locks.timeout</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <applications>
+                        <application>
+                            <name>[1C] Производительность</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>\d+.?\d*:(\d+):\d+
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.rphost.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&gt;0</expression>
+                            <name>[1C/Управляемые блокировки] Обнаружены таймауты</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>[1C/Управляемые блокировки] Общее ожидание на блокировках</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.rphost.locks.wait</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <units>s</units>
+                    <applications>
+                        <application>
+                            <name>[1C] Производительность</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>(\d+.?\d*):\d+:\d+
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.rphost.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&gt;{$MAX_LOCK_WAIT}</expression>
+                            <name>[1C/Управляемые блокировки] Превышено пороговое значение ожидания на блокировках</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>[1C/Управляемые блокировки] Сводка</name>
+                    <key>1c.rphost.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
+                    <delay>1h</delay>
+                    <history>30d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>[1C] Информация</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>[1C/Рабочий процесс] Объем используемой памяти</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.rphost.memory</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <units>B</units>
+                    <applications>
+                        <application>
+                            <name>[1C] Производительность</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>\d+:(\d+):\d+
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.rphost.summary</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>[1C/Рабочий процесс] Число открытых файлов</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.rphost.nofile</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <applications>
+                        <application>
+                            <name>[1C] Производительность</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.rphost.summary</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>[1C/Рабочий процесс] Число входящих TCP-сессий</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.rphost.sessions</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <applications>
+                        <application>
+                            <name>[1C] Производительность</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>\d+:\d+:(\d+)
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.rphost.summary</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>[1C/Рабочий процесс] Сводка</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>1c.rphost.summary</key>
+                    <delay>30s</delay>
+                    <history>0</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>[1C] Информация</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>[1C/Рабочий процесс] Стабильность</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.rphost.unfailing</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <applications>
+                        <application>
+                            <name>[1C] Устойчивость системы</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>\d+:\d+:\d+:(\d+)
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.rphost.summary</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{count(5m,0)}&gt;=3</expression>
+                            <name>[1C/Рабочий процес] Частые перезапуски рабочих процессов</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>[1C] Объем памяти сервера</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>vm.memory.size</key>
+                    <delay>1h</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <units>B</units>
+                    <applications>
+                        <application>
+                            <name>[1C] Производительность</name>
+                        </application>
+                    </applications>
                 </item>
             </items>
-            <discovery_rules/>
-            <httptests/>
             <macros>
+                <macro>
+                    <macro>{$LOGCFG_XML}</macro>
+                    <value>/opt/1C/v8.3/x86_64/conf/logcfg.xml</value>
+                </macro>
                 <macro>
                     <macro>{$LOG_DIR}</macro>
                     <value>/var/log/1C</value>
@@ -663,63 +500,110 @@
                     <value>1545</value>
                 </macro>
                 <macro>
+                    <macro>{$RPHOST_MAX_MEM}</macro>
+                    <value>0.85</value>
+                </macro>
+                <macro>
                     <macro>{$TOP_CALL_LIMIT}</macro>
                     <value>25</value>
                 </macro>
             </macros>
-            <templates/>
-            <screens/>
-            <tags/>
         </template>
     </templates>
     <triggers>
         <trigger>
-            <expression>{Template App 1C Enterprise Work Server:1c.rphost.locks.deadlock.last()}&gt;0</expression>
-            <recovery_mode>0</recovery_mode>
-            <recovery_expression/>
-            <name>[1C/Управляемые блокировки] Обнаружены взаимоблокировки</name>
-            <correlation_mode>0</correlation_mode>
-            <correlation_tag/>
-            <url/>
-            <status>0</status>
-            <priority>4</priority>
-            <description/>
-            <type>0</type>
-            <manual_close>0</manual_close>
-            <dependencies/>
-            <tags/>
-        </trigger>
-        <trigger>
-            <expression>{Template App 1C Enterprise Work Server:1c.rphost.locks.timeout.last()}&gt;0</expression>
-            <recovery_mode>0</recovery_mode>
-            <recovery_expression/>
-            <name>[1C/Управляемые блокировки] Обнаружены таймауты</name>
-            <correlation_mode>0</correlation_mode>
-            <correlation_tag/>
-            <url/>
-            <status>0</status>
-            <priority>4</priority>
-            <description/>
-            <type>0</type>
-            <manual_close>0</manual_close>
-            <dependencies/>
-            <tags/>
-        </trigger>
-        <trigger>
-            <expression>{Template App 1C Enterprise Work Server:1c.rphost.locks.wait.last()}&gt;{$MAX_LOCK_WAIT}</expression>
-            <recovery_mode>0</recovery_mode>
-            <recovery_expression/>
-            <name>[1C/Управляемые блокировки] Превышено пороговое значение ожидания на блокировках</name>
-            <correlation_mode>0</correlation_mode>
-            <correlation_tag/>
-            <url/>
-            <status>0</status>
-            <priority>4</priority>
-            <description/>
-            <type>0</type>
-            <manual_close>0</manual_close>
-            <dependencies/>
-            <tags/>
+            <expression>{Template App 1C Enterprise Work Server:1c.rphost.memory.last()}/{Template App 1C Enterprise Work Server:vm.memory.size.last()}&gt;{$RPHOST_MAX_MEM}</expression>
+            <name>[1C/Рабочий процесс] Превышено пороговое значение используемой памяти</name>
+            <priority>AVERAGE</priority>
         </trigger>
     </triggers>
+    <graphs>
+        <graph>
+            <name>[1C/Рабочий процесс/IO] Операции ввода-вывода</name>
+            <graph_items>
+                <graph_item>
+                    <color>2774A4</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.rphost.io.mread</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>F7941D</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.rphost.io.mwrite</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <color>199C0D</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.rphost.io.read</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>3</sortorder>
+                    <color>F63100</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.rphost.io.write</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>[1C/Рабочий процесс] Объем используемой памяти</name>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.rphost.memory</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>F63100</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>vm.memory.size</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <color>0040FF</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.rphost.count</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>3</sortorder>
+                    <color>F7941D</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.rphost.unfailing</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>[1C/Рабочий процесс] Число входящих TCP-сессий</name>
+            <graph_items>
+                <graph_item>
+                    <color>FF4000</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.rphost.sessions</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+    </graphs>
 </zabbix_export>
