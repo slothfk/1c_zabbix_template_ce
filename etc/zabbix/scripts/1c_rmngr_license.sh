@@ -41,7 +41,7 @@ function licenses_summary {
 }
 
 function license_info {
-    LIC_INFO=$(${RING_TOOL} license info --name ${1} | grep -Pe 'Описание.*на \d+ .*' | perl -pe 's/.*на (\d+) .*/\1/;')
+    LIC_INFO=$(${RING_TOOL} license info --name ${1} | grep -Pe '(Описание|Description).*на \d+ .*' | perl -pe 's/.*на (\d+) .*/\1/;')
     [[ -n ${LIC_INFO} ]] && echo ${LIC_INFO} >> ${LIC_COUNT_CACHE}
 }
 
@@ -109,7 +109,7 @@ function get_clusters_list {
 
 }
 
-[[ -f ${LIC_COUNT_CACHE} ]] && rm ${LIC_COUNT_CACHE}
+cat /dev/null > ${LIC_COUNT_CACHE}
 
 case ${1} in
     info) licenses_summary ;;
