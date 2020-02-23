@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>4.4</version>
+    <date>2020-02-23T22:13:34Z</date>
+    <value_maps>
+        <value_map>
+            <name>[1C/Рабочий процесс] Перемены в процессах</name>
+            <mappings>
+                <mapping>
+                    <value>0</value>
+                    <newvalue>изменений нет</newvalue>
+                </mapping>
+                <mapping>
+                    <value>1</value>
+                    <newvalue>произошло изменение</newvalue>
+                </mapping>
+            </mappings>
+        </value_map>
+    </value_maps>
+</zabbix_export>

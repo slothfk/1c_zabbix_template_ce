@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-02-04T09:02:00Z</date>
+    <date>2020-02-23T22:05:16Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -26,13 +26,17 @@
                 <application>
                     <name>[1C] Устойчивость системы</name>
                 </application>
+                <application>
+                    <name>[1С] Управляемые блокировки</name>
+                </application>
             </applications>
             <items>
                 <item>
                     <name>[1C/Серверные вызовы] ТОП по суммарному количеству</name>
-                    <key>1c.rphost.calls[{$LOG_DIR},count,{$TOP_CALL_LIMIT}]</key>
+                    <key>1c.ws.calls[{$LOG_DIR},count,{$TOP_CALL_LIMIT}]</key>
                     <delay>1h</delay>
                     <trends>0</trends>
+                    <status>DISABLED</status>
                     <value_type>TEXT</value_type>
                     <applications>
                         <application>
@@ -42,9 +46,10 @@
                 </item>
                 <item>
                     <name>[1C/Серверные вызовы] ТОП  по суммарному процессорному времени</name>
-                    <key>1c.rphost.calls[{$LOG_DIR},cpu,{$TOP_CALL_LIMIT}]</key>
+                    <key>1c.ws.calls[{$LOG_DIR},cpu,{$TOP_CALL_LIMIT}]</key>
                     <delay>1h</delay>
                     <trends>0</trends>
+                    <status>DISABLED</status>
                     <value_type>TEXT</value_type>
                     <applications>
                         <application>
@@ -54,9 +59,10 @@
                 </item>
                 <item>
                     <name>[1C/Серверные вызовы] ТОП по суммарной длительности</name>
-                    <key>1c.rphost.calls[{$LOG_DIR},duration,{$TOP_CALL_LIMIT}]</key>
+                    <key>1c.ws.calls[{$LOG_DIR},duration,{$TOP_CALL_LIMIT}]</key>
                     <delay>1h</delay>
                     <trends>0</trends>
+                    <status>DISABLED</status>
                     <value_type>TEXT</value_type>
                     <applications>
                         <application>
@@ -66,9 +72,10 @@
                 </item>
                 <item>
                     <name>[1C/Серверные вызовы] ТОП по средней длительности</name>
-                    <key>1c.rphost.calls[{$LOG_DIR},dur_avg,{$TOP_CALL_LIMIT}]</key>
+                    <key>1c.ws.calls[{$LOG_DIR},dur_avg,{$TOP_CALL_LIMIT}]</key>
                     <delay>1h</delay>
                     <trends>0</trends>
+                    <status>DISABLED</status>
                     <value_type>TEXT</value_type>
                     <applications>
                         <application>
@@ -78,9 +85,10 @@
                 </item>
                 <item>
                     <name>[1C/Серверные вызовы] ТОП &quot;ленивых&quot; вызовов</name>
-                    <key>1c.rphost.calls[{$LOG_DIR},lazy,{$TOP_CALL_LIMIT}]</key>
+                    <key>1c.ws.calls[{$LOG_DIR},lazy,{$TOP_CALL_LIMIT}]</key>
                     <delay>1h</delay>
                     <trends>0</trends>
+                    <status>DISABLED</status>
                     <value_type>TEXT</value_type>
                     <applications>
                         <application>
@@ -90,174 +98,27 @@
                 </item>
                 <item>
                     <name>[1C/Серверные вызовы] ТОП по максимальной памяти за вызов</name>
-                    <key>1c.rphost.calls[{$LOG_DIR},memory,{$TOP_CALL_LIMIT}]</key>
+                    <key>1c.ws.calls[{$LOG_DIR},memory,{$TOP_CALL_LIMIT}]</key>
                     <delay>1h</delay>
                     <trends>0</trends>
+                    <status>DISABLED</status>
                     <value_type>TEXT</value_type>
                     <applications>
                         <application>
                             <name>[1C] Производительность</name>
                         </application>
                     </applications>
-                </item>
-                <item>
-                    <name>[1C/Рабочий процесс] Число процессов</name>
-                    <type>DEPENDENT</type>
-                    <key>1c.rphost.count</key>
-                    <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
-                    <applications>
-                        <application>
-                            <name>[1C] Производительность</name>
-                        </application>
-                    </applications>
-                    <preprocessing>
-                        <step>
-                            <type>REGEX</type>
-                            <params>(\d+):\d+:\d+
-\1</params>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>1c.rphost.summary</key>
-                    </master_item>
-                    <triggers>
-                        <trigger>
-                            <expression>{last()}=0</expression>
-                            <name>[1C/Рабочий процесс] Нет запущенных рабочих процессов</name>
-                            <priority>HIGH</priority>
-                        </trigger>
-                    </triggers>
-                </item>
-                <item>
-                    <name>[1C/Рабочий процесс/IO] Сводка</name>
-                    <type>ZABBIX_ACTIVE</type>
-                    <key>1c.rphost.io</key>
-                    <delay>30s</delay>
-                    <history>0</history>
-                    <trends>0</trends>
-                    <value_type>TEXT</value_type>
-                    <applications>
-                        <application>
-                            <name>[1C] Информация</name>
-                        </application>
-                    </applications>
-                </item>
-                <item>
-                    <name>[1C/Рабочий процесс/IO] Операции чтения</name>
-                    <type>DEPENDENT</type>
-                    <key>1c.rphost.io.mread</key>
-                    <delay>0</delay>
-                    <units>B/s</units>
-                    <applications>
-                        <application>
-                            <name>[1C] Производительность</name>
-                        </application>
-                    </applications>
-                    <preprocessing>
-                        <step>
-                            <type>REGEX</type>
-                            <params>(\d+):\d+:\d+:\d+
-\1</params>
-                        </step>
-                        <step>
-                            <type>CHANGE_PER_SECOND</type>
-                            <params/>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>1c.rphost.io</key>
-                    </master_item>
-                </item>
-                <item>
-                    <name>[1C/Рабочий процесс/IO] Операции записи</name>
-                    <type>DEPENDENT</type>
-                    <key>1c.rphost.io.mwrite</key>
-                    <delay>0</delay>
-                    <units>B/s</units>
-                    <applications>
-                        <application>
-                            <name>[1C] Производительность</name>
-                        </application>
-                    </applications>
-                    <preprocessing>
-                        <step>
-                            <type>REGEX</type>
-                            <params>\d+:(\d+):\d+:\d+
-\1</params>
-                        </step>
-                        <step>
-                            <type>CHANGE_PER_SECOND</type>
-                            <params/>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>1c.rphost.io</key>
-                    </master_item>
-                </item>
-                <item>
-                    <name>[1C/Рабочий процесс/IO] Чтение с диска</name>
-                    <type>DEPENDENT</type>
-                    <key>1c.rphost.io.read</key>
-                    <delay>0</delay>
-                    <units>B/s</units>
-                    <applications>
-                        <application>
-                            <name>[1C] Производительность</name>
-                        </application>
-                    </applications>
-                    <preprocessing>
-                        <step>
-                            <type>REGEX</type>
-                            <params>\d+:\d+:(\d+):\d+
-\1</params>
-                        </step>
-                        <step>
-                            <type>CHANGE_PER_SECOND</type>
-                            <params/>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>1c.rphost.io</key>
-                    </master_item>
-                </item>
-                <item>
-                    <name>[1C/Рабочий процесс/IO] Запись на диск</name>
-                    <type>DEPENDENT</type>
-                    <key>1c.rphost.io.write</key>
-                    <delay>0</delay>
-                    <units>B/s</units>
-                    <applications>
-                        <application>
-                            <name>[1C] Производительность</name>
-                        </application>
-                    </applications>
-                    <preprocessing>
-                        <step>
-                            <type>REGEX</type>
-                            <params>\d+:\d+:\d+:(\d+)
-\1</params>
-                        </step>
-                        <step>
-                            <type>CHANGE_PER_SECOND</type>
-                            <params/>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>1c.rphost.io</key>
-                    </master_item>
                 </item>
                 <item>
                     <name>[1C/Управляемые блокировки] Число взаимоблокировок</name>
                     <type>DEPENDENT</type>
-                    <key>1c.rphost.locks.deadlock</key>
+                    <key>1c.ws.locks.deadlock</key>
                     <delay>0</delay>
                     <history>30d</history>
                     <trends>90d</trends>
                     <applications>
                         <application>
-                            <name>[1C] Производительность</name>
+                            <name>[1С] Управляемые блокировки</name>
                         </application>
                     </applications>
                     <preprocessing>
@@ -268,7 +129,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.rphost.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
+                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
                     </master_item>
                     <triggers>
                         <trigger>
@@ -281,13 +142,13 @@
                 <item>
                     <name>[1C/Управляемые блокировки] Число таймаутов</name>
                     <type>DEPENDENT</type>
-                    <key>1c.rphost.locks.timeout</key>
+                    <key>1c.ws.locks.timeout</key>
                     <delay>0</delay>
                     <history>30d</history>
                     <trends>90d</trends>
                     <applications>
                         <application>
-                            <name>[1C] Производительность</name>
+                            <name>[1С] Управляемые блокировки</name>
                         </application>
                     </applications>
                     <preprocessing>
@@ -298,7 +159,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.rphost.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
+                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
                     </master_item>
                     <triggers>
                         <trigger>
@@ -311,7 +172,7 @@
                 <item>
                     <name>[1C/Управляемые блокировки] Общее ожидание на блокировках</name>
                     <type>DEPENDENT</type>
-                    <key>1c.rphost.locks.wait</key>
+                    <key>1c.ws.locks.wait</key>
                     <delay>0</delay>
                     <history>30d</history>
                     <trends>90d</trends>
@@ -319,7 +180,7 @@
                     <units>s</units>
                     <applications>
                         <application>
-                            <name>[1C] Производительность</name>
+                            <name>[1С] Управляемые блокировки</name>
                         </application>
                     </applications>
                     <preprocessing>
@@ -330,7 +191,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.rphost.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
+                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
                     </master_item>
                     <triggers>
                         <trigger>
@@ -342,10 +203,11 @@
                 </item>
                 <item>
                     <name>[1C/Управляемые блокировки] Сводка</name>
-                    <key>1c.rphost.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
+                    <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
                     <delay>1h</delay>
                     <history>30d</history>
                     <trends>0</trends>
+                    <status>DISABLED</status>
                     <value_type>TEXT</value_type>
                     <applications>
                         <application>
@@ -354,79 +216,9 @@
                     </applications>
                 </item>
                 <item>
-                    <name>[1C/Рабочий процесс] Объем используемой памяти</name>
-                    <type>DEPENDENT</type>
-                    <key>1c.rphost.memory</key>
-                    <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
-                    <units>B</units>
-                    <applications>
-                        <application>
-                            <name>[1C] Производительность</name>
-                        </application>
-                    </applications>
-                    <preprocessing>
-                        <step>
-                            <type>REGEX</type>
-                            <params>\d+:(\d+):\d+
-\1</params>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>1c.rphost.summary</key>
-                    </master_item>
-                </item>
-                <item>
-                    <name>[1C/Рабочий процесс] Число открытых файлов</name>
-                    <type>DEPENDENT</type>
-                    <key>1c.rphost.nofile</key>
-                    <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
-                    <applications>
-                        <application>
-                            <name>[1C] Производительность</name>
-                        </application>
-                    </applications>
-                    <preprocessing>
-                        <step>
-                            <type>REGEX</type>
-                            <params>\d+:\d+:\d+:\d+:(\d+)
-\1</params>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>1c.rphost.summary</key>
-                    </master_item>
-                </item>
-                <item>
-                    <name>[1C/Рабочий процесс] Число входящих TCP-сессий</name>
-                    <type>DEPENDENT</type>
-                    <key>1c.rphost.sessions</key>
-                    <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
-                    <applications>
-                        <application>
-                            <name>[1C] Производительность</name>
-                        </application>
-                    </applications>
-                    <preprocessing>
-                        <step>
-                            <type>REGEX</type>
-                            <params>\d+:\d+:(\d+)
-\1</params>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>1c.rphost.summary</key>
-                    </master_item>
-                </item>
-                <item>
-                    <name>[1C/Рабочий процесс] Сводка</name>
+                    <name>[1C/Рабочий сервер] Объем памяти процессов</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>1c.rphost.summary</key>
+                    <key>1c.ws.memory</key>
                     <delay>30s</delay>
                     <history>0</history>
                     <trends>0</trends>
@@ -438,39 +230,63 @@
                     </applications>
                 </item>
                 <item>
-                    <name>[1C/Рабочий процесс] Стабильность</name>
+                    <name>[1C/Агент сервера] Число процессов</name>
                     <type>DEPENDENT</type>
-                    <key>1c.rphost.unfailing</key>
+                    <key>1c.ws.ragent.count</key>
                     <delay>0</delay>
                     <history>30d</history>
                     <trends>90d</trends>
                     <applications>
                         <application>
-                            <name>[1C] Устойчивость системы</name>
+                            <name>[1C] Производительность</name>
                         </application>
                     </applications>
                     <preprocessing>
                         <step>
                             <type>REGEX</type>
-                            <params>\d+:\d+:\d+:(\d+)
+                            <params>ragent: (\d+) \d+
 \1</params>
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.rphost.summary</key>
+                        <key>1c.ws.memory</key>
                     </master_item>
                     <triggers>
                         <trigger>
-                            <expression>{count(5m,0)}&gt;=3</expression>
-                            <name>[1C/Рабочий процес] Частые перезапуски рабочих процессов</name>
+                            <expression>{last()}=0</expression>
+                            <name>[1C/Агент сервера] Нет запущенных процессов</name>
                             <priority>HIGH</priority>
                         </trigger>
                     </triggers>
                 </item>
                 <item>
-                    <name>[1C] Объем памяти сервера</name>
+                    <name>[1C/Агент сервера] Объем памяти всех процессов</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.ws.ragent.memory</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <units>B</units>
+                    <applications>
+                        <application>
+                            <name>[1C] Производительность</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>ragent: \d+ (\d+)
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.ws.memory</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>[1C/Рабочий сервер] Объем памяти сервера</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>vm.memory.size</key>
+                    <key>1c.ws.ram</key>
                     <delay>1h</delay>
                     <history>30d</history>
                     <trends>90d</trends>
@@ -480,6 +296,147 @@
                             <name>[1C] Производительность</name>
                         </application>
                     </applications>
+                </item>
+                <item>
+                    <name>[1C/Менеджер кластера] Число процессов</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.ws.rmngr.count</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <applications>
+                        <application>
+                            <name>[1C] Производительность</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>rmngr: (\d+) \d+
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.ws.memory</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}=0</expression>
+                            <name>[1C/Менеджер кластера] Нет запущенных процессов</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>[1C/Менеджер кластера] Объем памяти всех процессов</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.ws.rmngr.memory</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <units>B</units>
+                    <applications>
+                        <application>
+                            <name>[1C] Производительность</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>rmngr: \d+ (\d+)
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.ws.memory</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>[1C/Рабочий процесс] Перемены в процессах</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.ws.rphost.change</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <applications>
+                        <application>
+                            <name>[1C] Устойчивость системы</name>
+                        </application>
+                    </applications>
+                    <valuemap>
+                        <name>[1C/Рабочий процесс] Перемены в процессах</name>
+                    </valuemap>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>rphost: \d+ \d+ (\d)
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.ws.memory</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{count(5m,1)}&gt;=3</expression>
+                            <name>[1C/Рабочий процеcc] Частые изменения в списке процессов</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>[1C/Рабочий процесс] Число процессов</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.ws.rphost.count</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <applications>
+                        <application>
+                            <name>[1C] Производительность</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>rphost: (\d+) \d+ \d
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.ws.memory</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}=0</expression>
+                            <name>[1C/Рабочий процесс] Нет запущенных процессов</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>[1C/Рабочий процесс] Объем памяти всех процессов</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.ws.rphost.memory</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <units>B</units>
+                    <applications>
+                        <application>
+                            <name>[1C] Производительность</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>rphost: \d+ (\d+) \d
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.ws.memory</key>
+                    </master_item>
                 </item>
             </items>
             <macros>
@@ -510,100 +467,93 @@
             </macros>
         </template>
     </templates>
-    <triggers>
-        <trigger>
-            <expression>{Template App 1C Enterprise Work Server:1c.rphost.memory.last()}/{Template App 1C Enterprise Work Server:vm.memory.size.last()}&gt;{$RPHOST_MAX_MEM}</expression>
-            <name>[1C/Рабочий процесс] Превышено пороговое значение используемой памяти</name>
-            <priority>AVERAGE</priority>
-        </trigger>
-    </triggers>
     <graphs>
         <graph>
-            <name>[1C/Рабочий процесс/IO] Операции ввода-вывода</name>
-            <graph_items>
-                <graph_item>
-                    <color>2774A4</color>
-                    <item>
-                        <host>Template App 1C Enterprise Work Server</host>
-                        <key>1c.rphost.io.mread</key>
-                    </item>
-                </graph_item>
-                <graph_item>
-                    <sortorder>1</sortorder>
-                    <color>F7941D</color>
-                    <item>
-                        <host>Template App 1C Enterprise Work Server</host>
-                        <key>1c.rphost.io.mwrite</key>
-                    </item>
-                </graph_item>
-                <graph_item>
-                    <sortorder>2</sortorder>
-                    <color>199C0D</color>
-                    <yaxisside>RIGHT</yaxisside>
-                    <item>
-                        <host>Template App 1C Enterprise Work Server</host>
-                        <key>1c.rphost.io.read</key>
-                    </item>
-                </graph_item>
-                <graph_item>
-                    <sortorder>3</sortorder>
-                    <color>F63100</color>
-                    <item>
-                        <host>Template App 1C Enterprise Work Server</host>
-                        <key>1c.rphost.io.write</key>
-                    </item>
-                </graph_item>
-            </graph_items>
-        </graph>
-        <graph>
-            <name>[1C/Рабочий процесс] Объем используемой памяти</name>
-            <graph_items>
-                <graph_item>
-                    <color>199C0D</color>
-                    <item>
-                        <host>Template App 1C Enterprise Work Server</host>
-                        <key>1c.rphost.memory</key>
-                    </item>
-                </graph_item>
-                <graph_item>
-                    <sortorder>1</sortorder>
-                    <color>F63100</color>
-                    <item>
-                        <host>Template App 1C Enterprise Work Server</host>
-                        <key>vm.memory.size</key>
-                    </item>
-                </graph_item>
-                <graph_item>
-                    <sortorder>2</sortorder>
-                    <color>0040FF</color>
-                    <yaxisside>RIGHT</yaxisside>
-                    <item>
-                        <host>Template App 1C Enterprise Work Server</host>
-                        <key>1c.rphost.count</key>
-                    </item>
-                </graph_item>
-                <graph_item>
-                    <sortorder>3</sortorder>
-                    <color>F7941D</color>
-                    <yaxisside>RIGHT</yaxisside>
-                    <item>
-                        <host>Template App 1C Enterprise Work Server</host>
-                        <key>1c.rphost.unfailing</key>
-                    </item>
-                </graph_item>
-            </graph_items>
-        </graph>
-        <graph>
-            <name>[1C/Рабочий процесс] Число входящих TCP-сессий</name>
+            <name>[1C/Рабочий сервер] Объем используемой памяти</name>
             <graph_items>
                 <graph_item>
                     <color>FF4000</color>
                     <item>
                         <host>Template App 1C Enterprise Work Server</host>
-                        <key>1c.rphost.sessions</key>
+                        <key>1c.ws.ram</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>FC6EA3</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.ws.ragent.memory</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <color>C7A72D</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.ws.rmngr.memory</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>3</sortorder>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.ws.rphost.memory</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>4</sortorder>
+                    <color>6C59DC</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.ws.ragent.count</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>5</sortorder>
+                    <color>BA2A5D</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.ws.rmngr.count</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>6</sortorder>
+                    <color>0040FF</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.ws.rphost.count</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>7</sortorder>
+                    <color>F7941D</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.ws.rphost.change</key>
                     </item>
                 </graph_item>
             </graph_items>
         </graph>
     </graphs>
+    <value_maps>
+        <value_map>
+            <name>[1C/Рабочий процесс] Перемены в процессах</name>
+            <mappings>
+                <mapping>
+                    <value>0</value>
+                    <newvalue>изменений нет</newvalue>
+                </mapping>
+                <mapping>
+                    <value>1</value>
+                    <newvalue>произошло изменение</newvalue>
+                </mapping>
+            </mappings>
+        </value_map>
+    </value_maps>
 </zabbix_export>

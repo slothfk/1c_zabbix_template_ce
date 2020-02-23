@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-02-04T09:00:11Z</date>
+    <date>2020-02-23T22:05:04Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -23,25 +23,11 @@
             </applications>
             <items>
                 <item>
-                    <name>[1C/Лицензии] Сводная информация</name>
-                    <type>TRAP</type>
-                    <key>1c.rmngr.license</key>
-                    <delay>0</delay>
-                    <history>2h</history>
-                    <trends>0</trends>
-                    <value_type>TEXT</value_type>
-                    <applications>
-                        <application>
-                            <name>[1С] Программные лицензии</name>
-                        </application>
-                    </applications>
-                </item>
-                <item>
                     <name>[1C/Лицензии] Количество лицензий на клиенте</name>
                     <type>DEPENDENT</type>
-                    <key>1c.rmngr.license.client</key>
+                    <key>1c.ls.license.client</key>
                     <delay>0</delay>
-                    <history>2w</history>
+                    <history>30d</history>
                     <trends>90d</trends>
                     <applications>
                         <application>
@@ -56,7 +42,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
+                        <key>1c.ls.sessions[{$RAS_PORT}]</key>
                     </master_item>
                     <triggers>
                         <trigger>
@@ -71,9 +57,9 @@
                 <item>
                     <name>[1C/Лицензии] Количество файлов пользовательских лицензий</name>
                     <type>DEPENDENT</type>
-                    <key>1c.rmngr.license.count</key>
+                    <key>1c.ls.license.file</key>
                     <delay>0</delay>
-                    <history>2w</history>
+                    <history>30d</history>
                     <trends>90d</trends>
                     <applications>
                         <application>
@@ -88,29 +74,15 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.rmngr.license</key>
+                        <key>1c.ls.licenses</key>
                     </master_item>
-                </item>
-                <item>
-                    <name>[1C/Лицензии] Активные сеансы</name>
-                    <type>ZABBIX_ACTIVE</type>
-                    <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
-                    <delay>60s</delay>
-                    <history>2h</history>
-                    <trends>0</trends>
-                    <value_type>TEXT</value_type>
-                    <applications>
-                        <application>
-                            <name>[1С] Программные лицензии</name>
-                        </application>
-                    </applications>
                 </item>
                 <item>
                     <name>[1C/Лицензии] Общее количество сеансов</name>
                     <type>DEPENDENT</type>
-                    <key>1c.rmngr.license.total</key>
+                    <key>1c.ls.license.total</key>
                     <delay>0</delay>
-                    <history>2w</history>
+                    <history>30d</history>
                     <trends>90d</trends>
                     <applications>
                         <application>
@@ -125,15 +97,15 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
+                        <key>1c.ls.sessions[{$RAS_PORT}]</key>
                     </master_item>
                 </item>
                 <item>
                     <name>[1C/Лицензии] Количество уникальных пользователей</name>
                     <type>DEPENDENT</type>
-                    <key>1c.rmngr.license.uniq</key>
+                    <key>1c.ls.license.uniq</key>
                     <delay>0</delay>
-                    <history>2w</history>
+                    <history>30d</history>
                     <trends>90d</trends>
                     <applications>
                         <application>
@@ -148,15 +120,15 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
+                        <key>1c.ls.sessions[{$RAS_PORT}]</key>
                     </master_item>
                 </item>
                 <item>
-                    <name>[1C/Лицензии] Количество использованных лицензий</name>
+                    <name>[1C/Лицензии] Количество выданных лицензий</name>
                     <type>DEPENDENT</type>
-                    <key>1c.rmngr.license.used</key>
+                    <key>1c.ls.license.used</key>
                     <delay>0</delay>
-                    <history>2w</history>
+                    <history>30d</history>
                     <trends>90d</trends>
                     <applications>
                         <application>
@@ -171,15 +143,15 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
+                        <key>1c.ls.sessions[{$RAS_PORT}]</key>
                     </master_item>
                 </item>
                 <item>
                     <name>[1C/Лицензии] Количество лицензированных сеансов</name>
                     <type>DEPENDENT</type>
-                    <key>1c.rmngr.license.user</key>
+                    <key>1c.ls.license.user</key>
                     <delay>0</delay>
-                    <history>2w</history>
+                    <history>30d</history>
                     <trends>90d</trends>
                     <applications>
                         <application>
@@ -194,15 +166,15 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.rmngr.license</key>
+                        <key>1c.ls.licenses</key>
                     </master_item>
                 </item>
                 <item>
                     <name>[1C/Лицензии] Количество веб-клиентов</name>
                     <type>DEPENDENT</type>
-                    <key>1c.rmngr.license.webclient</key>
+                    <key>1c.ls.license.webclient</key>
                     <delay>0</delay>
-                    <history>2w</history>
+                    <history>30d</history>
                     <trends>90d</trends>
                     <applications>
                         <application>
@@ -217,14 +189,42 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
+                        <key>1c.ls.sessions[{$RAS_PORT}]</key>
                     </master_item>
+                </item>
+                <item>
+                    <name>[1C/Лицензии] Сводная информация</name>
+                    <type>TRAP</type>
+                    <key>1c.ls.licenses</key>
+                    <delay>0</delay>
+                    <history>0</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>[1С] Программные лицензии</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>[1C/Лицензии] Активные сеансы</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>1c.ls.sessions[{$RAS_PORT}]</key>
+                    <delay>60s</delay>
+                    <history>0</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>[1С] Программные лицензии</name>
+                        </application>
+                    </applications>
                 </item>
             </items>
             <discovery_rules>
                 <discovery_rule>
                     <name>[1С/Лицензии] Кластеры</name>
-                    <key>1c.rmngr.license.clusters.discovery</key>
+                    <key>1c.ls.clusters.discovery</key>
                     <delay>1h</delay>
                     <status>DISABLED</status>
                     <lifetime>7d</lifetime>
@@ -232,9 +232,9 @@
                         <item_prototype>
                             <name>[1С/Лицензии/{#CLSTR_NAME}] Количество лицензий на клиенте</name>
                             <type>DEPENDENT</type>
-                            <key>1c.rmngr.license.client[{#CLSTR_NAME}]</key>
+                            <key>1c.ls.license.client[{#CLSTR_NAME}]</key>
                             <delay>0</delay>
-                            <history>2w</history>
+                            <history>30d</history>
                             <trends>90d</trends>
                             <applications>
                                 <application>
@@ -249,15 +249,15 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
+                                <key>1c.ls.sessions[{$RAS_PORT}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
                             <name>[1С/Лицензии/{#CLSTR_NAME}] Общее количество сеансов</name>
                             <type>DEPENDENT</type>
-                            <key>1c.rmngr.license.total[{#CLSTR_NAME}]</key>
+                            <key>1c.ls.license.total[{#CLSTR_NAME}]</key>
                             <delay>0</delay>
-                            <history>2w</history>
+                            <history>30d</history>
                             <trends>90d</trends>
                             <applications>
                                 <application>
@@ -272,15 +272,15 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
+                                <key>1c.ls.sessions[{$RAS_PORT}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
                             <name>[1С/Лицензии/{#CLSTR_NAME}] Количество уникальных пользователей</name>
                             <type>DEPENDENT</type>
-                            <key>1c.rmngr.license.uniq[{#CLSTR_NAME}]</key>
+                            <key>1c.ls.license.uniq[{#CLSTR_NAME}]</key>
                             <delay>0</delay>
-                            <history>2w</history>
+                            <history>30d</history>
                             <trends>90d</trends>
                             <applications>
                                 <application>
@@ -295,15 +295,15 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
+                                <key>1c.ls.sessions[{$RAS_PORT}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
-                            <name>[1С/Лицензии/{#CLSTR_NAME}] Количество использованных лицензий</name>
+                            <name>[1С/Лицензии/{#CLSTR_NAME}] Количество выданных лицензий</name>
                             <type>DEPENDENT</type>
-                            <key>1c.rmngr.license.used[{#CLSTR_NAME}]</key>
+                            <key>1c.ls.license.used[{#CLSTR_NAME}]</key>
                             <delay>0</delay>
-                            <history>2w</history>
+                            <history>30d</history>
                             <trends>90d</trends>
                             <applications>
                                 <application>
@@ -318,15 +318,15 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
+                                <key>1c.ls.sessions[{$RAS_PORT}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
                             <name>[1С/Лицензии/{#CLSTR_NAME}] Количество веб-клиентов</name>
                             <type>DEPENDENT</type>
-                            <key>1c.rmngr.license.webclient[{#CLSTR_NAME}]</key>
+                            <key>1c.ls.license.webclient[{#CLSTR_NAME}]</key>
                             <delay>0</delay>
-                            <history>2w</history>
+                            <history>30d</history>
                             <trends>90d</trends>
                             <applications>
                                 <application>
@@ -341,7 +341,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.rmngr.license.session[{$RAS_PORT}]</key>
+                                <key>1c.ls.sessions[{$RAS_PORT}]</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
@@ -353,7 +353,7 @@
                                     <color>1B5E20</color>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
-                                        <key>1c.rmngr.license.used[{#CLSTR_NAME}]</key>
+                                        <key>1c.ls.license.used[{#CLSTR_NAME}]</key>
                                     </item>
                                 </graph_item>
                                 <graph_item>
@@ -361,7 +361,7 @@
                                     <color>2774A4</color>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
-                                        <key>1c.rmngr.license.uniq[{#CLSTR_NAME}]</key>
+                                        <key>1c.ls.license.uniq[{#CLSTR_NAME}]</key>
                                     </item>
                                 </graph_item>
                                 <graph_item>
@@ -369,7 +369,7 @@
                                     <color>FC6EA3</color>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
-                                        <key>1c.rmngr.license.client[{#CLSTR_NAME}]</key>
+                                        <key>1c.ls.license.client[{#CLSTR_NAME}]</key>
                                     </item>
                                 </graph_item>
                                 <graph_item>
@@ -377,7 +377,7 @@
                                     <color>6C59DC</color>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
-                                        <key>1c.rmngr.license.webclient[{#CLSTR_NAME}]</key>
+                                        <key>1c.ls.license.webclient[{#CLSTR_NAME}]</key>
                                     </item>
                                 </graph_item>
                                 <graph_item>
@@ -385,7 +385,7 @@
                                     <color>F7941D</color>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
-                                        <key>1c.rmngr.license.total[{#CLSTR_NAME}]</key>
+                                        <key>1c.ls.license.total[{#CLSTR_NAME}]</key>
                                     </item>
                                 </graph_item>
                             </graph_items>
@@ -411,29 +411,29 @@
     </templates>
     <triggers>
         <trigger>
-            <expression>{$LIC_CORP}=0 and {Template App 1C Enterprise License Server:1c.rmngr.license.used.last()}&gt;={Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}&#13;
+            <expression>{$LIC_CORP}=0 and {Template App 1C Enterprise License Server:1c.ls.license.used.last()}&gt;={Template App 1C Enterprise License Server:1c.ls.license.user.last()}&#13;
 or &#13;
-{$LIC_CORP}=1 and  ({Template App 1C Enterprise License Server:1c.rmngr.license.uniq.last()})&gt;=({Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}*1.1)</expression>
+{$LIC_CORP}=1 and  ({Template App 1C Enterprise License Server:1c.ls.license.uniq.last()})&gt;=({Template App 1C Enterprise License Server:1c.ls.license.user.last()}*1.1)</expression>
             <name>[1C/Лицензии] Использованы все доступные клиентские лицензии</name>
             <priority>HIGH</priority>
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
-            <expression>{$LIC_CORP}=0 and {Template App 1C Enterprise License Server:1c.rmngr.license.used.last()}/{Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}&gt;{$LIC_UTIL_LIMIT} or {$LIC_CORP}=1 and  {Template App 1C Enterprise License Server:1c.rmngr.license.uniq.last()}/({Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}*1.1)&gt;{$LIC_UTIL_LIMIT}</expression>
+            <expression>{$LIC_CORP}=0 and {Template App 1C Enterprise License Server:1c.ls.license.used.last()}/{Template App 1C Enterprise License Server:1c.ls.license.user.last()}&gt;{$LIC_UTIL_LIMIT} or {$LIC_CORP}=1 and  {Template App 1C Enterprise License Server:1c.ls.license.uniq.last()}/({Template App 1C Enterprise License Server:1c.ls.license.user.last()}*1.1)&gt;{$LIC_UTIL_LIMIT}</expression>
             <name>[1C/Лицензии] Количество использованных лицензий близко к максимальному</name>
             <priority>WARNING</priority>
             <manual_close>YES</manual_close>
             <dependencies>
                 <dependency>
                     <name>[1C/Лицензии] Использованы все доступные клиентские лицензии</name>
-                    <expression>{$LIC_CORP}=0 and {Template App 1C Enterprise License Server:1c.rmngr.license.used.last()}&gt;={Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}&#13;
+                    <expression>{$LIC_CORP}=0 and {Template App 1C Enterprise License Server:1c.ls.license.used.last()}&gt;={Template App 1C Enterprise License Server:1c.ls.license.user.last()}&#13;
 or &#13;
-{$LIC_CORP}=1 and  ({Template App 1C Enterprise License Server:1c.rmngr.license.uniq.last()})&gt;=({Template App 1C Enterprise License Server:1c.rmngr.license.user.last()}*1.1)</expression>
+{$LIC_CORP}=1 and  ({Template App 1C Enterprise License Server:1c.ls.license.uniq.last()})&gt;=({Template App 1C Enterprise License Server:1c.ls.license.user.last()}*1.1)</expression>
                 </dependency>
             </dependencies>
         </trigger>
         <trigger>
-            <expression>{Template App 1C Enterprise License Server:1c.rmngr.license.client.last()}/{Template App 1C Enterprise License Server:1c.rmngr.license.total.last()}&gt;0.5</expression>
+            <expression>{Template App 1C Enterprise License Server:1c.ls.license.client.last()}/{Template App 1C Enterprise License Server:1c.ls.license.total.last()}&gt;0.5</expression>
             <name>[1C/Лицензии] Количество лицензий с клиентских компьютеров &gt; 50%</name>
             <status>DISABLED</status>
             <priority>WARNING</priority>
@@ -443,13 +443,14 @@ or &#13;
     <graphs>
         <graph>
             <name>[1C/Лицензии] Использование активированных лицензий</name>
+            <width>600</width>
             <ymin_type_1>FIXED</ymin_type_1>
             <graph_items>
                 <graph_item>
                     <color>F63100</color>
                     <item>
                         <host>Template App 1C Enterprise License Server</host>
-                        <key>1c.rmngr.license.user</key>
+                        <key>1c.ls.license.user</key>
                     </item>
                 </graph_item>
                 <graph_item>
@@ -457,7 +458,7 @@ or &#13;
                     <color>1B5E20</color>
                     <item>
                         <host>Template App 1C Enterprise License Server</host>
-                        <key>1c.rmngr.license.used</key>
+                        <key>1c.ls.license.used</key>
                     </item>
                 </graph_item>
                 <graph_item>
@@ -465,7 +466,7 @@ or &#13;
                     <color>2774A4</color>
                     <item>
                         <host>Template App 1C Enterprise License Server</host>
-                        <key>1c.rmngr.license.uniq</key>
+                        <key>1c.ls.license.uniq</key>
                     </item>
                 </graph_item>
                 <graph_item>
@@ -473,7 +474,7 @@ or &#13;
                     <color>FC6EA3</color>
                     <item>
                         <host>Template App 1C Enterprise License Server</host>
-                        <key>1c.rmngr.license.client</key>
+                        <key>1c.ls.license.client</key>
                     </item>
                 </graph_item>
                 <graph_item>
@@ -481,7 +482,7 @@ or &#13;
                     <color>6C59DC</color>
                     <item>
                         <host>Template App 1C Enterprise License Server</host>
-                        <key>1c.rmngr.license.webclient</key>
+                        <key>1c.ls.license.webclient</key>
                     </item>
                 </graph_item>
                 <graph_item>
@@ -489,7 +490,7 @@ or &#13;
                     <color>F7941D</color>
                     <item>
                         <host>Template App 1C Enterprise License Server</host>
-                        <key>1c.rmngr.license.total</key>
+                        <key>1c.ls.license.total</key>
                     </item>
                 </graph_item>
             </graph_items>
