@@ -1,20 +1,16 @@
 #!/bin/bash
 #
-# 1C Enterprise 8.3 Software License Utilization Info for Zabbix
+# Мониторинг 1С Предприятия 8.3 (сервер лицензирования)
 #
-# (c) 2019, Alexey Y. Fedotov
+# (c) 2019-2020, Алексей Ю. Федотов
 #
 # Email: fedotov@kaminsoft.ru
 #
 
-#LIC_DIR="/var/1C/licenses"
+source ${0%/*}/1c_common_module.sh 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
-source ${0%/*}/1c_common_vars.sh 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_vars.sh!" ; exit 1; }
-
-CLSTR_CACHE="${CACHE_DIR}/1c.rmngr.lst"
-LIC_COUNT_CACHE="${CACHE_DIR}/1c_rmngr_license_${$}.log"
-
-[[ ! -d ${CACHE_DIR} ]] && mkdir -p ${CACHE_DIR}
+CLSTR_CACHE="${CACHE_DIR}/1c_rmngr_cluster_cache"
+LIC_COUNT_CACHE="${CACHE_DIR}/1c_rmngr_license_cache.${$}"
 
 function licenses_summary {
 
@@ -25,7 +21,7 @@ function licenses_summary {
 
     RING_TOOL=${LIC_TOOL%\/*\/*}"/*ring*/ring"
     
-    LIC_LIST=$(${RING_TOOL} license list | sed 's/(.*//')
+    LIC_LIST=$(${RING_TOOL} license list --send-statistics false | sed 's/(.*//')
     LIC_COUNT=0; LIC_USERS=0
 
     execute_tasks license_info ${LIC_LIST[*]}
@@ -41,7 +37,7 @@ function licenses_summary {
 }
 
 function license_info {
-    LIC_INFO=$(${RING_TOOL} license info --name ${1} | grep -Pe '(Описание|Description).*на \d+ .*' | perl -pe 's/.*на (\d+) .*/\1/;')
+    LIC_INFO=$(${RING_TOOL} license info --send-statistics false --name ${1} | grep -Pe '(Описание|Description).*на \d+ .*' | perl -pe 's/.*на (\d+) .*/\1/;')
     [[ -n ${LIC_INFO} ]] && echo ${LIC_INFO} >> ${LIC_COUNT_CACHE}
 }
 
@@ -113,7 +109,7 @@ cat /dev/null > ${LIC_COUNT_CACHE}
 
 case ${1} in
     info) licenses_summary ;;
-    used) used_license $2 ;;
+    used) used_license ${2} ;;
     clusters) get_clusters_list ;;
     *) echo "ОШИБКА: Неверный режим работы скрипта!"; exit 1;;
 esac
