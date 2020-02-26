@@ -27,4 +27,11 @@
         <property name="context"/>
         <property name="cputime"/>
     </log>
+    <log location="/var/log/1C/zabbix/excps" history="1">
+        <event>
+            <eq property="name" value="excp"/>
+        </event>
+        <property name="descr"/>
+        <property name="context"/>
+    </log>
 </config>

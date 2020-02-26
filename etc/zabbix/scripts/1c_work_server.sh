@@ -136,13 +136,20 @@ function get_locks_info {
     find ${LOG_DIR%/*}/problem_log/ -mtime +${STORE_PERIOD} -name "*.tgz" -delete \;
 }
 
+function get_excps_info {
+    for CURR_NAME in ${PROCESS_NAMES[@]}
+    do
+        EXCP_COUNT=$(grep -c ",EXCP," ${LOG_DIR}/${CURR_NAME}_*/${LOG_FILE}.log 2>/dev/null)
+        echo ${CURR_NAME}: $([[ -n ${EXCP_COUNT} ]] && echo ${EXCP_COUNT} || echo 0)
+    done
+}
+
 function get_memory_counts {
 
     MEMORY_PAGE_SIZE=$(getconf PAGE_SIZE)
     RPHOST_PID_HASH="${CACHE_DIR}/1c_rphost_pid_hash"
 
     RAGENT_INDEX=0; RMNGR_INDEX=1; RPHOST_INDEX=2
-    PROCESS_NAMES=(ragent rmngr rphost)
     PID_LIST[${RAGENT_INDEX}]=$(pgrep -xd, ragent)
     PID_LIST[${RMNGR_INDEX}]=$(pgrep -xd, rmngr)
     PID_LIST[${RPHOST_INDEX}]=$(pgrep -xd, rphost)
@@ -164,11 +171,13 @@ function get_memory_counts {
 }
 
 case ${1} in
-    calls | locks) check_log_dir ${2} ${1};
+    calls | locks | excps) check_log_dir ${2} ${1};
         LOG_FILE=$(date --date="last hour" "+%y%m%d%H");
-        LOG_DIR="${2%/}/zabbix/${1}";;&
+        LOG_DIR="${2%/}/zabbix/${1}" ;;&
+    memory | excps) PROCESS_NAMES=(ragent rmngr rphost) ;;&
     calls) shift 2; get_calls_info ${@} ;;
     locks) shift 2; get_locks_info ${@} ;;
+    excps) shift 2; get_excps_info ${@} ;;
     memory) get_memory_counts ;;
     ram) free -b | grep -m1 "^[^ ]" | awk '{ print $2 }';;
     *) echo "ОШИБКА: Неизвестный режим работы скрипта!"; exit 1;;

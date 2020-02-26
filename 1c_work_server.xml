@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-02-23T22:05:16Z</date>
+    <date>2020-02-26T07:04:21Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -19,6 +19,9 @@
             <applications>
                 <application>
                     <name>[1C] Информация</name>
+                </application>
+                <application>
+                    <name>[1C] Ошибки</name>
                 </application>
                 <application>
                     <name>[1C] Производительность</name>
@@ -106,6 +109,23 @@
                     <applications>
                         <application>
                             <name>[1C] Производительность</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>[1C/Рабочий сервер] Ошибки процессов</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>1c.ws.excps[{$LOG_DIR}]</key>
+                    <delay>1h</delay>
+                    <history>0</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>[1C] Информация</name>
+                        </application>
+                        <application>
+                            <name>[1C] Ошибки</name>
                         </application>
                     </applications>
                 </item>
@@ -213,6 +233,9 @@
                         <application>
                             <name>[1C] Информация</name>
                         </application>
+                        <application>
+                            <name>[1С] Управляемые блокировки</name>
+                        </application>
                     </applications>
                 </item>
                 <item>
@@ -226,6 +249,9 @@
                     <applications>
                         <application>
                             <name>[1C] Информация</name>
+                        </application>
+                        <application>
+                            <name>[1C] Производительность</name>
                         </application>
                     </applications>
                 </item>
@@ -258,6 +284,29 @@
                             <priority>HIGH</priority>
                         </trigger>
                     </triggers>
+                </item>
+                <item>
+                    <name>[1C/Агент сервера] Количество исключений</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.ws.ragent.excps</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <applications>
+                        <application>
+                            <name>[1C] Ошибки</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>ragent: (\d+)
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.ws.excps[{$LOG_DIR}]</key>
+                    </master_item>
                 </item>
                 <item>
                     <name>[1C/Агент сервера] Объем памяти всех процессов</name>
@@ -326,6 +375,29 @@
                             <priority>HIGH</priority>
                         </trigger>
                     </triggers>
+                </item>
+                <item>
+                    <name>[1C/Менеджер кластера] Количество исключений</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.ws.rmngr.excps</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <applications>
+                        <application>
+                            <name>[1C] Ошибки</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>rmngr: (\d+)
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.ws.excps[{$LOG_DIR}]</key>
+                    </master_item>
                 </item>
                 <item>
                     <name>[1C/Менеджер кластера] Объем памяти всех процессов</name>
@@ -413,6 +485,29 @@
                             <priority>HIGH</priority>
                         </trigger>
                     </triggers>
+                </item>
+                <item>
+                    <name>[1C/Рабочий процесс] Количество исключений</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.ws.rphost.excps</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <applications>
+                        <application>
+                            <name>[1C] Ошибки</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>rphost: (\d+)
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.ws.excps[{$LOG_DIR}]</key>
+                    </master_item>
                 </item>
                 <item>
                     <name>[1C/Рабочий процесс] Объем памяти всех процессов</name>
@@ -536,6 +631,34 @@
                     <item>
                         <host>Template App 1C Enterprise Work Server</host>
                         <key>1c.ws.rphost.change</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>[1C/Рабочий сервер] Ошибки процессов</name>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.ws.ragent.excps</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>F63100</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.ws.rmngr.excps</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <color>2774A4</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.ws.rphost.excps</key>
                     </item>
                 </graph_item>
             </graph_items>
