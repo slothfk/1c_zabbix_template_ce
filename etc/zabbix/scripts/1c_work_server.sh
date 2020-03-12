@@ -149,17 +149,15 @@ function get_memory_counts {
     MEMORY_PAGE_SIZE=$(getconf PAGE_SIZE)
     RPHOST_PID_HASH="${CACHE_DIR}/1c_rphost_pid_hash"
 
-    declare PROCESS_MEMORY
-
     for PROCESS in ${PROCESS_NAMES[@]}
     do
-        PROCESS_MEMORY[${PROCESS}]=0
+        PROCESS_MEMORY=0
         PID_LIST=$(pgrep -xd, ${PROCESS})
         for CURRENT_PID in ${PID_LIST//,/ }
         do
-            (( PROCESS_MEMORY[${PROCESS}]+=$(cut -f2 -d" " /proc/${CURRENT_PID}/statm)*${MEMORY_PAGE_SIZE} )) ;
+            (( PROCESS_MEMORY+=$(cut -f2 -d" " /proc/${CURRENT_PID}/statm)*${MEMORY_PAGE_SIZE} )) ;
         done
-        echo ${PROCESS}: $(echo ${PID_LIST//,/ } | wc -w) ${PROCESS_MEMORY[${PROCESS}]}\
+        echo ${PROCESS}: $(echo ${PID_LIST//,/ } | wc -w) ${PROCESS_MEMORY}\
             $(if [[ ${PROCESS} == "rphost" ]]; then 
                 RPHOST_OLD_HASH=$(cat ${RPHOST_PID_HASH} 2>/dev/null);
                 echo ${PID_LIST} | md5sum | cut -f1 -d\  > ${RPHOST_PID_HASH};
