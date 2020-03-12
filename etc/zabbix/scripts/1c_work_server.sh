@@ -137,10 +137,10 @@ function get_locks_info {
 }
 
 function get_excps_info {
-    for CURR_NAME in ${PROCESS_NAMES[@]}
+    for PROCESS in ${PROCESS_NAMES[@]}
     do
-        EXCP_COUNT=$(grep -c ",EXCP," ${LOG_DIR}/${CURR_NAME}_*/${LOG_FILE}.log 2>/dev/null)
-        echo ${CURR_NAME}: $([[ -n ${EXCP_COUNT} ]] && echo ${EXCP_COUNT} || echo 0)
+        EXCP_COUNT=$(grep -c ",EXCP," ${LOG_DIR}/${PROCESS}_*/${LOG_FILE}.log 2>/dev/null)
+        echo ${PROCESS}: $([[ -n ${EXCP_COUNT} ]] && echo ${EXCP_COUNT} || echo 0)
     done
 }
 
@@ -149,23 +149,21 @@ function get_memory_counts {
     MEMORY_PAGE_SIZE=$(getconf PAGE_SIZE)
     RPHOST_PID_HASH="${CACHE_DIR}/1c_rphost_pid_hash"
 
-    RAGENT_INDEX=0; RMNGR_INDEX=1; RPHOST_INDEX=2
-    PID_LIST[${RAGENT_INDEX}]=$(pgrep -xd, ragent)
-    PID_LIST[${RMNGR_INDEX}]=$(pgrep -xd, rmngr)
-    PID_LIST[${RPHOST_INDEX}]=$(pgrep -xd, rphost)
+    declare PROCESS_MEMORY
 
-    RPHOST_OLD_HASH=$(cat ${RPHOST_PID_HASH} 2>/dev/null)
-    echo ${PID_LIST[${RPHOST_INDEX}]} | md5sum | cut -f1 -d\  > ${RPHOST_PID_HASH}
-
-    for (( PROCESS=0; PROCESS < ${#PID_LIST[*]}; PROCESS++ ))
+    for PROCESS in ${PROCESS_NAMES[@]}
     do
         PROCESS_MEMORY[${PROCESS}]=0
-        for CURRENT_PID in ${PID_LIST[${PROCESS}]//,/ }
+        PID_LIST=$(pgrep -xd, ${PROCESS})
+        for CURRENT_PID in ${PID_LIST//,/ }
         do
             (( PROCESS_MEMORY[${PROCESS}]+=$(cut -f2 -d" " /proc/${CURRENT_PID}/statm)*${MEMORY_PAGE_SIZE} )) ;
         done
-        echo ${PROCESS_NAMES[${PROCESS}]}: $(echo ${PID_LIST[$PROCESS]//,/ } | wc -w) ${PROCESS_MEMORY[${PROCESS}]}\
-            $(if [[ ${PROCESS} == ${RPHOST_INDEX} ]]; then [[ ${RPHOST_OLD_HASH} == $(cat ${RPHOST_PID_HASH}) ]] ; echo $?; fi)
+        echo ${PROCESS}: $(echo ${PID_LIST//,/ } | wc -w) ${PROCESS_MEMORY[${PROCESS}]}\
+            $(if [[ ${PROCESS} == "rphost" ]]; then 
+                RPHOST_OLD_HASH=$(cat ${RPHOST_PID_HASH} 2>/dev/null);
+                echo ${PID_LIST} | md5sum | cut -f1 -d\  > ${RPHOST_PID_HASH};
+                [[ ${RPHOST_OLD_HASH} == $(cat ${RPHOST_PID_HASH}) ]] ; echo $?; fi)
     done
 
 }
