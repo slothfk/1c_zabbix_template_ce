@@ -23,10 +23,20 @@
             <eq property="name" value="call"/>
             <ne property="context" value=""/>
         </event>
+        <event>
+            <eq property="name" value="call"/>
+            <ne property="module" value=""/>
+            <ne property="method" value=""/>
+        </event>
         <property name="p:processname"/>
         <property name="context"/>
+        <property name="module"/>
+        <property name="method"/>
+        <property name="memorypeak"/>
         <property name="cputime"/>
-    </log>
+        <property name="inbytes"/>
+        <property name="outbytes"/>
+     </log>
     <log location="/var/log/1C/zabbix/excps" history="1">
         <event>
             <eq property="name" value="excp"/>
