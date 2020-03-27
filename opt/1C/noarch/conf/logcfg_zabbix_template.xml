@@ -41,6 +41,7 @@
         <event>
             <eq property="name" value="excp"/>
         </event>
+        <property name="p:processname"/>
         <property name="descr"/>
         <property name="context"/>
     </log>
