@@ -134,7 +134,7 @@ function get_locks_info {
         execute_tasks save_logs ${CURR_LIST//:/ }
     done
 
-    find ${LOG_DIR%/*}/problem_log/ -mtime +${STORE_PERIOD} -name "*.tgz" -delete \;
+    find ${LOG_DIR%/*}/problem_log/ -mtime +${STORE_PERIOD} -name "*.tgz" -delete
 }
 
 function get_excps_info {
