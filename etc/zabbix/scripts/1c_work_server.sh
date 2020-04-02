@@ -77,7 +77,7 @@ function get_locks_info {
                 DUMP_RESULT=${DUMP_CODE_0} || DUMP_RESULT=${DUMP_CODE_2}
             fi
         else
-            zabbix_get -s ${1} -k 1c.rphost.locks[${LOG_DIR%/zabbix/*},${WAIT_LIMIT},${RAS_PORT},dump] 2>/dev/null || \
+            zabbix_get -s ${1} -k 1c.ws.locks[${LOG_DIR%/zabbix/*},${WAIT_LIMIT},${RAS_PORT},dump] 2>/dev/null || \
                 DUMP_RESULT=${DUMP_CODE_3}
         fi
 
