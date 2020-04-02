@@ -6,6 +6,9 @@
 # Email: fedotov@kaminsoft.ru
 #
 
+# Имя сервера, используемое в кластере 1С Предприятия
+HOSTNAME=$(hostname -s)
+
 # Добавление пути к бинарным файлам 1С Предприятия
 PATH=${PATH}:$(ls -d /opt/1C/v8*/[xi]* | tail -n1)
 

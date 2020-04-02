@@ -69,7 +69,7 @@ function get_locks_info {
     WAIT_LIMIT=${1}
 
     function save_logs {
-        if [[ $(echo ${1} | grep -ic $(hostname -s)) -ne 0 ]]; then
+        if [[ $(echo ${1} | grep -ic ${HOSTNAME}) -ne 0 ]]; then
             if [[ -f ${LOG_DIR%/*}/problem_log/${LOG_FILE}.tgz ]]; then
                 DUMP_RESULT=${DUMP_CODE_1}
             else
@@ -119,14 +119,14 @@ function get_locks_info {
             do
                 CURR_LIST=( $(timeout -s HUP ${RAS_TIMEOUT} rac server list --cluster=${CURR_CLSTR##*:} ${CURR_CLSTR%%:*}:${RAS_PORT} 2>/dev/null|\
                     grep agent-host | uniq | perl -pe "s/.*:/:/; s/( |\n)//g;" | sed -e "s/^://; s/$/\n/;") )
-                [[ $(echo ${CURR_LIST} | grep -ic $(hostname -s)) -ne 0 ]] && [[ $(echo ${RPHOST_LIST[*]} | grep -ic ${CURR_LIST}) -eq 0 ]] && \
+                [[ $(echo ${CURR_LIST} | grep -ic ${HOSTNAME}) -ne 0 ]] && [[ $(echo ${RPHOST_LIST[*]} | grep -ic ${CURR_LIST}) -eq 0 ]] && \
                     RPHOST_LIST+=(${CURR_LIST})
             done
 
         fi
 
     else
-        RPHOST_LIST=($(hostname -s))
+        RPHOST_LIST=(${HOSTNAME})
     fi
 
     for CURR_LIST in ${RPHOST_LIST[*]}
