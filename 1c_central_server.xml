@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-02-23T22:04:50Z</date>
+    <date>2020-04-03T12:27:57Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -23,7 +23,7 @@
             </applications>
             <items>
                 <item>
-                    <name>[1С] Статус сервиса RAS</name>
+                    <name>[1С/Центральный сервер] Статус сервиса RAS</name>
                     <type>SIMPLE</type>
                     <key>net.tcp.service[tcp,,{$RAS_PORT}]</key>
                     <delay>30s</delay>
@@ -40,21 +40,13 @@
                     <triggers>
                         <trigger>
                             <expression>{last()}=0</expression>
-                            <name>[1С] Недоступен сервис RAS на {HOST.NAME}</name>
+                            <name>[1С/RAS] Сервис недоступен на {HOST.NAME}</name>
                             <priority>AVERAGE</priority>
                         </trigger>
                     </triggers>
                 </item>
             </items>
             <macros>
-                <macro>
-                    <macro>{$LOGCFG_XML}</macro>
-                    <value>/opt/1C/v8.3/x86_64/conf/logcfg.xml</value>
-                </macro>
-                <macro>
-                    <macro>{$LOG_DIR}</macro>
-                    <value>/var/log/1C</value>
-                </macro>
                 <macro>
                     <macro>{$RAS_PORT}</macro>
                     <value>1545</value>

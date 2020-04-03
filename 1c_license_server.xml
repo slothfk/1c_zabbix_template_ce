@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-02-23T22:05:04Z</date>
+    <date>2020-04-03T12:24:57Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -23,7 +23,7 @@
             </applications>
             <items>
                 <item>
-                    <name>[1C/Лицензии] Количество лицензий на клиенте</name>
+                    <name>[1С/Лицензии] Количество лицензий на клиенте</name>
                     <type>DEPENDENT</type>
                     <key>1c.ls.license.client</key>
                     <delay>0</delay>
@@ -47,7 +47,7 @@
                     <triggers>
                         <trigger>
                             <expression>{last()}&gt;0</expression>
-                            <name>[1C/Лицензии] Используются лицензии с клиентских компьютеров</name>
+                            <name>[1С/Лицензии] Используются лицензии с клиентских компьютеров</name>
                             <status>DISABLED</status>
                             <priority>INFO</priority>
                             <manual_close>YES</manual_close>
@@ -55,7 +55,7 @@
                     </triggers>
                 </item>
                 <item>
-                    <name>[1C/Лицензии] Количество файлов пользовательских лицензий</name>
+                    <name>[1С/Лицензии] Количество файлов пользовательских лицензий</name>
                     <type>DEPENDENT</type>
                     <key>1c.ls.license.file</key>
                     <delay>0</delay>
@@ -78,7 +78,7 @@
                     </master_item>
                 </item>
                 <item>
-                    <name>[1C/Лицензии] Общее количество сеансов</name>
+                    <name>[1С/Лицензии] Общее количество сеансов</name>
                     <type>DEPENDENT</type>
                     <key>1c.ls.license.total</key>
                     <delay>0</delay>
@@ -101,7 +101,7 @@
                     </master_item>
                 </item>
                 <item>
-                    <name>[1C/Лицензии] Количество уникальных пользователей</name>
+                    <name>[1С/Лицензии] Количество уникальных пользователей</name>
                     <type>DEPENDENT</type>
                     <key>1c.ls.license.uniq</key>
                     <delay>0</delay>
@@ -124,7 +124,7 @@
                     </master_item>
                 </item>
                 <item>
-                    <name>[1C/Лицензии] Количество выданных лицензий</name>
+                    <name>[1С/Лицензии] Количество выданных лицензий</name>
                     <type>DEPENDENT</type>
                     <key>1c.ls.license.used</key>
                     <delay>0</delay>
@@ -147,7 +147,7 @@
                     </master_item>
                 </item>
                 <item>
-                    <name>[1C/Лицензии] Количество лицензированных сеансов</name>
+                    <name>[1С/Лицензии] Количество лицензированных сеансов</name>
                     <type>DEPENDENT</type>
                     <key>1c.ls.license.user</key>
                     <delay>0</delay>
@@ -170,7 +170,7 @@
                     </master_item>
                 </item>
                 <item>
-                    <name>[1C/Лицензии] Количество веб-клиентов</name>
+                    <name>[1С/Лицензии] Количество веб-клиентов</name>
                     <type>DEPENDENT</type>
                     <key>1c.ls.license.webclient</key>
                     <delay>0</delay>
@@ -193,7 +193,7 @@
                     </master_item>
                 </item>
                 <item>
-                    <name>[1C/Лицензии] Сводная информация</name>
+                    <name>[1С/Лицензии] Сводная информация</name>
                     <type>TRAP</type>
                     <key>1c.ls.licenses</key>
                     <delay>0</delay>
@@ -207,7 +207,7 @@
                     </applications>
                 </item>
                 <item>
-                    <name>[1C/Лицензии] Активные сеансы</name>
+                    <name>[1С/Лицензии] Активные сеансы</name>
                     <type>ZABBIX_ACTIVE</type>
                     <key>1c.ls.sessions[{$RAS_PORT}]</key>
                     <delay>60s</delay>
@@ -224,6 +224,7 @@
             <discovery_rules>
                 <discovery_rule>
                     <name>[1С/Лицензии] Кластеры</name>
+                    <type>ZABBIX_ACTIVE</type>
                     <key>1c.ls.clusters.discovery</key>
                     <delay>1h</delay>
                     <status>DISABLED</status>
@@ -414,18 +415,18 @@
             <expression>{$LIC_CORP}=0 and {Template App 1C Enterprise License Server:1c.ls.license.used.last()}&gt;={Template App 1C Enterprise License Server:1c.ls.license.user.last()}&#13;
 or &#13;
 {$LIC_CORP}=1 and  ({Template App 1C Enterprise License Server:1c.ls.license.uniq.last()})&gt;=({Template App 1C Enterprise License Server:1c.ls.license.user.last()}*1.1)</expression>
-            <name>[1C/Лицензии] Использованы все доступные клиентские лицензии</name>
+            <name>[1С/Лицензии] Использованы все доступные клиентские лицензии</name>
             <priority>HIGH</priority>
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
             <expression>{$LIC_CORP}=0 and {Template App 1C Enterprise License Server:1c.ls.license.used.last()}/{Template App 1C Enterprise License Server:1c.ls.license.user.last()}&gt;{$LIC_UTIL_LIMIT} or {$LIC_CORP}=1 and  {Template App 1C Enterprise License Server:1c.ls.license.uniq.last()}/({Template App 1C Enterprise License Server:1c.ls.license.user.last()}*1.1)&gt;{$LIC_UTIL_LIMIT}</expression>
-            <name>[1C/Лицензии] Количество использованных лицензий близко к максимальному</name>
+            <name>[1С/Лицензии] Количество использованных лицензий близко к максимальному</name>
             <priority>WARNING</priority>
             <manual_close>YES</manual_close>
             <dependencies>
                 <dependency>
-                    <name>[1C/Лицензии] Использованы все доступные клиентские лицензии</name>
+                    <name>[1С/Лицензии] Использованы все доступные клиентские лицензии</name>
                     <expression>{$LIC_CORP}=0 and {Template App 1C Enterprise License Server:1c.ls.license.used.last()}&gt;={Template App 1C Enterprise License Server:1c.ls.license.user.last()}&#13;
 or &#13;
 {$LIC_CORP}=1 and  ({Template App 1C Enterprise License Server:1c.ls.license.uniq.last()})&gt;=({Template App 1C Enterprise License Server:1c.ls.license.user.last()}*1.1)</expression>
@@ -434,7 +435,7 @@ or &#13;
         </trigger>
         <trigger>
             <expression>{Template App 1C Enterprise License Server:1c.ls.license.client.last()}/{Template App 1C Enterprise License Server:1c.ls.license.total.last()}&gt;0.5</expression>
-            <name>[1C/Лицензии] Количество лицензий с клиентских компьютеров &gt; 50%</name>
+            <name>[1С/Лицензии] Количество лицензий с клиентских компьютеров &gt; 50%</name>
             <status>DISABLED</status>
             <priority>WARNING</priority>
             <manual_close>YES</manual_close>
@@ -442,7 +443,7 @@ or &#13;
     </triggers>
     <graphs>
         <graph>
-            <name>[1C/Лицензии] Использование активированных лицензий</name>
+            <name>[1С/Лицензии] Использование активированных лицензий</name>
             <width>600</width>
             <ymin_type_1>FIXED</ymin_type_1>
             <graph_items>
