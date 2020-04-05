@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-04-03T12:24:39Z</date>
+    <date>2020-04-05T19:39:23Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -327,6 +327,13 @@
                     <master_item>
                         <key>1c.ws.excps[{$LOG_DIR}]</key>
                     </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&gt;{$EXCP_THRESHOLD}</expression>
+                            <name>[1С/Агент сервера] Количество исключений свыше {$EXCP_THRESHOLD}</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>[1С/Агент сервера] Объем памяти всех процессов</name>
@@ -418,6 +425,13 @@
                     <master_item>
                         <key>1c.ws.excps[{$LOG_DIR}]</key>
                     </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&gt;{$EXCP_THRESHOLD}</expression>
+                            <name>[1С/Менеджер кластера] Количество исключений свыше {$EXCP_THRESHOLD}</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>[1С/Менеджер кластера] Объем памяти всех процессов</name>
@@ -528,6 +542,13 @@
                     <master_item>
                         <key>1c.ws.excps[{$LOG_DIR}]</key>
                     </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&gt;{$EXCP_THRESHOLD}</expression>
+                            <name>[1С/Рабочий процесс] Количество исключений свыше {$EXCP_THRESHOLD}</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>[1С/Рабочий процесс] Объем памяти всех процессов</name>
@@ -555,6 +576,10 @@
                 </item>
             </items>
             <macros>
+                <macro>
+                    <macro>{$EXCP_THRESHOLD}</macro>
+                    <value>100</value>
+                </macro>
                 <macro>
                     <macro>{$LOG_DIR}</macro>
                     <value>/var/log/1C</value>
