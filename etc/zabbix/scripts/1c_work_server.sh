@@ -140,7 +140,7 @@ function get_locks_info {
 function get_excps_info {
     for PROCESS in ${PROCESS_NAMES[@]}
     do
-        EXCP_COUNT=$(grep -c ",EXCP," ${LOG_DIR}/${PROCESS}_*/${LOG_FILE}.log 2>/dev/null)
+        EXCP_COUNT=$(cat ${LOG_DIR}/${PROCESS}_*/${LOG_FILE}.log 2>/dev/null | grep -c ",EXCP,")
         echo ${PROCESS}: $([[ -n ${EXCP_COUNT} ]] && echo ${EXCP_COUNT} || echo 0)
     done
 }
