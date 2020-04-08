@@ -47,7 +47,7 @@ function execute_tasks {
         done
     else
         TASKS_LIST=(${@})
-        tasks_manager ${TASK_CMD} 0
+        tasks_manager ${TASK_CMD} 3
     fi
 
 }
