@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-04-05T19:39:23Z</date>
+    <date>2020-04-14T06:34:55Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -36,7 +36,7 @@
             <items>
                 <item>
                     <name>[1С/Серверные вызовы] ТОП по суммарному количеству</name>
-                    <key>1c.ws.calls[{$LOG_DIR},count,{$TOP_CALL_LIMIT}]</key>
+                    <key>1c.ws.calls[{$LOG_DIR},count,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
                     <history>30d</history>
                     <trends>0</trends>
@@ -50,7 +50,7 @@
                 </item>
                 <item>
                     <name>[1С/Серверные вызовы] ТОП  по суммарному процессорному времени</name>
-                    <key>1c.ws.calls[{$LOG_DIR},cpu,{$TOP_CALL_LIMIT}]</key>
+                    <key>1c.ws.calls[{$LOG_DIR},cpu,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
                     <history>30d</history>
                     <trends>0</trends>
@@ -64,7 +64,7 @@
                 </item>
                 <item>
                     <name>[1С/Серверные вызовы] ТОП по суммарной длительности</name>
-                    <key>1c.ws.calls[{$LOG_DIR},duration,{$TOP_CALL_LIMIT}]</key>
+                    <key>1c.ws.calls[{$LOG_DIR},duration,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
                     <history>30d</history>
                     <trends>0</trends>
@@ -78,7 +78,7 @@
                 </item>
                 <item>
                     <name>[1С/Серверные вызовы] ТОП по средней длительности</name>
-                    <key>1c.ws.calls[{$LOG_DIR},dur_avg,{$TOP_CALL_LIMIT}]</key>
+                    <key>1c.ws.calls[{$LOG_DIR},dur_avg,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
                     <history>30d</history>
                     <trends>0</trends>
@@ -92,7 +92,7 @@
                 </item>
                 <item>
                     <name>[1С/Серверные вызовы] ТОП по суммарному вводу-выводу</name>
-                    <key>1c.ws.calls[{$LOG_DIR},iobytes,{$TOP_CALL_LIMIT}]</key>
+                    <key>1c.ws.calls[{$LOG_DIR},iobytes,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
                     <history>30d</history>
                     <trends>0</trends>
@@ -106,7 +106,7 @@
                 </item>
                 <item>
                     <name>[1С/Серверные вызовы] ТОП &quot;ленивых&quot; вызовов</name>
-                    <key>1c.ws.calls[{$LOG_DIR},lazy,{$TOP_CALL_LIMIT}]</key>
+                    <key>1c.ws.calls[{$LOG_DIR},lazy,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
                     <history>30d</history>
                     <trends>0</trends>
@@ -120,7 +120,7 @@
                 </item>
                 <item>
                     <name>[1С/Серверные вызовы] ТОП по максимальной памяти за вызов</name>
-                    <key>1c.ws.calls[{$LOG_DIR},memory,{$TOP_CALL_LIMIT}]</key>
+                    <key>1c.ws.calls[{$LOG_DIR},memory,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
                     <history>30d</history>
                     <trends>0</trends>
@@ -597,7 +597,7 @@
                     <value>0.85</value>
                 </macro>
                 <macro>
-                    <macro>{$TOP_CALL_LIMIT}</macro>
+                    <macro>{$TOP_LIST_SIZE}</macro>
                     <value>25</value>
                 </macro>
             </macros>
