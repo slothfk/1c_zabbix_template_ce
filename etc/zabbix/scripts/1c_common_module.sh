@@ -36,7 +36,6 @@ function put_brack_line {
 
 # Выполнить серию команд ${1} с параметром, являющимся элементом массива ${@}, следующим за ${1}
 function execute_tasks {
-
     TASK_CMD=${1}
     shift
 
@@ -49,5 +48,19 @@ function execute_tasks {
         TASKS_LIST=(${@})
         tasks_manager ${TASK_CMD} 3
     fi
+}
 
+# Проверить наличие ring license и вернуть путь до ring
+function check_ring_license {
+    [[ ! -f /etc/1C/1CE/ring-commands.cfg ]] &&  echo "ОШИБКА: Не установлена утилита ring!" && exit 1
+    LIC_TOOL=$(grep license-tools /etc/1C/1CE/ring-commands.cfg | cut -d: -f2)
+
+    [[ -z ${LIC_TOOL} ]] && echo "ОШИБКА: Не установлена утилита license-tools!" && exit 1
+
+    ls ${LIC_TOOL%\/*\/*}/*ring*/ring
+}
+
+# Получить список имен установленных программных лицензий
+function get_license_list {
+    sleep 1;
 }

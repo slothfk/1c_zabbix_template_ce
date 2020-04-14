@@ -9,22 +9,16 @@
 
 source ${0%/*}/1c_common_module.sh 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
-CLSTR_CACHE="${CACHE_DIR}/1c_rmngr_cluster_cache"
-LIC_COUNT_CACHE="${CACHE_DIR}/1c_rmngr_license_cache.${$}"
+CLSTR_CACHE="${CACHE_DIR}/1c_cluster_cache"
+LIC_COUNT_CACHE="${CACHE_DIR}/1c_license_cache.${$}"
 
 function licenses_summary {
 
-    [[ ! -f /etc/1C/1CE/ring-commands.cfg ]] &&  echo "ОШИБКА: Не установлена утилита ring!" && exit 1 
-    LIC_TOOL=$(grep license-tools /etc/1C/1CE/ring-commands.cfg | cut -d: -f2)
+    RING_TOOL=$(check_ring_license)
     
-    [[ -z ${LIC_TOOL} ]] && echo "ОШИБКА: Не установлена утилита license-tools!" && exit 1
-
-    RING_TOOL=${LIC_TOOL%\/*\/*}"/*ring*/ring"
-    
-    LIC_LIST=$(${RING_TOOL} license list --send-statistics false | sed 's/(.*//')
     LIC_COUNT=0; LIC_USERS=0
 
-    execute_tasks license_info ${LIC_LIST[*]}
+    execute_tasks license_info $(${RING_TOOL} license list --send-statistics false | cut -d" " -f1)
 
     while read -r CURR_COUNT
     do
