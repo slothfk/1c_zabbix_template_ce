@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-04-14T06:34:55Z</date>
+    <date>2020-04-15T05:39:46Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -327,13 +327,6 @@
                     <master_item>
                         <key>1c.ws.excps[{$LOG_DIR}]</key>
                     </master_item>
-                    <triggers>
-                        <trigger>
-                            <expression>{last()}&gt;{$EXCP_THRESHOLD}</expression>
-                            <name>[1С/Агент сервера] Количество исключений свыше {$EXCP_THRESHOLD}</name>
-                            <priority>HIGH</priority>
-                        </trigger>
-                    </triggers>
                 </item>
                 <item>
                     <name>[1С/Агент сервера] Объем памяти всех процессов</name>
@@ -425,13 +418,6 @@
                     <master_item>
                         <key>1c.ws.excps[{$LOG_DIR}]</key>
                     </master_item>
-                    <triggers>
-                        <trigger>
-                            <expression>{last()}&gt;{$EXCP_THRESHOLD}</expression>
-                            <name>[1С/Менеджер кластера] Количество исключений свыше {$EXCP_THRESHOLD}</name>
-                            <priority>HIGH</priority>
-                        </trigger>
-                    </triggers>
                 </item>
                 <item>
                     <name>[1С/Менеджер кластера] Объем памяти всех процессов</name>
@@ -542,13 +528,6 @@
                     <master_item>
                         <key>1c.ws.excps[{$LOG_DIR}]</key>
                     </master_item>
-                    <triggers>
-                        <trigger>
-                            <expression>{last()}&gt;{$EXCP_THRESHOLD}</expression>
-                            <name>[1С/Рабочий процесс] Количество исключений свыше {$EXCP_THRESHOLD}</name>
-                            <priority>HIGH</priority>
-                        </trigger>
-                    </triggers>
                 </item>
                 <item>
                     <name>[1С/Рабочий процесс] Объем памяти всех процессов</name>
@@ -604,6 +583,21 @@
         </template>
     </templates>
     <triggers>
+        <trigger>
+            <expression>{Template App 1C Enterprise Work Server:1c.ws.ragent.excps.last()}/{Template App 1C Enterprise Work Server:1c.ws.ragent.count.avg(3600)}&gt;{$EXCP_THRESHOLD}</expression>
+            <name>[1С/Агент сервера] Количество исключений свыше {$EXCP_THRESHOLD}</name>
+            <priority>HIGH</priority>
+        </trigger>
+        <trigger>
+            <expression>{Template App 1C Enterprise Work Server:1c.ws.rmngr.excps.last()}/{Template App 1C Enterprise Work Server:1c.ws.rmngr.count.avg(3600)}&gt;{$EXCP_THRESHOLD}</expression>
+            <name>[1С/Менеджер кластера] Количество исключений свыше {$EXCP_THRESHOLD}</name>
+            <priority>HIGH</priority>
+        </trigger>
+        <trigger>
+            <expression>{Template App 1C Enterprise Work Server:1c.ws.rphost.excps.last()}/{Template App 1C Enterprise Work Server:1c.ws.rphost.count.avg(3600)}&gt;{$EXCP_THRESHOLD}</expression>
+            <name>[1С/Рабочий процесс] Количество исключений свыше {$EXCP_THRESHOLD}</name>
+            <priority>HIGH</priority>
+        </trigger>
         <trigger>
             <expression>{Template App 1C Enterprise Work Server:1c.ws.rphost.memory.last()}/{Template App 1C Enterprise Work Server:1c.ws.ram.last()}&gt;{$RPHOST_MAX_MEM}</expression>
             <name>[1С/Рабочий процесс] Превышено пороговое значение используемой памяти</name>
