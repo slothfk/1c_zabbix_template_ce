@@ -18,7 +18,7 @@ function licenses_summary {
     
     LIC_COUNT=0; LIC_USERS=0
 
-    execute_tasks license_info $(${RING_TOOL} license list --send-statistics false | cut -d" " -f1)
+    execute_tasks license_info $(get_license_list ${RING_TOOL})
 
     while read -r CURR_COUNT
     do

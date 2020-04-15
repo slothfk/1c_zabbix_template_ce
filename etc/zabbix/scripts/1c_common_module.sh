@@ -61,6 +61,7 @@ function check_ring_license {
 }
 
 # Получить список имен установленных программных лицензий
+# в качестве параметра ${1} указать путь до ring
 function get_license_list {
-    sleep 1;
+    ${1} license list --send-statistics false | cut -d' ' -f1
 }
