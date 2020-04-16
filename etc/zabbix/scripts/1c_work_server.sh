@@ -89,9 +89,7 @@ function get_locks_info {
 
     if [[ ${3} != "dump" ]]; then
 
-        [[ -n ${2} ]] && RAS_PORT=${2}
-
-        RMNGR_LIST=($(pgrep -xa rphost | sed -re "s/.*-reghost //; s/ -regport.*//;" | sort | uniq))
+        echo "lock: $(cat ${LOG_DIR}/rphost_*/${LOG_FILE}.log 2>/dev/null | grep -c ',TLOCK,')"
 
         RESULT=($(cat ${LOG_DIR}/rphost_*/${LOG_FILE}.log 2>/dev/null | \
             grep -P "(TDEADLOCK|TTIMEOUT|TLOCK.*,WaitConnections=\d+)" | \
@@ -99,26 +97,30 @@ function get_locks_info {
             awk -F"," -v lts=${WAIT_LIMIT} 'BEGIN {dl=0; to=0; lw=0} { if ($2 == "TDEADLOCK") {dl+=1} \
                 else if ($2 == "TTIMEOUT") { to+=1 } \
                 else { lw+=$1; lws[$4"->"$6]+=$1; } } \
-                END { print lw/1000000":"to":"dl"<nl>"; \
-                if ( length(lws) > 0 ) { print "Ожидания на блокировках (установлен порог "lts" сек):<nl>"; \
+                END { print "timeout: "to"<nl>"; print "deadlock: "dl"<nl>"; print "wait: "lw/1000000"<nl>"; \
+                if ( lw > 0 ) { print "Ожидания на блокировках (установлен порог "lts" сек):<nl>"; \
                 for ( i in lws ) { print "> "i" - "lws[i]/1000000" сек.<nl>" } } }'))
 
         echo ${RESULT[@]} | perl -pe 's/<nl>\s?/\n/g'
 
-        COUNTERS=${RESULT[0]%<*}
+        if [[ ${RESULT[1]%<*} != 0 || ${RESULT[3]%<*} != 0 || $(echo "${RESULT[5]%<*} > ${WAIT_LIMIT}" | bc) != 0 ]]; then
 
-        if [[ ${COUNTERS##*:} != 0 || $(echo "${COUNTERS%%:*} > ${WAIT_LIMIT}" | bc) != 0 || $(echo ${COUNTERS} | cut -d: -f2) != 0 ]]; then
+            [[ -n ${2} ]] && RAS_PORT=${2}
+
+            RMNGR_LIST=($(pgrep -xa rphost | sed -re "s/.*-reghost //; s/ -regport.*//;" | sort | uniq))
 
             for CURR_RMNGR in ${RMNGR_LIST[@]}; do
-                CURR_CLSTR=$(timeout -s HUP ${RAS_TIMEOUT} rac cluster list ${CURR_RMNGR}:${RAS_PORT} 2>/dev/null | grep cluster | sed 's/.*: //')
+                CURR_CLSTR=$(timeout -s HUP ${RAS_TIMEOUT} rac cluster list ${CURR_RMNGR}:${RAS_PORT} \
+                    2>/dev/null | grep cluster | sed 's/.*: //')
                 CLSTR_LIST+=(${CURR_RMNGR}:${CURR_CLSTR// /,})
             done
 
             for CURR_CLSTR in ${CLSTR_LIST[@]}; do
-                CURR_LIST=( $(timeout -s HUP ${RAS_TIMEOUT} rac server list --cluster=${CURR_CLSTR##*:} ${CURR_CLSTR%%:*}:${RAS_PORT} 2>/dev/null|\
-                    grep agent-host | uniq | perl -pe "s/.*:/:/; s/( |\n)//g;" | sed -e "s/^://; s/$/\n/;") )
-                [[ $(echo ${CURR_LIST} | grep -ic ${HOSTNAME}) -ne 0 ]] && [[ $(echo ${RPHOST_LIST[@]} | grep -ic ${CURR_LIST}) -eq 0 ]] && \
-                    RPHOST_LIST+=(${CURR_LIST})
+                CURR_LIST=( $(timeout -s HUP ${RAS_TIMEOUT} rac server list --cluster=${CURR_CLSTR##*:} \
+                    ${CURR_CLSTR%%:*}:${RAS_PORT} 2>/dev/null| grep agent-host | uniq | \
+                    perl -pe "s/.*:/:/; s/( |\n)//g;" | sed -e "s/^://; s/$/\n/;") )
+                [[ $(echo ${CURR_LIST} | grep -ic ${HOSTNAME}) -ne 0 ]] && [[ $(echo ${RPHOST_LIST[@]} | \
+                    grep -ic ${CURR_LIST}) -eq 0 ]] && RPHOST_LIST+=(${CURR_LIST})
             done
 
         fi
@@ -152,11 +154,13 @@ function get_memory_counts {
         for CURRENT_PID in ${PID_LIST//,/ }; do
             (( PROCESS_MEMORY+=$(cut -f2 -d" " /proc/${CURRENT_PID}/statm)*${MEMORY_PAGE_SIZE} )) ;
         done
-        echo ${PROCESS}: $(echo ${PID_LIST//,/ } | wc -w) ${PROCESS_MEMORY}\
-            $(if [[ ${PROCESS} == "rphost" ]]; then 
-                RPHOST_OLD_HASH=$(cat ${RPHOST_PID_HASH} 2>/dev/null);
-                echo ${PID_LIST} | md5sum | cut -f1 -d\  > ${RPHOST_PID_HASH};
-                [[ ${RPHOST_OLD_HASH} == $(cat ${RPHOST_PID_HASH}) ]] ; echo $?; fi)
+        if [[ ${PROCESS} == "rphost" ]]; then 
+            RPHOST_OLD_HASH=$(cat ${RPHOST_PID_HASH} 2>/dev/null)
+            echo ${PID_LIST} | md5sum | cut -f1 -d\  > ${RPHOST_PID_HASH}
+            [[ ${RPHOST_OLD_HASH} == $(cat ${RPHOST_PID_HASH}) ]]
+            CHANGE=${?}
+        fi
+        echo ${PROCESS}: $(echo ${PID_LIST//,/ } | wc -w) ${PROCESS_MEMORY} ${CHANGE}
     done
 
 }

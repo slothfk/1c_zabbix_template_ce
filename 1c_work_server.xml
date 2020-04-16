@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-04-15T05:39:46Z</date>
+    <date>2020-04-16T13:16:19Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -164,7 +164,7 @@
                     <preprocessing>
                         <step>
                             <type>REGEX</type>
-                            <params>\d+.?\d*:\d+:(\d+)
+                            <params>deadlock: (\d+)
 \1</params>
                         </step>
                     </preprocessing>
@@ -176,6 +176,37 @@
                             <expression>{last()}&gt;0</expression>
                             <name>[1С/Блокировки] Обнаружены взаимоблокировки</name>
                             <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>[1С/Блокировки] Число блокировок</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.ws.locks.lock</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <applications>
+                        <application>
+                            <name>[1С] Управляемые блокировки</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>lock: (\d+)
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}=0</expression>
+                            <name>[1С/Блокировки] Отсутствуют блокировки</name>
+                            <priority>INFO</priority>
+                            <description>Данное событие говорит либо об отсутствии необходимости следить за показателями по управляемым блокировкам, либо о некорректной настройке технологического журнала 1С Предприятия</description>
                         </trigger>
                     </triggers>
                 </item>
@@ -194,7 +225,7 @@
                     <preprocessing>
                         <step>
                             <type>REGEX</type>
-                            <params>\d+.?\d*:(\d+):\d+
+                            <params>timeout: (\d+)
 \1</params>
                         </step>
                     </preprocessing>
@@ -226,7 +257,7 @@
                     <preprocessing>
                         <step>
                             <type>REGEX</type>
-                            <params>(\d+.?\d*):\d+:\d+
+                            <params>wait: (\d+.?\d*)
 \1</params>
                         </step>
                     </preprocessing>
