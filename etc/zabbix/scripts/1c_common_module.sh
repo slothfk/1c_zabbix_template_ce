@@ -40,8 +40,7 @@ function execute_tasks {
     shift
 
     if [[ -z ${TM_AVAILABLE} || ${#@} -eq 1 ]]; then
-        for CURR_TASK in ${@}
-        do
+        for CURR_TASK in ${@}; do
             ${TASK_CMD} ${CURR_TASK}
         done
     else

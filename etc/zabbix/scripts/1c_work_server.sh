@@ -103,23 +103,21 @@ function get_locks_info {
                 if ( length(lws) > 0 ) { print "Ожидания на блокировках (установлен порог "lts" сек):<nl>"; \
                 for ( i in lws ) { print "> "i" - "lws[i]/1000000" сек.<nl>" } } }'))
 
-        echo ${RESULT[*]} | perl -pe 's/<nl>\s?/\n/g'
+        echo ${RESULT[@]} | perl -pe 's/<nl>\s?/\n/g'
 
         COUNTERS=${RESULT[0]%<*}
 
         if [[ ${COUNTERS##*:} != 0 || $(echo "${COUNTERS%%:*} > ${WAIT_LIMIT}" | bc) != 0 || $(echo ${COUNTERS} | cut -d: -f2) != 0 ]]; then
 
-            for CURR_RMNGR in ${RMNGR_LIST[*]}
-            do
+            for CURR_RMNGR in ${RMNGR_LIST[@]}; do
                 CURR_CLSTR=$(timeout -s HUP ${RAS_TIMEOUT} rac cluster list ${CURR_RMNGR}:${RAS_PORT} 2>/dev/null | grep cluster | sed 's/.*: //')
                 CLSTR_LIST+=(${CURR_RMNGR}:${CURR_CLSTR// /,})
             done
 
-            for CURR_CLSTR in ${CLSTR_LIST[*]}
-            do
+            for CURR_CLSTR in ${CLSTR_LIST[@]}; do
                 CURR_LIST=( $(timeout -s HUP ${RAS_TIMEOUT} rac server list --cluster=${CURR_CLSTR##*:} ${CURR_CLSTR%%:*}:${RAS_PORT} 2>/dev/null|\
                     grep agent-host | uniq | perl -pe "s/.*:/:/; s/( |\n)//g;" | sed -e "s/^://; s/$/\n/;") )
-                [[ $(echo ${CURR_LIST} | grep -ic ${HOSTNAME}) -ne 0 ]] && [[ $(echo ${RPHOST_LIST[*]} | grep -ic ${CURR_LIST}) -eq 0 ]] && \
+                [[ $(echo ${CURR_LIST} | grep -ic ${HOSTNAME}) -ne 0 ]] && [[ $(echo ${RPHOST_LIST[@]} | grep -ic ${CURR_LIST}) -eq 0 ]] && \
                     RPHOST_LIST+=(${CURR_LIST})
             done
 
@@ -129,8 +127,7 @@ function get_locks_info {
         RPHOST_LIST=(${HOSTNAME})
     fi
 
-    for CURR_LIST in ${RPHOST_LIST[*]}
-    do
+    for CURR_LIST in ${RPHOST_LIST[@]}; do
         execute_tasks save_logs ${CURR_LIST//:/ }
     done
 
@@ -138,8 +135,7 @@ function get_locks_info {
 }
 
 function get_excps_info {
-    for PROCESS in ${PROCESS_NAMES[@]}
-    do
+    for PROCESS in ${PROCESS_NAMES[@]}; do
         EXCP_COUNT=$(cat ${LOG_DIR}/${PROCESS}_*/${LOG_FILE}.log 2>/dev/null | grep -c ",EXCP,")
         echo ${PROCESS}: $([[ -n ${EXCP_COUNT} ]] && echo ${EXCP_COUNT} || echo 0)
     done
@@ -150,12 +146,10 @@ function get_memory_counts {
     MEMORY_PAGE_SIZE=$(getconf PAGE_SIZE)
     RPHOST_PID_HASH="${CACHE_DIR}/1c_rphost_pid_hash"
 
-    for PROCESS in ${PROCESS_NAMES[@]}
-    do
+    for PROCESS in ${PROCESS_NAMES[@]}; do
         PROCESS_MEMORY=0
         PID_LIST=$(pgrep -xd, ${PROCESS})
-        for CURRENT_PID in ${PID_LIST//,/ }
-        do
+        for CURRENT_PID in ${PID_LIST//,/ }; do
             (( PROCESS_MEMORY+=$(cut -f2 -d" " /proc/${CURRENT_PID}/statm)*${MEMORY_PAGE_SIZE} )) ;
         done
         echo ${PROCESS}: $(echo ${PID_LIST//,/ } | wc -w) ${PROCESS_MEMORY}\
