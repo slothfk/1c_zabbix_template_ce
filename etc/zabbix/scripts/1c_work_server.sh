@@ -10,7 +10,7 @@
 source ${0%/*}/1c_common_module.sh 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
 function check_log_dir {
-    [[ ! -d "${1}/zabbix/${2}" ]] && echo "ОШИБКА: Неверно задан каталог технологического журнала!" && exit 1
+    [[ ! -d "${1}/zabbix/${2}" ]] && error "Неверно задан каталог технологического журнала!"
 }
 
 function get_calls_info {
@@ -27,7 +27,7 @@ function get_calls_info {
         dur_avg) echo "СрДл-ть,с | Длит-ть,с | Кол-во | Процессор | Контекст";;
         memory) echo "Память,МБ | СрДл-ть,мс | СрПр-ор,мс | Кол-во | Контекст";;
         iobytes) echo "Объем IO,МБ | Длит-ть,с | Процессор | Кол-во | Контекст";;
-        *) echo "ОШИБКА: Некорректный параметр для данного режима работы скрипта!"; exit 1 ;;
+        *) error "Некорректный параметр для данного режима работы скрипта!" ;;
     esac
 
     put_brack_line
@@ -175,6 +175,6 @@ case ${1} in
     excps) shift 2; get_excps_info ${@} ;;
     memory) get_memory_counts ;;
     ram) free -b | grep -m1 "^[^ ]" | awk '{ print $2 }';;
-    *) echo "ОШИБКА: Неизвестный режим работы скрипта!"; exit 1;;
+    *) error "Неизвестный режим работы скрипта!" ;;
 esac
 

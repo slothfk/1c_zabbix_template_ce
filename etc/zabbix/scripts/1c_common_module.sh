@@ -25,6 +25,12 @@ RAS_PORT=1545
 # Максимальное время ожидания ответа от RAS
 RAS_TIMEOUT=1.5
 
+# Вывести сообщение об ошибке переданное в аргументе и выйти с кодом 1
+function error {
+    echo "ОШИБКА: "${@} >&2
+    exit 1
+}
+
 # Вывести разделительную строку длинной ${1} из символов ${2}
 # По-умолчанию раделительная строка - это 80 символов "-"
 function put_brack_line {
@@ -51,10 +57,10 @@ function execute_tasks {
 
 # Проверить наличие ring license и вернуть путь до ring
 function check_ring_license {
-    [[ ! -f /etc/1C/1CE/ring-commands.cfg ]] &&  echo "ОШИБКА: Не установлена утилита ring!" && exit 1
+    [[ ! -f /etc/1C/1CE/ring-commands.cfg ]] &&  error "Не установлена утилита ring!"
     LIC_TOOL=$(grep license-tools /etc/1C/1CE/ring-commands.cfg | cut -d: -f2)
 
-    [[ -z ${LIC_TOOL} ]] && echo "ОШИБКА: Не установлена утилита license-tools!" && exit 1
+    [[ -z ${LIC_TOOL} ]] && error "Не установлена утилита license-tools!"
 
     ls ${LIC_TOOL%\/*\/*}/*ring*/ring
 }

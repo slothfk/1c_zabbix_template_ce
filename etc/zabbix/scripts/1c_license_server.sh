@@ -86,7 +86,7 @@ function used_license {
 
 function get_clusters_list {
 
-    [[ ! -f ${CLSTR_CACHE} ]] && echo "ОШИБКА: Не найден файл списка кластеров!" && exit 1
+    [[ ! -f ${CLSTR_CACHE} ]] && error "Не найден файл списка кластеров!"
 
     cut -f2 -d: ${CLSTR_CACHE} | perl -pe 's/;[^\n]/\n/; s/;//' | \
         awk 'BEGIN {FS=","; print "{\"data\":[" } \
@@ -102,7 +102,7 @@ case ${1} in
     info) licenses_summary ;;
     used) used_license ${2} ;;
     clusters) get_clusters_list ;;
-    *) echo "ОШИБКА: Неверный режим работы скрипта!"; exit 1;;
+    *) error "Неверный режим работы скрипта!" ;;
 esac
 
 [[ -f ${LIC_COUNT_CACHE} ]] && rm ${LIC_COUNT_CACHE}
