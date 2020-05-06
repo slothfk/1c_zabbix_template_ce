@@ -102,7 +102,7 @@ case ${1} in
     info) licenses_summary ;;
     used) used_license ${2} ;;
     clusters) get_clusters_list ;;
-    *) error "Неверный режим работы скрипта!" ;;
+    *) error ${ERROR_UNKNOWN_MODE} ;;
 esac
 
 [[ -f ${LIC_COUNT_CACHE} ]] && rm ${LIC_COUNT_CACHE}

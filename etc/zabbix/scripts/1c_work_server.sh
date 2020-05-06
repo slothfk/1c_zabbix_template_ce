@@ -27,7 +27,7 @@ function get_calls_info {
         dur_avg) echo "СрДл-ть,с | Длит-ть,с | Кол-во | Процессор | Контекст";;
         memory) echo "Память,МБ | СрДл-ть,мс | СрПр-ор,мс | Кол-во | Контекст";;
         iobytes) echo "Объем IO,МБ | Длит-ть,с | Процессор | Кол-во | Контекст";;
-        *) error "Некорректный параметр для данного режима работы скрипта!" ;;
+        *) error ${ERROR_UNKNOWN_PARAM} ;;
     esac
 
     put_brack_line
@@ -175,6 +175,6 @@ case ${1} in
     excps) shift 2; get_excps_info ${@} ;;
     memory) get_memory_counts ;;
     ram) free -b | grep -m1 "^[^ ]" | awk '{ print $2 }';;
-    *) error "Неизвестный режим работы скрипта!" ;;
+    *) error ${ERROR_UNKNOWN_MODE} ;;
 esac
 
