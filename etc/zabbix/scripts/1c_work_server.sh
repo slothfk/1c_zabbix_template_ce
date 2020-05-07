@@ -111,7 +111,7 @@ function get_locks_info {
 
             for CURR_RMNGR in ${RMNGR_LIST[@]}; do
                 CURR_CLSTR=$(timeout -s HUP ${RAS_TIMEOUT} rac cluster list ${CURR_RMNGR}:${RAS_PORT} \
-                    2>/dev/null | grep cluster | sed 's/.*: //')
+                    2>/dev/null | grep '^cluster' | sed 's/.*: //')
                 CLSTR_LIST+=(${CURR_RMNGR}:${CURR_CLSTR// /,})
             done
 
