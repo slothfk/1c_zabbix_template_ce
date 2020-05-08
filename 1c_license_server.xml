@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-04-03T12:24:57Z</date>
+    <date>2020-05-08T08:44:19Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -11,6 +11,11 @@
         <template>
             <template>Template App 1C Enterprise License Server</template>
             <name>Template App 1C Enterprise License Server</name>
+            <templates>
+                <template>
+                    <name>Template App 1C Enterprise Work Server</name>
+                </template>
+            </templates>
             <groups>
                 <group>
                     <name>Templates (Kaminsoft)</name>
@@ -403,10 +408,6 @@
                     <macro>{$LIC_UTIL_LIMIT}</macro>
                     <value>0.9</value>
                 </macro>
-                <macro>
-                    <macro>{$RAS_PORT}</macro>
-                    <value>1545</value>
-                </macro>
             </macros>
         </template>
     </templates>
@@ -438,6 +439,13 @@ or &#13;
             <name>[1С/Лицензии] Количество лицензий с клиентских компьютеров &gt; 50%</name>
             <status>DISABLED</status>
             <priority>WARNING</priority>
+            <manual_close>YES</manual_close>
+        </trigger>
+        <trigger>
+            <expression>{Template App 1C Enterprise License Server:1c.ws.rmngr.count.last()}&lt;{Template App 1C Enterprise License Server:1c.ws.rmngr.count.avg(600)}</expression>
+            <name>[1С/Сервер лицензирования] Отключение от кластера</name>
+            <priority>HIGH</priority>
+            <description>Если сервер лицензирования выведен из состава кластера, закройте проблему вручную!</description>
             <manual_close>YES</manual_close>
         </trigger>
     </triggers>
