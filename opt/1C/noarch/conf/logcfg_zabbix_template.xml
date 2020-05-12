@@ -45,4 +45,6 @@
         <property name="descr"/>
         <property name="context"/>
     </log>
+    <log location="/var/log/1C/zabbix/problem_log" history="1">
+    </log>
 </config>
