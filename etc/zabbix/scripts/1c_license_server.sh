@@ -38,7 +38,8 @@ function get_cluster_uuid {
     CURR_CLSTR=$( timeout -s HUP ${RAS_TIMEOUT} rac cluster list ${1%%:*}:${RAS_PORT} |grep -Pe '^(cluster|name|port)' | \
         perl -pe 's/[ "]//g; s/^name:(.*)$/\1\n/; s/^cluster:(.*)/\1,/; s/^port:(.*)/\1,/; s/\n//' | \
         grep -Pe ${1##*:} | perl -pe 's/(.*,)\d+,(.*)/\1\2/; s/\n/;/' )
-    echo ${1%%:*}:${CURR_CLSTR} >> ${CLSTR_CACHE}
+
+    [[ -n ${CURR_CLSTR} ]] && echo ${1%%:*}:${CURR_CLSTR} >> ${CLSTR_CACHE}
 }
 
 function get_license_counts {
