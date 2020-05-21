@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-05-08T08:44:19Z</date>
+    <date>2020-05-21T06:02:33Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -442,7 +442,7 @@ or &#13;
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
-            <expression>{Template App 1C Enterprise License Server:1c.ws.rmngr.count.last()}&lt;{Template App 1C Enterprise License Server:1c.ws.rmngr.count.avg(600)}</expression>
+            <expression>{Template App 1C Enterprise License Server:1c.ws.rmngr.count.avg(600)}-{Template App 1C Enterprise License Server:1c.ws.rmngr.count.last()}&gt;0.5</expression>
             <name>[1С/Сервер лицензирования] Отключение от кластера</name>
             <priority>HIGH</priority>
             <description>Если сервер лицензирования выведен из состава кластера, закройте проблему вручную!</description>
