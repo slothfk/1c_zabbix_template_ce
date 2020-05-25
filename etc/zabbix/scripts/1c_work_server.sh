@@ -9,6 +9,12 @@
 
 source ${0%/*}/1c_common_module.sh 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
+# Коды завершения процедуры архивирования файлов технологического журнала
+DUMP_CODE_0=0   # Архивированение файлов ТЖ выполнено успешно
+DUMP_CODE_1=1   # Файл архива ТЖ уже существует
+DUMP_CODE_2=2   # При архивировании файлов ТЖ возникли ошибки
+DUMP_CODE_3=3   # Не удалось выполнить архивирование ТЖ на удаленом сервере
+
 function check_log_dir {
     [[ ! -d "${1}/zabbix/${2}" ]] && error "Неверно задан каталог технологического журнала!"
 }
@@ -59,10 +65,6 @@ function get_calls_info {
 
 
 function get_locks_info {
-    DUMP_CODE_0=0   # Архивированение файлов ТЖ выполнено успешно
-    DUMP_CODE_1=1   # Файл архива ТЖ уже существует
-    DUMP_CODE_2=2   # Не удалось выполнить архивирование ТЖ на текущем сервере
-    DUMP_CODE_3=3   # Не удалось выполнить архивирование ТЖ на удаленом сервере
 
     STORE_PERIOD=30 # Срок хранения архивов ТЖ, содержащих информацию о проблемах - 30 дней
 
@@ -70,70 +72,59 @@ function get_locks_info {
 
     function save_logs {
         if [[ $(echo ${1} | grep -ic ${HOSTNAME}) -ne 0 ]]; then
-            if [[ -f ${LOG_DIR%/*}/problem_log/${LOG_FILE}.tgz ]]; then
-                DUMP_RESULT=${DUMP_CODE_1}
-            else
-                cd ${LOG_DIR} && tar czf ../problem_log/${LOG_FILE}.tgz ./rphost_*/${LOG_FILE}.log && \
-                DUMP_RESULT=${DUMP_CODE_0} || DUMP_RESULT=${DUMP_CODE_2}
-            fi
+            DUMP_RESULT=$(dump_logs ${LOG_DIR} ${LOG_FILE})
         else
-            zabbix_get -s ${1} -k 1c.ws.locks[${LOG_DIR%/zabbix/*},${WAIT_LIMIT},${RAS_PORT},dump] 2>/dev/null || \
-                DUMP_RESULT=${DUMP_CODE_3}
+            DUMP_RESULT=$(zabbix_get -s ${1} -k 1c.ws.dump_logs[${LOG_DIR},${LOG_FILE}] 2>/dev/null)
+            [[ -z ${DUMP_RESULT} || ${DUMP_RESULT} -eq ${DUMP_CODE_2} ]] && DUMP_RESULT=${DUMP_CODE_3}
         fi
 
         [[ ${DUMP_RESULT} -gt 1 ]] && DUMP_TEXT="ОШИБКА: не удалось сохранить файлы технологического журнала!" ||
-            DUMP_TEXT="Файлы технологического журнала сохранены (${LOG_DIR%/*}/problem_log/${LOG_FILE}.tgz)"
+            DUMP_TEXT="Файлы технологического журнала сохранены (${LOG_DIR%/*}/problem_log/${LOG_DIR##*/}-${LOG_FILE}.tgz)"
 
         [[ -n ${DUMP_RESULT} ]] && echo "[${1} (${DUMP_RESULT})] ${DUMP_TEXT}" && unset DUMP_RESULT
     }
 
-    if [[ ${3} != "dump" ]]; then
+    echo "lock: $(cat ${LOG_DIR}/rphost_*/${LOG_FILE}.log 2>/dev/null | grep -c ',TLOCK,')"
 
-        echo "lock: $(cat ${LOG_DIR}/rphost_*/${LOG_FILE}.log 2>/dev/null | grep -c ',TLOCK,')"
+    RESULT=($(cat ${LOG_DIR}/rphost_*/${LOG_FILE}.log 2>/dev/null | \
+        grep -P "(TDEADLOCK|TTIMEOUT|TLOCK.*,WaitConnections=\d+)" | \
+        sed -re "s/[0-9]{2}:[0-9]{2}.[0-9]{6}-//; s/,[a-zA-Z\:]+=/,/g" | \
+        awk -F"," -v lts=${WAIT_LIMIT} 'BEGIN {dl=0; to=0; lw=0} { if ($2 == "TDEADLOCK") {dl+=1} \
+            else if ($2 == "TTIMEOUT") { to+=1 } \
+            else { lw+=$1; lws[$4"->"$6]+=$1; } } \
+            END { print "timeout: "to"<nl>"; print "deadlock: "dl"<nl>"; print "wait: "lw/1000000"<nl>"; \
+            if ( lw > 0 ) { print "Ожидания на блокировках (установлен порог "lts" сек):<nl>"; \
+            for ( i in lws ) { print "> "i" - "lws[i]/1000000" сек.<nl>" } } }'))
 
-        RESULT=($(cat ${LOG_DIR}/rphost_*/${LOG_FILE}.log 2>/dev/null | \
-            grep -P "(TDEADLOCK|TTIMEOUT|TLOCK.*,WaitConnections=\d+)" | \
-            sed -re "s/[0-9]{2}:[0-9]{2}.[0-9]{6}-//; s/,[a-zA-Z\:]+=/,/g" | \
-            awk -F"," -v lts=${WAIT_LIMIT} 'BEGIN {dl=0; to=0; lw=0} { if ($2 == "TDEADLOCK") {dl+=1} \
-                else if ($2 == "TTIMEOUT") { to+=1 } \
-                else { lw+=$1; lws[$4"->"$6]+=$1; } } \
-                END { print "timeout: "to"<nl>"; print "deadlock: "dl"<nl>"; print "wait: "lw/1000000"<nl>"; \
-                if ( lw > 0 ) { print "Ожидания на блокировках (установлен порог "lts" сек):<nl>"; \
-                for ( i in lws ) { print "> "i" - "lws[i]/1000000" сек.<nl>" } } }'))
+    echo ${RESULT[@]} | perl -pe 's/<nl>\s?/\n/g'
 
-        echo ${RESULT[@]} | perl -pe 's/<nl>\s?/\n/g'
+    if [[ ${RESULT[1]%<*} != 0 || ${RESULT[3]%<*} != 0 || $(echo "${RESULT[5]%<*} > ${WAIT_LIMIT}" | bc) != 0 ]]; then
 
-        if [[ ${RESULT[1]%<*} != 0 || ${RESULT[3]%<*} != 0 || $(echo "${RESULT[5]%<*} > ${WAIT_LIMIT}" | bc) != 0 ]]; then
+        [[ -n ${2} ]] && RAS_PORT=${2}
 
-            [[ -n ${2} ]] && RAS_PORT=${2}
+        RMNGR_LIST=($(pgrep -xa rphost | sed -re "s/.*-reghost //; s/ -regport.*//;" | sort | uniq))
 
-            RMNGR_LIST=($(pgrep -xa rphost | sed -re "s/.*-reghost //; s/ -regport.*//;" | sort | uniq))
+        for CURR_RMNGR in ${RMNGR_LIST[@]}; do
+            CURR_CLSTR=$(timeout -s HUP ${RAS_TIMEOUT} rac cluster list ${CURR_RMNGR}:${RAS_PORT} \
+                2>/dev/null | grep '^cluster' | sed 's/.*: //')
+            CLSTR_LIST+=(${CURR_RMNGR}:${CURR_CLSTR// /,})
+        done
 
-            for CURR_RMNGR in ${RMNGR_LIST[@]}; do
-                CURR_CLSTR=$(timeout -s HUP ${RAS_TIMEOUT} rac cluster list ${CURR_RMNGR}:${RAS_PORT} \
-                    2>/dev/null | grep '^cluster' | sed 's/.*: //')
-                CLSTR_LIST+=(${CURR_RMNGR}:${CURR_CLSTR// /,})
-            done
+        for CURR_CLSTR in ${CLSTR_LIST[@]}; do
+            CURR_LIST=( $(timeout -s HUP ${RAS_TIMEOUT} rac server list --cluster=${CURR_CLSTR##*:} \
+                ${CURR_CLSTR%%:*}:${RAS_PORT} 2>/dev/null| grep agent-host | uniq | \
+                perl -pe "s/.*:/:/; s/( |\n)//g;" | sed -e "s/^://; s/$/\n/;") )
+            [[ $(echo ${CURR_LIST} | grep -ic ${HOSTNAME}) -ne 0 ]] && [[ $(echo ${RPHOST_LIST[@]} | \
+                grep -ic ${CURR_LIST}) -eq 0 ]] && RPHOST_LIST+=(${CURR_LIST})
+        done
 
-            for CURR_CLSTR in ${CLSTR_LIST[@]}; do
-                CURR_LIST=( $(timeout -s HUP ${RAS_TIMEOUT} rac server list --cluster=${CURR_CLSTR##*:} \
-                    ${CURR_CLSTR%%:*}:${RAS_PORT} 2>/dev/null| grep agent-host | uniq | \
-                    perl -pe "s/.*:/:/; s/( |\n)//g;" | sed -e "s/^://; s/$/\n/;") )
-                [[ $(echo ${CURR_LIST} | grep -ic ${HOSTNAME}) -ne 0 ]] && [[ $(echo ${RPHOST_LIST[@]} | \
-                    grep -ic ${CURR_LIST}) -eq 0 ]] && RPHOST_LIST+=(${CURR_LIST})
-            done
-
-        fi
-
-    else
-        RPHOST_LIST=(${HOSTNAME})
     fi
 
     for CURR_LIST in ${RPHOST_LIST[@]}; do
         execute_tasks save_logs ${CURR_LIST//:/ }
     done
 
-    find ${LOG_DIR%/*}/problem_log/ -mtime +${STORE_PERIOD} -name "*.tgz" -delete
+    find ${LOG_DIR%/*}/problem_log/ -mtime +${STORE_PERIOD} -name "*.tgz" -delete 2>/dev/null
 }
 
 function get_excps_info {
@@ -165,6 +156,21 @@ function get_memory_counts {
 
 }
 
+# Архивирование файлов ТЖ с именем ${2} из каталога ${1} в problem_log
+function dump_logs {
+    # TODO: Проверка наличия каталога problem_log и возможности записи в него
+
+    if [[ -f ${1%/*}/problem_log/${1##*/}-${2}.tgz ]]; then
+        DUMP_RESULT=${DUMP_CODE_1}
+    else
+        cd ${1} 2>/dev/null && tar czf ../problem_log/${1##*/}-${2}.tgz ./rphost_*/${2}.log && \
+        DUMP_RESULT=${DUMP_CODE_0} || DUMP_RESULT=${DUMP_CODE_2}
+    fi
+
+    echo ${DUMP_RESULT}
+
+}
+
 case ${1} in
     calls | locks | excps) check_log_dir ${2} ${1};
         LOG_FILE=$(date --date="last hour" "+%y%m%d%H");
@@ -175,6 +181,7 @@ case ${1} in
     excps) shift 2; get_excps_info ${@} ;;
     memory) get_memory_counts ;;
     ram) free -b | grep -m1 "^[^ ]" | awk '{ print $2 }';;
+    dump_logs) shift; dump_logs ${@} ;;
     *) error ${ERROR_UNKNOWN_MODE} ;;
 esac
 
