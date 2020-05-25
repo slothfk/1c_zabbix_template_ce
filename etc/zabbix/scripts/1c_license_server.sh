@@ -14,7 +14,7 @@ LIC_COUNT_CACHE="${CACHE_DIR}/1c_license_cache.${$}"
 
 function licenses_summary {
 
-    RING_TOOL=$(check_ring_license)
+    RING_TOOL=$(check_ring_license) || exit 1
     
     LIC_COUNT=0; LIC_USERS=0
 
