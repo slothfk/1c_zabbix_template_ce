@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-05-25T17:44:45Z</date>
+    <date>2020-05-26T08:48:55Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -172,7 +172,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
+                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                     <triggers>
                         <trigger>
@@ -202,7 +202,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
+                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                     <triggers>
                         <trigger>
@@ -232,7 +232,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
+                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                     <triggers>
                         <trigger>
@@ -264,7 +264,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
+                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                     <triggers>
                         <trigger>
@@ -276,7 +276,7 @@
                 </item>
                 <item>
                     <name>[1С/Блокировки] Сводка</name>
-                    <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
+                    <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     <delay>1h</delay>
                     <history>30d</history>
                     <trends>0</trends>
