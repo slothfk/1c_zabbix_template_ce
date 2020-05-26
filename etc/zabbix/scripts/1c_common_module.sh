@@ -20,10 +20,8 @@ TM_MODULE="1c_common_tm.sh"
 CACHE_DIR="/var/tmp/1C"
 [[ ! -d ${CACHE_DIR} ]] && mkdir -p ${CACHE_DIR}
 
-# Порт RAS по умолчанию
-RAS_PORT=1545
-# Максимальное время ожидания ответа от RAS
-RAS_TIMEOUT=1.5
+# Параметры взаимодействия с сервисом RAS
+declare -A RAS_PARAMS=([port]=1545 [timeout]=1.5 [auth]=)
 
 # Общие для всех скрпитов тексты ошибок
 ERROR_UNKNOWN_MODE="Неизвестный режим работы скрипта!"
@@ -73,4 +71,23 @@ function check_ring_license {
 # в качестве параметра ${1} указать путь до ring
 function get_license_list {
     ${1} license list --send-statistics false | sed -re 's/^([0-9\-]+).*/\1/'
+}
+
+# Установка параметров взаимодействия с сервисом RAS
+#  Метод заменяет значения в массиве RAS_PARAMS значениями,
+#  указанными в параметрах:
+#  * ${1} - номер порта RAS
+#  * ${2} - максимальное время ожидания ответа RAS
+#  * ${3} - пользователь администратор кластрера
+#  * ${4} - пароль пользователя администратора кластера
+function make_ras_params {
+
+    [[ -n ${1} ]] && RAS_PARAMS[port]=${1}
+
+    [[ -n ${2} ]] && RAS_PARAMS[timeout]=${2}
+
+    [[ -n ${3} ]] && RAS_PARAMS[auth]="--cluster-user=${3}"
+
+    [[ -n ${4} ]] && RAS_PARAMS[auth]+=" --cluster-pwd=${4}"
+
 }

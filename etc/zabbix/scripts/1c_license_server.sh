@@ -30,12 +30,14 @@ function licenses_summary {
 }
 
 function license_info {
-    LIC_INFO=$(${RING_TOOL} license info --send-statistics false --name ${1} | grep -Pe '(Описание|Description).*на \d+ .*' | perl -pe 's/.*на (\d+) .*/\1/;')
+    LIC_INFO=$(${RING_TOOL} license info --send-statistics false --name ${1} | \
+        grep -Pe '(Описание|Description).*на \d+ .*' | perl -pe 's/.*на (\d+) .*/\1/;')
     [[ -n ${LIC_INFO} ]] && echo ${LIC_INFO} >> ${LIC_COUNT_CACHE}
 }
 
 function get_cluster_uuid {
-    CURR_CLSTR=$( timeout -s HUP ${RAS_TIMEOUT} rac cluster list ${1%%:*}:${RAS_PORT} |grep -Pe '^(cluster|name|port)' | \
+    CURR_CLSTR=$( timeout -s HUP ${RAS_PARAMS[timeout]} rac cluster list \
+        ${1%%:*}:${RAS_PARAMS[port]} | grep -Pe '^(cluster|name|port)' | \
         perl -pe 's/[ "]//g; s/^name:(.*)$/\1\n/; s/^cluster:(.*)/\1,/; s/^port:(.*)/\1,/; s/\n//' | \
         grep -Pe ${1##*:} | perl -pe 's/(.*,)\d+,(.*)/\1\2/; s/\n/;/' )
 
@@ -45,7 +47,8 @@ function get_cluster_uuid {
 function get_license_counts {
     CLSTR_LIST=${1##*:}
     for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
-        timeout -s HUP ${RAS_TIMEOUT} rac session list --licenses --cluster=${CURR_CLSTR%,*} ${1%%:*}:${RAS_PORT} 2>/dev/null | \
+        timeout -s HUP ${RAS_PARAMS[timeout]} rac session list --licenses --cluster=${CURR_CLSTR%,*} \
+            ${RAS_PARAMS[auth]} ${1%%:*}:${RAS_PARAMS[port]} 2>/dev/null | \
             grep -Pe "(user-name|rmngr-address|app-id)" | \
             perl -pe 's/ //g; s/\n/|/; s/rmngr-address:(\"(.*)\"|)\||/\2/; s/app-id://; s/user-name:/\n/;' | \
             awk -F"|" -v hostname=${HOSTNAME} -v cluster=${CURR_CLSTR#*,} 'BEGIN { sc=0; hc=0; cc=0; wc=0 } \
@@ -62,11 +65,9 @@ function used_license {
         END { for ( i in clstr_list ) { print i":"clstr_list[i]} }' ) )
     SRV_LIST=()
 
-    [[ -n ${1} ]] && RAS_PORT=${1}
-
     if [[ ! -e ${CLSTR_CACHE} || 
         ${#RMNGR_LIST[@]} -ne $(wc -l ${CLSTR_CACHE} | cut -f1 -d" ") ||
-        $(date -r ${CLSTR_CACHE} "+%s") -lt $(date -d "-1 hour" "+%s") ]]; then
+        $(date -r ${CLSTR_CACHE} "+%s") -lt $(date -d "last hour" "+%s") ]]; then
 
         cat /dev/null > ${CLSTR_CACHE}
 
@@ -101,7 +102,7 @@ cat /dev/null > ${LIC_COUNT_CACHE}
 
 case ${1} in
     info) licenses_summary ;;
-    used) used_license ${2} ;;
+    used) shift; make_ras_params ${@}; used_license ;;
     clusters) get_clusters_list ;;
     *) error ${ERROR_UNKNOWN_MODE} ;;
 esac

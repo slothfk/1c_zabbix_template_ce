@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-05-21T06:02:33Z</date>
+    <date>2020-05-25T17:59:19Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -11,6 +11,11 @@
         <template>
             <template>Template App 1C Enterprise License Server</template>
             <name>Template App 1C Enterprise License Server</name>
+            <description>Шаблон для мониторинга сервиса лицензирования сервера 1С Предприятия, работающего на платформе GNU/Linux&#13;
+&#13;
+Является потомком шаблона рабочего сервера 1С Предприятия!&#13;
+&#13;
+Подробнее https://slothfk.github.io/1c_zabbix_template_ce/</description>
             <templates>
                 <template>
                     <name>Template App 1C Enterprise Work Server</name>
@@ -47,7 +52,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ls.sessions[{$RAS_PORT}]</key>
+                        <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                     <triggers>
                         <trigger>
@@ -102,7 +107,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ls.sessions[{$RAS_PORT}]</key>
+                        <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                 </item>
                 <item>
@@ -125,7 +130,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ls.sessions[{$RAS_PORT}]</key>
+                        <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                 </item>
                 <item>
@@ -148,7 +153,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ls.sessions[{$RAS_PORT}]</key>
+                        <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                 </item>
                 <item>
@@ -194,7 +199,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ls.sessions[{$RAS_PORT}]</key>
+                        <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                 </item>
                 <item>
@@ -214,7 +219,7 @@
                 <item>
                     <name>[1С/Лицензии] Активные сеансы</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>1c.ls.sessions[{$RAS_PORT}]</key>
+                    <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     <delay>60s</delay>
                     <history>0</history>
                     <trends>0</trends>
@@ -255,7 +260,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.ls.sessions[{$RAS_PORT}]</key>
+                                <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -278,7 +283,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.ls.sessions[{$RAS_PORT}]</key>
+                                <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -301,7 +306,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.ls.sessions[{$RAS_PORT}]</key>
+                                <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -324,7 +329,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.ls.sessions[{$RAS_PORT}]</key>
+                                <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -347,7 +352,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.ls.sessions[{$RAS_PORT}]</key>
+                                <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
@@ -443,6 +448,13 @@ or &#13;
         </trigger>
         <trigger>
             <expression>{Template App 1C Enterprise License Server:1c.ws.rmngr.count.avg(600)}-{Template App 1C Enterprise License Server:1c.ws.rmngr.count.last()}&gt;0.5</expression>
+            <name>[1С/Сервер лицензирования] Отключение от кластера</name>
+            <priority>HIGH</priority>
+            <description>Если сервер лицензирования выведен из состава кластера, закройте проблему вручную!</description>
+            <manual_close>YES</manual_close>
+        </trigger>
+        <trigger>
+            <expression>{Template App 1C Enterprise License Server:1c.ws.rmngr.count.last()}&lt;{Template App 1C Enterprise License Server:1c.ws.rmngr.count.avg(600)}</expression>
             <name>[1С/Сервер лицензирования] Отключение от кластера</name>
             <priority>HIGH</priority>
             <description>Если сервер лицензирования выведен из состава кластера, закройте проблему вручную!</description>

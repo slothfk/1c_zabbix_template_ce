@@ -100,19 +100,19 @@ function get_locks_info {
 
     if [[ ${RESULT[1]%<*} != 0 || ${RESULT[3]%<*} != 0 || $(echo "${RESULT[5]%<*} > ${WAIT_LIMIT}" | bc) != 0 ]]; then
 
-        [[ -n ${2} ]] && RAS_PORT=${2}
+        shift; make_ras_params ${@}
 
         RMNGR_LIST=($(pgrep -xa rphost | sed -re "s/.*-reghost //; s/ -regport.*//;" | sort | uniq))
 
         for CURR_RMNGR in ${RMNGR_LIST[@]}; do
-            CURR_CLSTR=$(timeout -s HUP ${RAS_TIMEOUT} rac cluster list ${CURR_RMNGR}:${RAS_PORT} \
+            CURR_CLSTR=$(timeout -s HUP ${RAS_PARAMS[timeout]} rac cluster list ${CURR_RMNGR}:${RAS_PARAMS[port]} \
                 2>/dev/null | grep '^cluster' | sed 's/.*: //')
             CLSTR_LIST+=(${CURR_RMNGR}:${CURR_CLSTR// /,})
         done
 
         for CURR_CLSTR in ${CLSTR_LIST[@]}; do
-            CURR_LIST=( $(timeout -s HUP ${RAS_TIMEOUT} rac server list --cluster=${CURR_CLSTR##*:} \
-                ${CURR_CLSTR%%:*}:${RAS_PORT} 2>/dev/null| grep agent-host | uniq | \
+            CURR_LIST=( $(timeout -s HUP ${RAS_PARAMS[timeout]} rac server list --cluster=${CURR_CLSTR##*:} \
+                ${RAS_PARAMS[auth]} ${CURR_CLSTR%%:*}:${RAS_PARAMS[port]} 2>/dev/null| grep agent-host | uniq | \
                 perl -pe "s/.*:/:/; s/( |\n)//g;" | sed -e "s/^://; s/$/\n/;") )
             [[ $(echo ${CURR_LIST} | grep -ic ${HOSTNAME}) -ne 0 ]] && [[ $(echo ${RPHOST_LIST[@]} | \
                 grep -ic ${CURR_LIST}) -eq 0 ]] && RPHOST_LIST+=(${CURR_LIST})
