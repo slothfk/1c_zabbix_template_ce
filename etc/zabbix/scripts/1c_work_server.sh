@@ -102,32 +102,28 @@ function get_locks_info {
 
         shift; make_ras_params ${@}
 
-        RMNGR_LIST=($(pgrep -xa rphost | sed -re "s/.*-reghost //; s/ -regport.*//;" | sort | uniq))
+        HOSTS_LIST=()
 
-        for CURR_RMNGR in ${RMNGR_LIST[@]}; do
-            CURR_CLSTR=$(timeout -s HUP ${RAS_PARAMS[timeout]} rac cluster list ${CURR_RMNGR}:${RAS_PARAMS[port]} \
-                2>/dev/null | grep '^cluster' | sed 's/.*: //')
-            CLSTR_LIST+=(${CURR_RMNGR}:${CURR_CLSTR// /,})
-        done
+        pop_clusters_list
 
-        for CURR_CLSTR in ${CLSTR_LIST[@]}; do
-            CURR_LIST=( $(timeout -s HUP ${RAS_PARAMS[timeout]} rac server list --cluster=${CURR_CLSTR##*:} \
-                ${RAS_PARAMS[auth]} ${CURR_CLSTR%%:*}:${RAS_PARAMS[port]} 2>/dev/null| grep agent-host | uniq | \
-                perl -pe "s/.*:/:/; s/( |\n)//g;" | sed -e "s/^://; s/$/\n/;") )
-            [[ $(echo ${CURR_LIST} | grep -ic ${HOSTNAME}) -ne 0 ]] && [[ $(echo ${RPHOST_LIST[@]} | \
-                grep -ic ${CURR_LIST}) -eq 0 ]] && RPHOST_LIST+=(${CURR_LIST})
+        for CURRENT_HOST in ${HOSTS_LIST}; do
+            CLSTR_LIST=${CURRENT_HOST#*:}
+            for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
+                SRV_LIST+=( $(timeout -s HUP ${RAS_PARAMS[timeout]} rac server list --cluster=${CURR_CLSTR%,*} \
+                    ${RAS_PARAMS[auth]} ${CURRENT_HOST%:*}:${RAS_PARAMS[port]} 2>/dev/null| grep agent-host | sort -u | \
+                    sed -r "s/.*: (.*)$/\1/; s/\"//g") )
+            done
         done
 
     fi
 
-    for CURR_LIST in ${RPHOST_LIST[@]}; do
-        execute_tasks save_logs ${CURR_LIST//:/ }
-    done
+    execute_tasks save_logs $(echo ${SRV_LIST[@]} | perl -pe 's/ /\n/g' | sort -u)
 
     find ${LOG_DIR%/*}/problem_log/ -mtime +${STORE_PERIOD} -name "*.tgz" -delete 2>/dev/null
 }
 
 function get_excps_info {
+
     for PROCESS in ${PROCESS_NAMES[@]}; do
         EXCP_COUNT=$(cat ${LOG_DIR}/${PROCESS}_*/${LOG_FILE}.log 2>/dev/null | grep -c ",EXCP,")
         echo ${PROCESS}: $([[ -n ${EXCP_COUNT} ]] && echo ${EXCP_COUNT} || echo 0)
