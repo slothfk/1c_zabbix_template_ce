@@ -1,3 +1,5 @@
+[![CodeFactor](https://www.codefactor.io/repository/github/slothfk/1c_zabbix_template_ce/badge)](https://www.codefactor.io/repository/github/slothfk/1c_zabbix_template_ce)
+
 # 1c_zabbix_template_ce (Community Edition)
 Шаблон (конфигурационные файлы агента и вспомогательные скрипты) для мониторинга с помощью Zabbix (версии 4.4) серверов 1С Предприятия, работающих под управлением операционный системы GNU/Linux
 
