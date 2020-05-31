@@ -81,7 +81,7 @@ case ${1} in
     info) licenses_summary ;;
     used) shift; make_ras_params ${@}; used_license ;;
     clusters) get_clusters_list ;;
-    *) error ${ERROR_UNKNOWN_MODE} ;;
+    *) error "${ERROR_UNKNOWN_MODE}" ;;
 esac
 
 [[ -f ${LIC_COUNT_CACHE} ]] && rm ${LIC_COUNT_CACHE}

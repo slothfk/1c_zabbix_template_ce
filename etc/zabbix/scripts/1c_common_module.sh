@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Мониторинг 1С Предприятия 8.3 (общие переменные и функции)
 #
@@ -14,7 +15,7 @@ PATH=${PATH}:$(ls -d /opt/1C/v8*/[xi]* | tail -n1)
 
 # Модуль менеджера задач
 TM_MODULE="1c_common_tm.sh"
-[[ -f ${0%/*}/${TM_MODULE} ]] && source ${0%/*}/${TM_MODULE} 2>/dev/null && TM_AVAILABLE=1
+[[ -f ${0%/*}/${TM_MODULE} ]] && source ${0%/*}/${TM_MODULE} 2>/dev/null
 
 # Каталог для различных кешей скриптов
 CACHE_DIR="/var/tmp/1C"
@@ -24,7 +25,7 @@ CACHE_DIR="/var/tmp/1C"
 CLSTR_CACHE="${CACHE_DIR}/1c_clusters_cache"
 
 # Параметры взаимодействия с сервисом RAS
-declare -A RAS_PARAMS=([port]=1545 [timeout]=1.5 [auth]=)
+declare -A RAS_PARAMS=([port]=1545 [timeout]=1.5 [auth]="")
 
 # Общие для всех скрпитов тексты ошибок
 ERROR_UNKNOWN_MODE="Неизвестный режим работы скрипта!"
@@ -32,7 +33,7 @@ ERROR_UNKNOWN_PARAM="Неизвестный параметр для данног
 
 # Вывести сообщение об ошибке переданное в аргументе и выйти с кодом 1
 function error {
-    echo "ОШИБКА: "${@} >&2
+    echo "ОШИБКА: ${1}" >&2
     exit 1
 }
 

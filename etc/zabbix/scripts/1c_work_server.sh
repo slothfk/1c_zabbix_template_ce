@@ -33,7 +33,7 @@ function get_calls_info {
         dur_avg) echo "СрДл-ть,с | Длит-ть,с | Кол-во | Процессор | Контекст";;
         memory) echo "Память,МБ | СрДл-ть,мс | СрПр-ор,мс | Кол-во | Контекст";;
         iobytes) echo "Объем IO,МБ | Длит-ть,с | Процессор | Кол-во | Контекст";;
-        *) error ${ERROR_UNKNOWN_PARAM} ;;
+        *) error "${ERROR_UNKNOWN_PARAM}" ;;
     esac
 
     put_brack_line
@@ -178,6 +178,6 @@ case ${1} in
     memory) get_memory_counts ;;
     ram) free -b | grep -m1 "^[^ ]" | awk '{ print $2 }';;
     dump_logs) shift; dump_logs ${@} ;;
-    *) error ${ERROR_UNKNOWN_MODE} ;;
+    *) error "${ERROR_UNKNOWN_MODE}" ;;
 esac
 
