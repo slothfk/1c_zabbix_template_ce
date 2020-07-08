@@ -1,0 +1,1 @@
+../../../../etc/cron.hourly/1c_ls_license_info.sh

@@ -1,0 +1,14 @@
+---
+
+- hosts: all
+
+  roles:
+    - general
+
+- hosts: 1c_ws
+  roles:
+    - 1c_ws
+
+- hosts: 1c_ws
+  roles:
+    - 1c_ls

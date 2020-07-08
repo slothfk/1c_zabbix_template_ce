@@ -1,0 +1,25 @@
+---
+# tasks file for 1c_ls
+- name: Copy userparameter for license server
+  copy:
+    src: userparameter_1c-ls.conf
+    dest: /etc/zabbix/zabbix_agentd.d/
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Copy main script for work server
+  copy:
+    src: 1c_license_server.sh
+    dest: /etc/zabbix/scripts/
+    owner: zabbix
+    group: zabbix
+    mode: 0755
+
+- name: Make cron job for license info
+  copy:
+    src: 1c_ls_license_info.sh
+    dest: /etc/cron.hourly/
+    owner: root
+    group: root
+    mode: 0755

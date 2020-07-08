@@ -1,0 +1,9 @@
+---
+# tasks file for general
+- name: Copy common module script
+  copy:
+    src: 1c_common_module.sh
+    dest: /etc/zabbix/scripts/
+    owner: zabbix
+    group: zabbix
+    mode: 0755
