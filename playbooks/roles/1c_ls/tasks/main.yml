@@ -1,5 +1,14 @@
 ---
 # tasks file for 1c_ls
+
+- name: Install required packages
+  yum:
+    name: '{{ packages }}'
+    state: latest
+  vars:
+    packages:
+    - zabbix-sender
+
 - name: Copy userparameter for license server
   copy:
     src: userparameter_1c-ls.conf
@@ -8,7 +17,7 @@
     group: root
     mode: 0644
 
-- name: Copy main script for work server
+- name: Copy main script for license server
   copy:
     src: 1c_license_server.sh
     dest: /etc/zabbix/scripts/

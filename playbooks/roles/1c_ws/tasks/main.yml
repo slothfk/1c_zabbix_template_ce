@@ -1,5 +1,14 @@
 ---
 # tasks file for 1c_ws
+
+- name: Install required packages
+  yum:
+    name: '{{ packages }}'
+  vars:
+    packages:
+    - bc
+    - zabbix-get
+
 - name: Copy userparameter for work server
   copy:
     src: userparameter_1c-ws.conf
