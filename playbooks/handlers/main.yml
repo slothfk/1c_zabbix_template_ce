@@ -1,0 +1,7 @@
+---
+
+- name: Restart zabbix agent
+  service:
+    name: zabbix-agent
+    state: restarted
+  listen: restart zabbix agent needed
