@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-04-16T13:16:19Z</date>
+    <date>2020-05-26T08:48:55Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -11,6 +11,9 @@
         <template>
             <template>Template App 1C Enterprise Work Server</template>
             <name>Template App 1C Enterprise Work Server</name>
+            <description>Шаблон для мониторинга рабочего сервера 1С Предприятия, работающего на платформе GNU/Linux&#13;
+&#13;
+Подробнее https://slothfk.github.io/1c_zabbix_template_ce/</description>
             <groups>
                 <group>
                     <name>Templates (Kaminsoft)</name>
@@ -35,7 +38,7 @@
             </applications>
             <items>
                 <item>
-                    <name>[1С/Серверные вызовы] ТОП по суммарному количеству</name>
+                    <name>[1С/Серверные вызовы] ТОП{$TOP_LIST_SIZE} по суммарному количеству</name>
                     <key>1c.ws.calls[{$LOG_DIR},count,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
                     <history>30d</history>
@@ -49,7 +52,7 @@
                     </applications>
                 </item>
                 <item>
-                    <name>[1С/Серверные вызовы] ТОП  по суммарному процессорному времени</name>
+                    <name>[1С/Серверные вызовы] ТОП{$TOP_LIST_SIZE}  по суммарному процессорному времени</name>
                     <key>1c.ws.calls[{$LOG_DIR},cpu,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
                     <history>30d</history>
@@ -63,7 +66,7 @@
                     </applications>
                 </item>
                 <item>
-                    <name>[1С/Серверные вызовы] ТОП по суммарной длительности</name>
+                    <name>[1С/Серверные вызовы] ТОП{$TOP_LIST_SIZE} по суммарной длительности</name>
                     <key>1c.ws.calls[{$LOG_DIR},duration,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
                     <history>30d</history>
@@ -77,7 +80,7 @@
                     </applications>
                 </item>
                 <item>
-                    <name>[1С/Серверные вызовы] ТОП по средней длительности</name>
+                    <name>[1С/Серверные вызовы] ТОП{$TOP_LIST_SIZE} по средней длительности</name>
                     <key>1c.ws.calls[{$LOG_DIR},dur_avg,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
                     <history>30d</history>
@@ -91,7 +94,7 @@
                     </applications>
                 </item>
                 <item>
-                    <name>[1С/Серверные вызовы] ТОП по суммарному вводу-выводу</name>
+                    <name>[1С/Серверные вызовы] ТОП{$TOP_LIST_SIZE} по суммарному вводу-выводу</name>
                     <key>1c.ws.calls[{$LOG_DIR},iobytes,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
                     <history>30d</history>
@@ -105,7 +108,7 @@
                     </applications>
                 </item>
                 <item>
-                    <name>[1С/Серверные вызовы] ТОП &quot;ленивых&quot; вызовов</name>
+                    <name>[1С/Серверные вызовы] ТОП{$TOP_LIST_SIZE} &quot;ленивых&quot; вызовов</name>
                     <key>1c.ws.calls[{$LOG_DIR},lazy,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
                     <history>30d</history>
@@ -119,7 +122,7 @@
                     </applications>
                 </item>
                 <item>
-                    <name>[1С/Серверные вызовы] ТОП по максимальной памяти за вызов</name>
+                    <name>[1С/Серверные вызовы] ТОП{$TOP_LIST_SIZE} по максимальной памяти за вызов</name>
                     <key>1c.ws.calls[{$LOG_DIR},memory,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
                     <history>30d</history>
@@ -169,7 +172,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
+                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                     <triggers>
                         <trigger>
@@ -199,14 +202,13 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
+                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                     <triggers>
                         <trigger>
                             <expression>{last()}=0</expression>
                             <name>[1С/Блокировки] Отсутствуют блокировки</name>
                             <priority>INFO</priority>
-                            <description>Данное событие говорит либо об отсутствии необходимости следить за показателями по управляемым блокировкам, либо о некорректной настройке технологического журнала 1С Предприятия</description>
                         </trigger>
                     </triggers>
                 </item>
@@ -230,7 +232,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
+                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                     <triggers>
                         <trigger>
@@ -262,7 +264,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
+                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                     <triggers>
                         <trigger>
@@ -274,7 +276,7 @@
                 </item>
                 <item>
                     <name>[1С/Блокировки] Сводка</name>
-                    <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT}]</key>
+                    <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     <delay>1h</delay>
                     <history>30d</history>
                     <trends>0</trends>
@@ -589,26 +591,45 @@
                 <macro>
                     <macro>{$EXCP_THRESHOLD}</macro>
                     <value>100</value>
+                    <description>Пороговое количество исключений на процесс</description>
                 </macro>
                 <macro>
                     <macro>{$LOG_DIR}</macro>
                     <value>/var/log/1C</value>
+                    <description>Каталог технологического журнала</description>
                 </macro>
                 <macro>
                     <macro>{$MAX_LOCK_WAIT}</macro>
                     <value>5</value>
+                    <description>Пороговая величина времени ожидания на управляемых блокировках, сек</description>
+                </macro>
+                <macro>
+                    <macro>{$RAS_PASS}</macro>
+                    <description>Пароль пользователя администратора кластера</description>
                 </macro>
                 <macro>
                     <macro>{$RAS_PORT}</macro>
                     <value>1545</value>
+                    <description>Сетевой порт службы RAS</description>
+                </macro>
+                <macro>
+                    <macro>{$RAS_TIMEOUT}</macro>
+                    <value>1.5</value>
+                    <description>Таймаут ожидания ответа от службы RAS</description>
+                </macro>
+                <macro>
+                    <macro>{$RAS_USER}</macro>
+                    <description>Имя пользователя администратора кластера</description>
                 </macro>
                 <macro>
                     <macro>{$RPHOST_MAX_MEM}</macro>
                     <value>0.85</value>
+                    <description>Относительная допустимая величина объема памяти процессов rphost</description>
                 </macro>
                 <macro>
                     <macro>{$TOP_LIST_SIZE}</macro>
                     <value>25</value>
+                    <description>Количество записей в TOP-списках</description>
                 </macro>
             </macros>
         </template>
@@ -617,17 +638,17 @@
         <trigger>
             <expression>{Template App 1C Enterprise Work Server:1c.ws.ragent.excps.last()}/{Template App 1C Enterprise Work Server:1c.ws.ragent.count.avg(3600)}&gt;{$EXCP_THRESHOLD}</expression>
             <name>[1С/Агент сервера] Количество исключений свыше {$EXCP_THRESHOLD}</name>
-            <priority>HIGH</priority>
+            <priority>AVERAGE</priority>
         </trigger>
         <trigger>
             <expression>{Template App 1C Enterprise Work Server:1c.ws.rmngr.excps.last()}/{Template App 1C Enterprise Work Server:1c.ws.rmngr.count.avg(3600)}&gt;{$EXCP_THRESHOLD}</expression>
             <name>[1С/Менеджер кластера] Количество исключений свыше {$EXCP_THRESHOLD}</name>
-            <priority>HIGH</priority>
+            <priority>AVERAGE</priority>
         </trigger>
         <trigger>
             <expression>{Template App 1C Enterprise Work Server:1c.ws.rphost.excps.last()}/{Template App 1C Enterprise Work Server:1c.ws.rphost.count.avg(3600)}&gt;{$EXCP_THRESHOLD}</expression>
             <name>[1С/Рабочий процесс] Количество исключений свыше {$EXCP_THRESHOLD}</name>
-            <priority>HIGH</priority>
+            <priority>AVERAGE</priority>
         </trigger>
         <trigger>
             <expression>{Template App 1C Enterprise Work Server:1c.ws.rphost.memory.last()}/{Template App 1C Enterprise Work Server:1c.ws.ram.last()}&gt;{$RPHOST_MAX_MEM}</expression>

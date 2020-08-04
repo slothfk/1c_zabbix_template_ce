@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-04-24T09:59:53Z</date>
+    <date>2020-05-26T08:26:38Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -11,6 +11,9 @@
         <template>
             <template>Template App 1C Enterprise Central Server</template>
             <name>Template App 1C Enterprise Central Server</name>
+            <description>Шаблон для мониторинга центального сервера 1С Предприятия, работающего на платформе GNU/Linux&#13;
+&#13;
+Подробнее https://slothfk.github.io/1c_zabbix_template_ce/</description>
             <groups>
                 <group>
                     <name>Templates (Kaminsoft)</name>
