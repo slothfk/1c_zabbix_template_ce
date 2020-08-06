@@ -15,7 +15,7 @@ PATH=${PATH}:$(ls -d /opt/1C/v8*/[xi]* | tail -n1)
 
 # Модуль менеджера задач
 TM_MODULE="1c_common_tm.sh"
-[[ -f ${0%/*}/${TM_MODULE} ]] && source ${0%/*}/${TM_MODULE} 2>/dev/null
+[[ -f ${0%/*}/${TM_MODULE} ]] && source ${0%/*}/${TM_MODULE} 2>/dev/null && TM_AVAILABLE=1
 
 # Каталог для различных кешей скриптов
 CACHE_DIR="/var/tmp/1C"
@@ -138,8 +138,12 @@ function pop_clusters_list {
 
     push_clusters_list # Обновить список перед извлечением
 
-    while read -r CURRENT_HOST; do
-        HOSTS_LIST+=(${CURRENT_HOST})
-    done < ${CLSTR_CACHE}
+    if [[ -n ${1} && ${1} == "self" ]]; then
+        HOSTS_LIST+=($(grep -i "^${HOSTNAME}" ${CLSTR_CACHE}));
+    else
+        while read -r CURRENT_HOST; do
+            HOSTS_LIST+=(${CURRENT_HOST})
+        done < ${CLSTR_CACHE}
+    fi
 
 }

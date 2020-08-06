@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-05-26T08:26:38Z</date>
+    <date>2020-08-06T14:55:21Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -21,10 +21,144 @@
             </groups>
             <applications>
                 <application>
+                    <name>[1C] Информация</name>
+                </application>
+                <application>
                     <name>[1С] Доступность</name>
+                </application>
+                <application>
+                    <name>[1С] Сеансы</name>
                 </application>
             </applications>
             <items>
+                <item>
+                    <name>[1С/Центральный сервер] Количество сеансов фоновых заданий</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.cs.sessions.bg</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <applications>
+                        <application>
+                            <name>[1С] Сеансы</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>summary:\d+:(\d+):\d+:\d+:\d+
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>[1С/Центральный сервер] Количество спящих сеансов</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.cs.sessions.hb</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <applications>
+                        <application>
+                            <name>[1С] Сеансы</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>summary:\d+:\d+:(\d+):\d+:\d+
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>[1С/Центральный сервер] Количество сеансов http-сервисов</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.cs.sessions.http</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <applications>
+                        <application>
+                            <name>[1С] Сеансы</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>summary:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>[1С/Центральный сервер] Общее количество сеансов</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.cs.sessions.total</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <applications>
+                        <application>
+                            <name>[1С] Сеансы</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>summary:(\d+):\d+:\d+:\d+:\d+
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>[1С/Центральный сервер] Количество сеансов веб-сервисов</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.cs.sessions.ws</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <applications>
+                        <application>
+                            <name>[1С] Сеансы</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>summary:\d+:\d+:\d+:(\d+):\d+
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>[1С/Центральный сервер] Текущие сеансы</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    <history>0</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>[1C] Информация</name>
+                        </application>
+                    </applications>
+                </item>
                 <item>
                     <name>[1С/Центральный сервер] Статус сервиса RAS</name>
                     <type>SIMPLE</type>
@@ -49,14 +183,463 @@
                     </triggers>
                 </item>
             </items>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>[1С/Центральный сервер] Кластеры</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>1c.cs.clusters.discovery</key>
+                    <delay>1h</delay>
+                    <status>DISABLED</status>
+                    <lifetime>7d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Количество сеансов фоновых заданий</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.bg[{#CLSTR_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>{#CLSTR_NAME}:\d+:(\d+):\d+:\d+:\d+
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Количество спящих сеансов</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.hb[{#CLSTR_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>{#CLSTR_NAME}:\d+:\d+:(\d+):\d+:\d+
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Количество сеансов http-сервисов</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.hs[{#CLSTR_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>{#CLSTR_NAME}:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Общее количество сеансов</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.total[{#CLSTR_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>{#CLSTR_NAME}:(\d+):\d+:\d+:\d+:\d+
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Количество сеансов веб-сервисов</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.ws[{#CLSTR_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>{#CLSTR_NAME}:\d+:\d+:\d+:(\d+):\d+
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <graph_prototypes>
+                        <graph_prototype>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Текущие сеансы</name>
+                            <graph_items>
+                                <graph_item>
+                                    <drawtype>GRADIENT_LINE</drawtype>
+                                    <color>199C0D</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.total[{#CLSTR_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <drawtype>GRADIENT_LINE</drawtype>
+                                    <color>F63100</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.bg[{#CLSTR_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <drawtype>GRADIENT_LINE</drawtype>
+                                    <color>2774A4</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.hb[{#CLSTR_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>3</sortorder>
+                                    <drawtype>GRADIENT_LINE</drawtype>
+                                    <color>F7941D</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.ws[{#CLSTR_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>4</sortorder>
+                                    <drawtype>GRADIENT_LINE</drawtype>
+                                    <color>FC6EA3</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.hs[{#CLSTR_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                    </graph_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>[1С/Центральный сервер] Информационные базы</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>1c.cs.infobases.discovery[{$IBNAME_WITH_CLSTR},{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    <delay>1h</delay>
+                    <lifetime>7d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Доступность</name>
+                            <type>ZABBIX_ACTIVE</type>
+                            <key>1c.cs.ib.availability[{$RC_BASE_URL}/{#IB_NAME},{$RC_USER},{$RC_PWD}]</key>
+                            <delay>30s</delay>
+                            <history>30d</history>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>[1С] Доступность</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Количество сеансов фоновых заданий</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.bg[{#IB_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>UUID#{#IB_UUID}:\d+:(\d+):\d+:\d+:\d+
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Количество спящих сеансов</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.hb[{#IB_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>UUID#{#IB_UUID}:\d+:\d+:(\d+):\d+:\d+
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Количество сеансов http-сервисов</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.hs[{#IB_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>UUID#{#IB_UUID}:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Общее количество сеансов</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.total[{#IB_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>UUID#{#IB_UUID}:(\d+):\d+:\d+:\d+:\d+
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Количество сеансов веб-сервисов</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.ws[{#IB_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>UUID#{#IB_UUID}:\d+:\d+:\d+:(\d+):\d+
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <graph_prototypes>
+                        <graph_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Текущие сеансы</name>
+                            <graph_items>
+                                <graph_item>
+                                    <drawtype>GRADIENT_LINE</drawtype>
+                                    <color>199C0D</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.total[{#IB_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <drawtype>GRADIENT_LINE</drawtype>
+                                    <color>F63100</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.bg[{#IB_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <drawtype>GRADIENT_LINE</drawtype>
+                                    <color>2774A4</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.hb[{#IB_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>3</sortorder>
+                                    <drawtype>GRADIENT_LINE</drawtype>
+                                    <color>F7941D</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.ws[{#IB_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>4</sortorder>
+                                    <drawtype>GRADIENT_LINE</drawtype>
+                                    <color>FC6EA3</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.hs[{#IB_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                    </graph_prototypes>
+                </discovery_rule>
+            </discovery_rules>
             <macros>
+                <macro>
+                    <macro>{$IBNAME_WITH_CLSTR}</macro>
+                    <value>0</value>
+                    <description>Включать имя кластера в имя информационной базы</description>
+                </macro>
+                <macro>
+                    <macro>{$RAS_PASS}</macro>
+                    <description>Пароль администратора кластера</description>
+                </macro>
                 <macro>
                     <macro>{$RAS_PORT}</macro>
                     <value>1545</value>
+                    <description>Порт сервиса RAS</description>
+                </macro>
+                <macro>
+                    <macro>{$RAS_TIMEOUT}</macro>
+                    <value>1.5</value>
+                    <description>Время ожидания ответа от сервиса RAS</description>
+                </macro>
+                <macro>
+                    <macro>{$RAS_USER}</macro>
+                    <description>Имя пользователя - администратора кластера</description>
+                </macro>
+                <macro>
+                    <macro>{$RC_BASE_URL}</macro>
+                    <value>http://localhost/</value>
+                </macro>
+                <macro>
+                    <macro>{$RC_PASS}</macro>
+                    <value>zabbix</value>
+                </macro>
+                <macro>
+                    <macro>{$RC_USER}</macro>
+                    <value>zabbix</value>
                 </macro>
             </macros>
         </template>
     </templates>
+    <graphs>
+        <graph>
+            <name>[1С/Центральный сервер] Текущие сеансы</name>
+            <graph_items>
+                <graph_item>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template App 1C Enterprise Central Server</host>
+                        <key>1c.cs.sessions.total</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>F63100</color>
+                    <item>
+                        <host>Template App 1C Enterprise Central Server</host>
+                        <key>1c.cs.sessions.bg</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>2774A4</color>
+                    <item>
+                        <host>Template App 1C Enterprise Central Server</host>
+                        <key>1c.cs.sessions.hb</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>3</sortorder>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>F7941D</color>
+                    <item>
+                        <host>Template App 1C Enterprise Central Server</host>
+                        <key>1c.cs.sessions.ws</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>4</sortorder>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>FC6EA3</color>
+                    <item>
+                        <host>Template App 1C Enterprise Central Server</host>
+                        <key>1c.cs.sessions.http</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+    </graphs>
     <value_maps>
         <value_map>
             <name>Service state</name>
