@@ -1,2 +1,18 @@
 ---
 # tasks file for 1c_cs
+
+- name: Copy userparameter for central server
+  copy:
+    src: userparameter_1c-cs.conf
+    dest: /etc/zabbix/zabbix_agentd.d/
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Copy main script for central server
+  copy:
+    src: 1c_central_server.sh
+    dest: /etc/zabbix/scripts/
+    owner: zabbix
+    group: zabbix
+    mode: 0755

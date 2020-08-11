@@ -1,0 +1,1 @@
+../../../../etc/zabbix/scripts/1c_central_server.sh

@@ -1,7 +1,6 @@
 ---
 
-- hosts: all
-
+- hosts: 1c_servers
   roles:
     - general
 
@@ -9,6 +8,11 @@
   roles:
     - 1c_ws
 
-- hosts: 1c_ws
+- hosts: 1c_ls
   roles:
+    - 1c_ws
     - 1c_ls
+
+- hosts: 1c_cs
+  roles:
+    - 1c_cs
