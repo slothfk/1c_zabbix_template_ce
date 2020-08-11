@@ -24,3 +24,30 @@
     owner: zabbix
     group: zabbix
     mode: 0755
+
+- name: Make directory for 1C tech log
+  file:
+    name: /var/log/1C
+    owner: usr1cv8
+    group: grp1cv8
+    mode: 0750
+
+- name: Make directory for 1C tech log
+  file:
+    name: /var/log/1C/zabbix
+    owner: usr1cv8
+    group: grp1cv8
+    mode: 0750
+
+- name: Make directory for problem log
+  file:
+    name: /var/log/1C/zabbix/problem_log
+    owner: zabbix
+    group: grp1cv8
+    mode: 0750
+
+- name: Attach zabbix user to 1C group
+  user:
+    name: zabbix
+    groups: grp1cv8
+    append: yes
