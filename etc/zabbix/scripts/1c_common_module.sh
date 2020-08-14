@@ -132,18 +132,13 @@ function push_clusters_list {
 
 }
 
-# Считать список кластеров из временного файла в массив HOSTS_LIST
-#   (массив должен быть инициализирован до вызова метода)
+# Вывести список кластеров из временного файла:
+#  - если в первом параметре указано self, то выводится только список кластеров текущего сервера
 function pop_clusters_list {
 
     push_clusters_list # Обновить список перед извлечением
 
-    if [[ -n ${1} && ${1} == "self" ]]; then
-        HOSTS_LIST+=($(grep -i "^${HOSTNAME}" ${CLSTR_CACHE}));
-    else
-        while read -r CURRENT_HOST; do
-            HOSTS_LIST+=(${CURRENT_HOST})
-        done < ${CLSTR_CACHE}
-    fi
+    [[ -n ${1} && ${1} == "self" ]] && \
+        grep -i "^${HOSTNAME}" "${CLSTR_CACHE}" | cut -f2 -d: || cat "${CLSTR_CACHE}"
 
 }

@@ -18,11 +18,7 @@ function get_infobase_status {
 
 function get_infobases_list {
 
-    HOSTS_LIST=()
-
-    pop_clusters_list self
-
-    CLUSTERS_LIST=${HOSTS_LIST##*:}
+    CLUSTERS_LIST=$( pop_clusters_list self )
     BASE_INFO='{"data":[ '
     for CURRENT_CLUSTER in ${CLUSTERS_LIST//;/ }; do
         BASE_LIST=$(timeout -s HUP ${RAS_PARAMS[timeout]} rac infobase summary list \
@@ -50,10 +46,9 @@ function get_clusters_list {
 }
 
 function get_clusters_sessions {
-    CLSTR_LIST=${1##*:}
-    for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
+    for CURR_CLSTR in ${1//;/ }; do
         timeout -s HUP ${RAS_PARAMS[timeout]} rac session list --cluster=${CURR_CLSTR%,*} \
-            ${RAS_PARAMS[auth]} ${1%%:*}:${RAS_PARAMS[port]} 2>/dev/null | \
+            ${RAS_PARAMS[auth]} ${HOSTNAME}:${RAS_PARAMS[port]} 2>/dev/null | \
             grep -Pe "^(infobase|app-id|hibernate)\s" | \
             perl -pe 's/ //g; s/\n/ /; s/infobase:/\n/; s/.*://' | grep -v "^$" | \
             awk -v cluster=${CURR_CLSTR#*,} '{ 
@@ -78,11 +73,7 @@ function get_clusters_sessions {
 
 function get_session_amounts {
 
-    HOSTS_LIST=()
-
-    pop_clusters_list self
-
-    (execute_tasks get_clusters_sessions ${HOSTS_LIST[@]} ) | \
+    ( execute_tasks get_clusters_sessions $( pop_clusters_list self ) ) | \
         awk -F: 'BEGIN {sc=0; hc=0; bg=0; ws=0; hs=0 } 
            { print $0; 
            if ($1 !~ /^UUID/) {sc+=$2; bg+=$3; hc+=$4; ws+=$5; hs+=$6 } } 

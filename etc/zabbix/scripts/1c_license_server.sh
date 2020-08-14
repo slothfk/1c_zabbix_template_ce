@@ -41,11 +41,7 @@ function get_license_counts {
 
 function used_license {
 
-    HOSTS_LIST=()
-
-    pop_clusters_list
-
-    ( execute_tasks get_license_counts ${HOSTS_LIST[@]} ) | \
+    ( execute_tasks get_license_counts $( pop_clusters_list ) ) | \
         awk -F: 'BEGIN {ul=0; as=0; cl=0; uu=0; wc=0} \
             { print $0; ul+=$2; uu+=$3; as+=$4; cl+=$5; wc+=$6; } \
             END { print "summary:"ul":"uu":"as":"cl":"wc }'
