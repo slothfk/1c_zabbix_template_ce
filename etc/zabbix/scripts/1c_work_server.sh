@@ -102,11 +102,7 @@ function get_locks_info {
 
         shift; make_ras_params ${@}
 
-        HOSTS_LIST=()
-
-        pop_clusters_list
-
-        for CURRENT_HOST in ${HOSTS_LIST}; do
+        for CURRENT_HOST in $( pop_clusters_list ); do
             CLSTR_LIST=${CURRENT_HOST#*:}
             for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
                 SRV_LIST+=( $(timeout -s HUP ${RAS_PARAMS[timeout]} rac server list --cluster=${CURR_CLSTR%,*} \
