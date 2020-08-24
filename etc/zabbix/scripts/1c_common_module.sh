@@ -17,12 +17,8 @@ PATH=${PATH}:$(ls -d /opt/1C/v8*/[xi]* | tail -n1)
 TM_MODULE="1c_common_tm.sh"
 [[ -f ${0%/*}/${TM_MODULE} ]] && source ${0%/*}/${TM_MODULE} 2>/dev/null && TM_AVAILABLE=1
 
-# Каталог для различных кешей скриптов
-CACHE_DIR="/var/tmp/1C"
-[[ ! -d ${CACHE_DIR} ]] && mkdir -p ${CACHE_DIR}
-
 # Файл списка кластеров
-CLSTR_CACHE="${CACHE_DIR}/1c_clusters_cache"
+CLSTR_CACHE="${TMPDIR}/1c_clusters_cache"
 
 # Параметры взаимодействия с сервисом RAS
 declare -A RAS_PARAMS=([port]=1545 [timeout]=1.5 [auth]="")

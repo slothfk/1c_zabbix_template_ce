@@ -129,7 +129,7 @@ function get_excps_info {
 function get_memory_counts {
 
     MEMORY_PAGE_SIZE=$(getconf PAGE_SIZE)
-    RPHOST_PID_HASH="${CACHE_DIR}/1c_rphost_pid_hash"
+    RPHOST_PID_HASH="${TMPDIR}/1c_rphost_pid_hash"
 
     for PROCESS in ${PROCESS_NAMES[@]}; do
         PROCESS_MEMORY=0
