@@ -17,6 +17,9 @@ PATH=${PATH}:$(ls -d /opt/1C/v8*/[xi]* | tail -n1)
 TM_MODULE="1c_common_tm.sh"
 [[ -f ${0%/*}/${TM_MODULE} ]] && source ${0%/*}/${TM_MODULE} 2>/dev/null && TM_AVAILABLE=1
 
+# Проверить инициализацию переменной TMPDIR
+[[ -z ${TMPDIR} ]] && export TMPDIR="/var/tmp"
+
 # Файл списка кластеров
 CLSTR_CACHE="${TMPDIR}/1c_clusters_cache"
 
