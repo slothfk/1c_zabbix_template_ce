@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-05-25T17:59:19Z</date>
+    <date>2020-08-28T07:17:42Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -26,11 +26,6 @@
                     <name>Templates (Kaminsoft)</name>
                 </group>
             </groups>
-            <applications>
-                <application>
-                    <name>[1С] Программные лицензии</name>
-                </application>
-            </applications>
             <items>
                 <item>
                     <name>[1С/Лицензии] Количество лицензий на клиенте</name>
@@ -444,13 +439,6 @@ or &#13;
             <name>[1С/Лицензии] Количество лицензий с клиентских компьютеров &gt; 50%</name>
             <status>DISABLED</status>
             <priority>WARNING</priority>
-            <manual_close>YES</manual_close>
-        </trigger>
-        <trigger>
-            <expression>{Template App 1C Enterprise License Server:1c.ws.rmngr.count.avg(600)}-{Template App 1C Enterprise License Server:1c.ws.rmngr.count.last()}&gt;0.5</expression>
-            <name>[1С/Сервер лицензирования] Отключение от кластера</name>
-            <priority>HIGH</priority>
-            <description>Если сервер лицензирования выведен из состава кластера, закройте проблему вручную!</description>
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
