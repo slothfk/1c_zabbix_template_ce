@@ -21,7 +21,7 @@
             </groups>
             <applications>
                 <application>
-                    <name>[1C] Информация</name>
+                    <name>[1С] Информация</name>
                 </application>
                 <application>
                     <name>[1С] Доступность</name>
@@ -155,7 +155,7 @@
                     <value_type>TEXT</value_type>
                     <applications>
                         <application>
-                            <name>[1C] Информация</name>
+                            <name>[1С] Информация</name>
                         </application>
                     </applications>
                 </item>
