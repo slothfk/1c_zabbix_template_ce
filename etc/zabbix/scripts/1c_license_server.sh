@@ -7,13 +7,14 @@
 # Email: fedotov@kaminsoft.ru
 #
 
-source ${0%/*}/1c_common_module.sh 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
+WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
+source "${WORK_DIR}"/1c_common_module.sh || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
 function licenses_summary {
 
     RING_TOOL=$(check_ring_license) || exit 1
     
-    ( execute_tasks license_info $(get_license_list ${RING_TOOL}) ) | \
+    ( execute_tasks license_info $(get_license_list "${RING_TOOL}") ) | \
         awk 'BEGIN { files=0; users=0 } 
             { files+=1; users+=$1 } 
             END { print files":"users }'
@@ -21,7 +22,7 @@ function licenses_summary {
 }
 
 function license_info {
-    ${RING_TOOL} license info --send-statistics false --name ${1} | \
+    "${RING_TOOL}" license info --send-statistics false --name ${1} | \
         grep -Pe '(Описание|Description).*на \d+ .*' | perl -pe 's/.*на (\d+) .*/\1/;'
 }
 
