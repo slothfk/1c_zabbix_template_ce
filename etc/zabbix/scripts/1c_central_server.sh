@@ -7,7 +7,8 @@
 # Email: fedotov@kaminsoft.ru
 #
 
-source ${0%/*}/1c_common_module.sh 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
+WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
+source "${WORK_DIR}"/1c_common_module.sh || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
 function get_infobase_status {
     curl -u "${2}:${3}" --header "SOAPAction: http://www.1c.ru/SSL/RemoteControl_1_0_0_1#RemoteControl:GetCurrentState" \
@@ -51,7 +52,7 @@ function get_clusters_sessions {
             ${RAS_PARAMS[auth]} ${HOSTNAME}:${RAS_PARAMS[port]} 2>/dev/null | \
             grep -Pe "^(infobase|app-id|hibernate)\s" | \
             perl -pe 's/ //g; s/\n/ /; s/infobase:/\n/; s/.*://' | grep -v "^$" | \
-            awk -v cluster=${CURR_CLSTR#*,} '{ 
+            awk -v cluster="${CURR_CLSTR#*,}" '{ 
                 ib_mark="UUID#"$1;
                 sc[cluster]+=1; sc[ib_mark]+=1; 
                 switch ( $2 ) { 
