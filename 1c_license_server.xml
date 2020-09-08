@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-08-28T07:17:42Z</date>
+    <date>2020-09-08T12:59:07Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
         </group>
     </groups>
-    <applications>
-      <application>
-        <name>[1С] Программные лицензии</name>
-      </application>
-    </applications>
     <templates>
         <template>
             <template>Template App 1C Enterprise License Server</template>
@@ -31,6 +26,11 @@
                     <name>Templates (Kaminsoft)</name>
                 </group>
             </groups>
+            <applications>
+                <application>
+                    <name>[1С] Программные лицензии</name>
+                </application>
+            </applications>
             <items>
                 <item>
                     <name>[1С/Лицензии] Количество лицензий на клиенте</name>
