@@ -7,6 +7,11 @@
             <name>Templates (Kaminsoft)</name>
         </group>
     </groups>
+    <applications>
+      <application>
+        <name>[1С] Программные лицензии</name>
+      </application>
+    </applications>
     <templates>
         <template>
             <template>Template App 1C Enterprise License Server</template>
