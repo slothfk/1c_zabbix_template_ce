@@ -7,7 +7,8 @@
 # Email: fedotov@kaminsoft.ru
 #
 
-source ${0%/*}/1c_common_module.sh 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
+WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
+source "${WORK_DIR}"/1c_common_module.sh || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
 # Коды завершения процедуры архивирования файлов технологического журнала
 DUMP_CODE_0=0   # Архивированение файлов ТЖ выполнено успешно
@@ -98,7 +99,8 @@ function get_locks_info {
 
     echo ${RESULT[@]} | perl -pe 's/<nl>\s?/\n/g'
 
-    if [[ ${RESULT[1]%<*} != 0 || ${RESULT[3]%<*} != 0 || $(echo "${RESULT[5]%<*} > ${WAIT_LIMIT}" | bc) != 0 ]]; then
+    if [[ ${RESULT[1]%<*} != 0 || ${RESULT[3]%<*} != 0 || \
+        $( awk "BEGIN { print (${RESULT[5]%<*} > ${WAIT_LIMIT}) }" ) == 1 ]]; then
 
         shift; make_ras_params ${@}
 
@@ -132,11 +134,20 @@ function get_memory_counts {
     RPHOST_PID_HASH="${TMPDIR}/1c_rphost_pid_hash"
 
     for PROCESS in ${PROCESS_NAMES[@]}; do
-        PROCESS_MEMORY=0
-        PID_LIST=$(pgrep -xd, ${PROCESS})
-        for CURRENT_PID in ${PID_LIST//,/ }; do
-            (( PROCESS_MEMORY+=$(cut -f2 -d" " /proc/${CURRENT_PID}/statm)*${MEMORY_PAGE_SIZE} )) ;
-        done
+        PROCESS_MEMORY=0; unset PID_LIST
+        if [ -z ${IS_WINDOWS} ]; then
+            PID_LIST=$(pgrep -xd, ${PROCESS})
+            for CURRENT_PID in ${PID_LIST//,/ }; do
+                (( PROCESS_MEMORY+=$(cut -f2 -d" " /proc/${CURRENT_PID}/statm)*${MEMORY_PAGE_SIZE} )) ;
+            done
+        else
+            for PROC_INFO in $(wmic path win32_process where "caption like '${PROCESS}%'" \
+                get processid,workingsetsize /format:csv | grep -v "^$" | tail -n+2 ); do
+                (( PROCESS_MEMORY+=$( echo "${PROC_INFO}" | cut -f3 -d, ) )) ;
+                PID_LIST+=$( echo "${PROC_INFO}" | cut -f2 -d, )","
+            done
+        fi
+
         if [[ ${PROCESS} == "rphost" ]]; then 
             RPHOST_OLD_HASH=$(cat ${RPHOST_PID_HASH} 2>/dev/null)
             echo ${PID_LIST} | md5sum | cut -f1 -d\  > ${RPHOST_PID_HASH}
@@ -163,6 +174,11 @@ function dump_logs {
 
 }
 
+function get_physical_memory {
+    [ -z ${IS_WINDOWS} ] && free -b | grep -m1 "^[^ ]" | awk '{ print $2 }' ||
+        wmic computersystem get totalphysicalmemory | grep -Pe "^\d"
+}
+
 case ${1} in
     calls | locks | excps) check_log_dir ${2} ${1};
         LOG_FILE=$(date --date="last hour" "+%y%m%d%H");
@@ -172,7 +188,7 @@ case ${1} in
     locks) shift 2; get_locks_info ${@} ;;
     excps) shift 2; get_excps_info ${@} ;;
     memory) get_memory_counts ;;
-    ram) free -b | grep -m1 "^[^ ]" | awk '{ print $2 }';;
+    ram) get_physical_memory ;;
     dump_logs) shift; dump_logs ${@} ;;
     *) error "${ERROR_UNKNOWN_MODE}" ;;
 esac
