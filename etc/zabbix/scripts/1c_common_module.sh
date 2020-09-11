@@ -107,7 +107,7 @@ function push_clusters_list {
     # Сохранить список UUID кластеров во временный файл
     function push_clusters_uuid {
         CURR_CLSTR=$( timeout -s HUP ${RAS_PARAMS[timeout]} rac cluster list \
-            ${1%%:*}:${RAS_PARAMS[port]} | grep -Pe '^($|cluster|name|port)' | \
+            ${1%%:*}:${RAS_PARAMS[port]} 2>/dev/null | grep -Pe '^($|cluster|name|port)' | \
             perl -pe "s/.*: /,/; s/(.+)\n/\1/;" | sed 's/^,//; s/"//g' | \
             grep -Pe ${1##*:} | perl -pe 's/(.*,)\d+,(.*)/\1\2/; s/\n/;/' )
 
@@ -116,8 +116,8 @@ function push_clusters_list {
 
     # Получим список менеджеров кластеров, в которых участвует данный сервер, следующего вида:
     #   <имя_сервера>:<номер_порта_0>[|<номер_порта_1>[|..<номер_порта_N>]]
-    RMNGR_LIST=( $( [[ -z ${IS_WINDOWS} ]] && pgrep -ax rphost ||
-        { wmic path win32_process where "caption like 'rphost%'" get CommandLine | grep rphost; } |
+    RMNGR_LIST=( $( { [ -z ${IS_WINDOWS} ] && pgrep -ax rphost ||
+        wmic path win32_process where "caption like 'rphost%'" get CommandLine | grep rphost; } |
         sed -r 's/.*-regport ([^ ]+).*/\0|\1/; s/.*-reghost ([^ ]+).*\|/\1:/' | sort -u | \
         awk -F: '{ if ( clstr_list[$1]== "" ) { clstr_list[$1]=$2 } \
             else { clstr_list[$1]=clstr_list[$1]"|"$2 } } \
