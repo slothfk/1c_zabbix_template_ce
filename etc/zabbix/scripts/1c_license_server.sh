@@ -29,22 +29,27 @@ function licenses_summary {
 }
 
 function license_info {
+
     echo ${LICENSE_CODE[$( "${RING_TOOL}" license info --send-statistics false --name ${1} | \
         grep -Pe '0{7}10{2}\d+' | perl -pe 's/.*: (\d{10})/\1/' )]}
+
 }
 
 function get_license_counts {
+
     CLSTR_LIST=${1##*:}
+
     for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
-        timeout -s HUP ${RAS_PARAMS[timeout]} rac session list --licenses --cluster=${CURR_CLSTR%,*} \
+        timeout -s HUP ${RAS_PARAMS[timeout]} rac session list --licenses --cluster=${CURR_CLSTR%%,*} \
             ${RAS_PARAMS[auth]} ${1%%:*}:${RAS_PARAMS[port]} 2>/dev/null | \
             grep -Pe "(user-name|rmngr-address|app-id)" | \
             perl -pe 's/ //g; s/\n/|/; s/rmngr-address:(\"(.*)\"|)\||/\2/; s/app-id://; s/user-name:/\n/;' | \
-            awk -F"|" -v hostname=${HOSTNAME,,} -v cluster=${CURR_CLSTR#*,} 'BEGIN { sc=0; hc=0; cc=0; wc=0 } \
+            awk -F"|" -v hostname=${HOSTNAME,,} -v cluster=${CURR_CLSTR##*,} 'BEGIN { sc=0; hc=0; cc=0; wc=0 } \
                 { if ($1 != "") { sc+=1; uc[$1]; if ( index(tolower($3), hostname) > 0 ) { hc+=1 } \
                 if ($2 == "WebClient") { wc+=1 } if ($3 == "") { cc+=1 } } } \
                 END {print cluster":"hc":"length(uc)":"sc":"cc":"wc }'
     done
+
 }
 
 function used_license {
@@ -52,7 +57,7 @@ function used_license {
     ( execute_tasks get_license_counts $( pop_clusters_list ) ) | \
         awk -F: 'BEGIN {ul=0; as=0; cl=0; uu=0; wc=0} \
             { print $0; ul+=$2; uu+=$3; as+=$4; cl+=$5; wc+=$6; } \
-            END { print "summary:"ul":"uu":"as":"cl":"wc }'
+            END { print "summary:"ul":"uu":"as":"cl":"wc }' | sed 's/<sp>/ /g'
 
 }
 
@@ -62,7 +67,7 @@ function get_clusters_list {
 
     cut -f2 -d: ${CLSTR_CACHE} | perl -pe 's/;[^\n]/\n/; s/;//' | \
         awk 'BEGIN {FS=","; print "{\"data\":[" } \
-            {print "{\"{#CLSTR_UUID}\":\""$1"\",\"{#CLSTR_NAME}\":\""$2"\"}," } \
+            {print "{\"{#CLSTR_UUID}\":\""$1"\",\"{#CLSTR_NAME}\":"$3"}," } \
             END { print "]}" }' | \
         perl -pe 's/\n//;' | perl -pe 's/(.*),]}/\1]}\n/'
 

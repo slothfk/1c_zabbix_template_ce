@@ -108,10 +108,10 @@ function push_clusters_list {
     function push_clusters_uuid {
         CURR_CLSTR=$( timeout -s HUP ${RAS_PARAMS[timeout]} rac cluster list \
             ${1%%:*}:${RAS_PARAMS[port]} 2>/dev/null | grep -Pe '^($|cluster|name|port)' | \
-            perl -pe "s/.*: /,/; s/(.+)\n/\1/;" | sed 's/^,//; s/"//g' | \
-            grep -Pe ${1##*:} | perl -pe 's/(.*,)\d+,(.*)/\1\2/; s/\n/;/' )
+            perl -pe "s/.*: /,/; s/(.+)\n/\1/;" | sed 's/^,//' | \
+            grep -Pe ${1##*:} | perl -pe 's/\n/;/' )
 
-        [[ -n ${CURR_CLSTR} ]] && echo ${1%%:*}:${CURR_CLSTR} >> ${CLSTR_CACHE}
+        [[ -n ${CURR_CLSTR} ]] && echo "${1%%:*}:${CURR_CLSTR}" >> ${CLSTR_CACHE}
     }
 
     # Получим список менеджеров кластеров, в которых участвует данный сервер, следующего вида:
@@ -144,7 +144,7 @@ function pop_clusters_list {
 
     push_clusters_list # Обновить список перед извлечением
 
-    [[ -n ${1} && ${1} == "self" ]] && \
-        grep -i "^${HOSTNAME}" "${CLSTR_CACHE}" | cut -f2 -d: || cat "${CLSTR_CACHE}"
+    ( [[ -n ${1} && ${1} == "self" ]] && \
+        grep -i "^${HOSTNAME}" "${CLSTR_CACHE}" | cut -f2 -d: || cat "${CLSTR_CACHE}" ) | sed 's/ /<sp>/g; s/"//g'
 
 }

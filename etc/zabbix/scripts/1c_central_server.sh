@@ -23,14 +23,14 @@ function get_infobases_list {
     BASE_INFO='{"data":[ '
     for CURRENT_CLUSTER in ${CLUSTERS_LIST//;/ }; do
         BASE_LIST=$(timeout -s HUP ${RAS_PARAMS[timeout]} rac infobase summary list \
-            --cluster ${CURRENT_CLUSTER%,*} ${RAS_PARAMS[auth]} ${HOSTNAME}:${RAS_PARAMS[port]} | \
+            --cluster ${CURRENT_CLUSTER%%,*} ${RAS_PARAMS[auth]} ${HOSTNAME}:${RAS_PARAMS[port]} | \
             grep -Pe '(infobase|name)' | \
             perl -pe 's/[ "]//g; s/^name:(.*)$/\1\n/; s/^infobase:(.*)/\1,/; s/\n//' | perl -pe 's/\n/;/' )
         for CURRENT_BASE in ${BASE_LIST//;/ }; do
-            BASE_INFO+="{ \"{#CLSTR_UUID}\":\"${CURRENT_CLUSTER%,*}\",\"{#CLSTR_NAME}\":\"${CURRENT_CLUSTER#*,}\",\"{#IB_UUID}\":\"${CURRENT_BASE%,*}\",\"{#IB_NAME}\":\"${CURRENT_BASE#*,}\" }, "
+            BASE_INFO+="{ \"{#CLSTR_UUID}\":\"${CURRENT_CLUSTER%%,*}\",\"{#CLSTR_NAME}\":\"${CURRENT_CLUSTER##*,}\",\"{#IB_UUID}\":\"${CURRENT_BASE%,*}\",\"{#IB_NAME}\":\"${CURRENT_BASE#*,}\" }, "
         done
     done
-    echo "${BASE_INFO%, } ]}"
+    echo "${BASE_INFO%, } ]}" | sed 's/<sp>/ /g'
 }
 
 function get_clusters_list {
@@ -40,7 +40,7 @@ function get_clusters_list {
     grep -i "^${HOSTNAME}" ${CLSTR_CACHE} | cut -f2 -d: | \
         perl -pe 's/;[^\n]/\n/; s/;//' | \
         awk 'BEGIN {FS=","; print "{\"data\":[" } \
-            {print "{\"{#CLSTR_UUID}\":\""$1"\",\"{#CLSTR_NAME}\":\""$2"\"}," } \
+            {print "{\"{#CLSTR_UUID}\":\""$1"\",\"{#CLSTR_NAME}\":"$3"}," } \
             END { print "]}" }' | \
         perl -pe 's/\n//;' | perl -pe 's/(.*),]}/\1]}\n/'
 
@@ -48,11 +48,11 @@ function get_clusters_list {
 
 function get_clusters_sessions {
     for CURR_CLSTR in ${1//;/ }; do
-        timeout -s HUP ${RAS_PARAMS[timeout]} rac session list --cluster=${CURR_CLSTR%,*} \
+        timeout -s HUP ${RAS_PARAMS[timeout]} rac session list --cluster=${CURR_CLSTR%%,*} \
             ${RAS_PARAMS[auth]} ${HOSTNAME}:${RAS_PARAMS[port]} 2>/dev/null | \
             grep -Pe "^(infobase|app-id|hibernate)\s" | \
             perl -pe 's/ //g; s/\n/ /; s/infobase:/\n/; s/.*://' | grep -v "^$" | \
-            awk -v cluster="${CURR_CLSTR#*,}" '{ 
+            awk -v cluster=${CURR_CLSTR##*,} '{ 
                 ib_mark="UUID#"$1;
                 sc[cluster]+=1; sc[ib_mark]+=1; 
                 switch ( $2 ) { 
@@ -78,7 +78,7 @@ function get_session_amounts {
         awk -F: 'BEGIN {sc=0; hc=0; bg=0; ws=0; hs=0 } 
            { print $0; 
            if ($1 !~ /^UUID/) {sc+=$2; bg+=$3; hc+=$4; ws+=$5; hs+=$6 } } 
-           END { print "summary:"sc":"bg":"hc":"ws":"hs }'
+           END { print "summary:"sc":"bg":"hc":"ws":"hs }' | sed 's/<sp>/ /g'
 
 }
 
