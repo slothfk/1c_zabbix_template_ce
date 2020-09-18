@@ -6,7 +6,6 @@
     name: '{{ packages }}'
   vars:
     packages:
-    - bc
     - zabbix-get
 
 - name: Copy userparameter for work server
