@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-09-08T12:59:07Z</date>
+    <date>2020-09-21T11:37:09Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -11,7 +11,7 @@
         <template>
             <template>Template App 1C Enterprise License Server</template>
             <name>Template App 1C Enterprise License Server</name>
-            <description>Шаблон для мониторинга сервиса лицензирования сервера 1С Предприятия, работающего на платформе GNU/Linux&#13;
+            <description>Шаблон для мониторинга сервиса лицензирования сервера 1С Предприятия&#13;
 &#13;
 Является потомком шаблона рабочего сервера 1С Предприятия!&#13;
 &#13;

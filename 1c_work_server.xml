@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-05-26T08:48:55Z</date>
+    <date>2020-09-21T11:38:36Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -11,7 +11,7 @@
         <template>
             <template>Template App 1C Enterprise Work Server</template>
             <name>Template App 1C Enterprise Work Server</name>
-            <description>Шаблон для мониторинга рабочего сервера 1С Предприятия, работающего на платформе GNU/Linux&#13;
+            <description>Шаблон для мониторинга рабочего сервера 1С Предприятия&#13;
 &#13;
 Подробнее https://slothfk.github.io/1c_zabbix_template_ce/</description>
             <groups>
@@ -654,6 +654,11 @@
             <expression>{Template App 1C Enterprise Work Server:1c.ws.rphost.memory.last()}/{Template App 1C Enterprise Work Server:1c.ws.ram.last()}&gt;{$RPHOST_MAX_MEM}</expression>
             <name>[1С/Рабочий процесс] Превышено пороговое значение используемой памяти</name>
             <priority>AVERAGE</priority>
+        </trigger>
+        <trigger>
+            <expression>{Template App 1C Enterprise Work Server:1c.ws.rmngr.memory.last()}&gt;={Template App 1C Enterprise Work Server:1c.ws.rphost.memory.last()}</expression>
+            <name>[1С/Рабочий сервер] Объем памяти rmngr превышает объем rphost</name>
+            <priority>HIGH</priority>
         </trigger>
     </triggers>
     <graphs>
