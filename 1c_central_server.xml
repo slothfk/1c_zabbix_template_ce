@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-09-21T11:33:09Z</date>
+    <date>2020-10-09T15:39:14Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -31,6 +31,55 @@
                 </application>
             </applications>
             <items>
+                <item>
+                    <name>[1С/Центральный сервер] Количество активных сеансов</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.cs.sessions.as</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <description>Число сеансов, имеющих активный серверный вызов</description>
+                    <applications>
+                        <application>
+                            <name>[1С] Сеансы</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>summary:\d+:\d+:\d+:\d+:\d+:(\d+):\d+
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>[1С/Центральный сервер] Максимальная длительность текущего вызова</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.cs.sessions.asm</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <units>ms</units>
+                    <description>Максимальное значение длительности среди серверных вызовов, выполняющихся в настоящий момент</description>
+                    <applications>
+                        <application>
+                            <name>[1С] Сеансы</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>summary:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    </master_item>
+                </item>
                 <item>
                     <name>[1С/Центральный сервер] Количество сеансов фоновых заданий</name>
                     <type>DEPENDENT</type>
@@ -193,6 +242,55 @@
                     <lifetime>7d</lifetime>
                     <item_prototypes>
                         <item_prototype>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Максимальная длительность текущего вызова</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.asm[{#CLSTR_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <units>ms</units>
+                            <description>Максимальное значение длительности среди серверных вызовов, выполняющихся в настоящий момент в данном кластере</description>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>CL#{#CLSTR_UUID}:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Количество активных сеансов</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.as[{#CLSTR_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <description>Число сеансов кластера, имеющих активный серверный вызов</description>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>CL#{#CLSTR_UUID}:\d+:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
                             <name>[1С/Кластер/{#CLSTR_NAME}] Количество сеансов фоновых заданий</name>
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.bg[{#CLSTR_UUID}]</key>
@@ -207,7 +305,7 @@
                             <preprocessing>
                                 <step>
                                     <type>REGEX</type>
-                                    <params>{#CLSTR_NAME}:\d+:(\d+):\d+:\d+:\d+
+                                    <params>CL#{#CLSTR_UUID}:\d+:(\d+):\d+:\d+:\d+
 \1</params>
                                 </step>
                             </preprocessing>
@@ -230,7 +328,7 @@
                             <preprocessing>
                                 <step>
                                     <type>REGEX</type>
-                                    <params>{#CLSTR_NAME}:\d+:\d+:(\d+):\d+:\d+
+                                    <params>CL#{#CLSTR_UUID}:\d+:\d+:(\d+):\d+:\d+
 \1</params>
                                 </step>
                             </preprocessing>
@@ -253,7 +351,7 @@
                             <preprocessing>
                                 <step>
                                     <type>REGEX</type>
-                                    <params>{#CLSTR_NAME}:\d+:\d+:\d+:\d+:(\d+)
+                                    <params>CL#{#CLSTR_UUID}:\d+:\d+:\d+:\d+:(\d+)
 \1</params>
                                 </step>
                             </preprocessing>
@@ -299,7 +397,7 @@
                             <preprocessing>
                                 <step>
                                     <type>REGEX</type>
-                                    <params>{#CLSTR_NAME}:\d+:\d+:\d+:(\d+):\d+
+                                    <params>CL#{#CLSTR_UUID}:\d+:\d+:\d+:(\d+):\d+
 \1</params>
                                 </step>
                             </preprocessing>
@@ -356,6 +454,22 @@
                                         <key>1c.cs.sessions.hs[{#CLSTR_UUID}]</key>
                                     </item>
                                 </graph_item>
+                                <graph_item>
+                                    <sortorder>5</sortorder>
+                                    <color>6C59DC</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.as[{#CLSTR_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>6</sortorder>
+                                    <color>FFFF00</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.asm[{#CLSTR_UUID}]</key>
+                                    </item>
+                                </graph_item>
                             </graph_items>
                         </graph_prototype>
                     </graph_prototypes>
@@ -382,6 +496,55 @@
                             </applications>
                         </item_prototype>
                         <item_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Максимальная длительность текущего вызова</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.asm[{#IB_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <units>ms</units>
+                            <description>Максимальное значение длительности среди серверных вызовов, выполняющихся в настоящий момент в данной информационной базе</description>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>IB#{#IB_UUID}:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Количество активных сеансов</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.as[{#IB_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <description>Число сеансов информационной базы, имеющих активный серверный вызов</description>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>IB#{#IB_UUID}:\d+:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
                             <name>[1С/Инфобаза/{#IB_NAME}] Количество сеансов фоновых заданий</name>
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.bg[{#IB_UUID}]</key>
@@ -396,7 +559,7 @@
                             <preprocessing>
                                 <step>
                                     <type>REGEX</type>
-                                    <params>UUID#{#IB_UUID}:\d+:(\d+):\d+:\d+:\d+
+                                    <params>IB#{#IB_UUID}:\d+:(\d+):\d+:\d+:\d+
 \1</params>
                                 </step>
                             </preprocessing>
@@ -419,7 +582,7 @@
                             <preprocessing>
                                 <step>
                                     <type>REGEX</type>
-                                    <params>UUID#{#IB_UUID}:\d+:\d+:(\d+):\d+:\d+
+                                    <params>IB#{#IB_UUID}:\d+:\d+:(\d+):\d+:\d+
 \1</params>
                                 </step>
                             </preprocessing>
@@ -442,7 +605,7 @@
                             <preprocessing>
                                 <step>
                                     <type>REGEX</type>
-                                    <params>UUID#{#IB_UUID}:\d+:\d+:\d+:\d+:(\d+)
+                                    <params>IB#{#IB_UUID}:\d+:\d+:\d+:\d+:(\d+)
 \1</params>
                                 </step>
                             </preprocessing>
@@ -465,7 +628,7 @@
                             <preprocessing>
                                 <step>
                                     <type>REGEX</type>
-                                    <params>UUID#{#IB_UUID}:(\d+):\d+:\d+:\d+:\d+
+                                    <params>IB#{#IB_UUID}:(\d+):\d+:\d+:\d+:\d+
 \1</params>
                                 </step>
                             </preprocessing>
@@ -488,7 +651,7 @@
                             <preprocessing>
                                 <step>
                                     <type>REGEX</type>
-                                    <params>UUID#{#IB_UUID}:\d+:\d+:\d+:(\d+):\d+
+                                    <params>IB#{#IB_UUID}:\d+:\d+:\d+:(\d+):\d+
 \1</params>
                                 </step>
                             </preprocessing>
@@ -543,6 +706,23 @@
                                     <item>
                                         <host>Template App 1C Enterprise Central Server</host>
                                         <key>1c.cs.sessions.hs[{#IB_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>5</sortorder>
+                                    <drawtype>GRADIENT_LINE</drawtype>
+                                    <color>6C59DC</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.as[{#IB_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>6</sortorder>
+                                    <color>FFFF00</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.asm[{#IB_UUID}]</key>
                                     </item>
                                 </graph_item>
                             </graph_items>
@@ -635,6 +815,24 @@
                     <item>
                         <host>Template App 1C Enterprise Central Server</host>
                         <key>1c.cs.sessions.http</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>5</sortorder>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>6C59DC</color>
+                    <item>
+                        <host>Template App 1C Enterprise Central Server</host>
+                        <key>1c.cs.sessions.as</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>6</sortorder>
+                    <color>FFFF00</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <item>
+                        <host>Template App 1C Enterprise Central Server</host>
+                        <key>1c.cs.sessions.asm</key>
                     </item>
                 </graph_item>
             </graph_items>

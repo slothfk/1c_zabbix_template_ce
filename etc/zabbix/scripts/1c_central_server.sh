@@ -50,10 +50,10 @@ function get_clusters_sessions {
     for CURR_CLSTR in ${1//;/ }; do
         timeout -s HUP ${RAS_PARAMS[timeout]} rac session list --cluster=${CURR_CLSTR%%,*} \
             ${RAS_PARAMS[auth]} ${HOSTNAME}:${RAS_PARAMS[port]} 2>/dev/null | \
-            grep -Pe "^(infobase|app-id|hibernate)\s" | \
+            grep -Pe "^(infobase|app-id|hibernate|duration-current)\s" | \
             perl -pe 's/ //g; s/\n/ /; s/infobase:/\n/; s/.*://' | grep -v "^$" | \
-            awk -v cluster=${CURR_CLSTR##*,} '{ 
-                ib_mark="UUID#"$1;
+            awk -v cluster="CL#${CURR_CLSTR%%,*}" '{ 
+                ib_mark="IB#"$1;
                 sc[cluster]+=1; sc[ib_mark]+=1; 
                 switch ( $2 ) { 
                     case "BackgroundJob":
@@ -66,19 +66,28 @@ function get_clusters_sessions {
                         hs[cluster]+=1; hs[ib_mark]+=1
                         break
                     }
-                if ( $3 == "yes" ) { hc[cluster]+=1; hc[ib_mark]+=1 } }
+                if ( $3 == "yes" ) { hc[cluster]+=1; hc[ib_mark]+=1 } 
+                if ( $4 != 0) { 
+                    as[cluster]+=1; as[ib_mark]+=1; 
+                    if ( as_max[cluster] < $4 ) { 
+                        as_max[cluster]=$4; as_max[ib_mark]=$4; 
+                    } else if ( as_max[ib_mark] < $4 ) { as_max[ib_mark]=$4; }
+                } }
                 END { for (i in sc) { 
-                    print i":"(sc[i]?sc[i]:0)":"(bg[i]?bg[i]:0)":"(hc[i]?hc[i]:0)":"(ws[i]?ws[i]:0)":"(hs[i]?hs[i]:0) } }'
+                    print i":"(sc[i]?sc[i]:0)":"(bg[i]?bg[i]:0)":"(hc[i]?hc[i]:0)":"\
+                        (ws[i]?ws[i]:0)":"(hs[i]?hs[i]:0)":"(as[i]?as[i]:0)":"(as_max[i]?as_max[i]:0) } }'
     done
 }
 
 function get_session_amounts {
 
     ( execute_tasks get_clusters_sessions $( pop_clusters_list self ) ) | \
-        awk -F: 'BEGIN {sc=0; hc=0; bg=0; ws=0; hs=0 } 
-           { print $0; 
-           if ($1 !~ /^UUID/) {sc+=$2; bg+=$3; hc+=$4; ws+=$5; hs+=$6 } } 
-           END { print "summary:"sc":"bg":"hc":"ws":"hs }' | sed 's/<sp>/ /g'
+        awk -F: 'BEGIN {sc=0; hc=0; bg=0; ws=0; hs=0; as=0; as_max=0 } 
+            { print $0; 
+            if ($1 !~ /^IB/) { sc+=$2; bg+=$3; hc+=$4; ws+=$5; hs+=$6; as+=$7;
+                if ( as_max < $8 ) { as_max=$8; } 
+            } } 
+            END { print "summary:"sc":"bg":"hc":"ws":"hs":"as":"as_max }' | sed 's/<sp>/ /g'
 
 }
 
