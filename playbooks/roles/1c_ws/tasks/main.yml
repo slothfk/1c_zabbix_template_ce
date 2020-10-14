@@ -15,13 +15,15 @@
     owner: root
     group: root
     mode: 0644
+  notify: 
+    - Add host to group for restart zabbix agent
 
 - name: Copy main script for work server
   copy:
     src: 1c_work_server.sh
     dest: /etc/zabbix/scripts/
-    owner: zabbix
-    group: zabbix
+    owner: root
+    group: root
     mode: 0755
 
 - name: Make directory for 1C tech log
@@ -29,6 +31,7 @@
     name: /var/log/1C
     owner: usr1cv8
     group: grp1cv8
+    state: directory
     mode: 0750
 
 - name: Make directory for 1C tech log
@@ -36,6 +39,7 @@
     name: /var/log/1C/zabbix
     owner: usr1cv8
     group: grp1cv8
+    state: directory
     mode: 0750
 
 - name: Make directory for problem log
@@ -43,6 +47,7 @@
     name: /var/log/1C/zabbix/problem_log
     owner: zabbix
     group: grp1cv8
+    state: directory
     mode: 0750
 
 - name: Attach zabbix user to 1C group
@@ -50,3 +55,4 @@
     name: zabbix
     groups: grp1cv8
     append: yes
+

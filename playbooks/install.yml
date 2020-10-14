@@ -1,6 +1,6 @@
 ---
 
-- hosts: 1c_servers
+- hosts: 1c
   roles:
     - general
 
@@ -16,3 +16,11 @@
 - hosts: 1c_cs
   roles:
     - 1c_cs
+
+- hosts: hosts_to_restart
+  gather_facts: no
+  tasks:
+    - name: Restart zabbix agent
+      service:
+        name: zabbix-agent
+        state: restarted
