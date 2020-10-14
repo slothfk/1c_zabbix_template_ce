@@ -1,2 +1,6 @@
 ---
 # handlers file for 1c_ws
+
+- name: Add host to group for restart zabbix agent
+  group_by:
+    key: hosts_to_restart
