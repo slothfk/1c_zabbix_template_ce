@@ -8,7 +8,7 @@
 #
 
 WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
-source "${WORK_DIR}"/1c_common_module.sh || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
+source "${WORK_DIR}"/1c_common_module.sh 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
 # Коды завершения процедуры архивирования файлов технологического журнала
 DUMP_CODE_0=0   # Архивированение файлов ТЖ выполнено успешно

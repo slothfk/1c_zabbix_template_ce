@@ -8,7 +8,7 @@
     owner: root
     group: root
     mode: 0644
-  notify: 
+  notify:
     - Add host to group for restart zabbix agent
 
 

@@ -36,7 +36,7 @@
         <property name="cputime"/>
         <property name="inbytes"/>
         <property name="outbytes"/>
-     </log>
+    </log>
     <log location="{{tech_logs_dir}}/zabbix/excps" history="1">
         <event>
             <eq property="name" value="excp"/>

@@ -8,7 +8,7 @@
 #
 
 WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
-source "${WORK_DIR}"/1c_common_module.sh || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
+source "${WORK_DIR}"/1c_common_module.sh 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
 declare -A LICENSE_CODE=(    # Коды пользовательских лицензий
     [0000000100005]=5        # 5 пользователей

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-10-09T15:39:14Z</date>
+    <date>2020-10-14T12:48:26Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -62,7 +62,8 @@
                     <delay>0</delay>
                     <history>30d</history>
                     <trends>90d</trends>
-                    <units>ms</units>
+                    <value_type>FLOAT</value_type>
+                    <units>s</units>
                     <description>Максимальное значение длительности среди серверных вызовов, выполняющихся в настоящий момент</description>
                     <applications>
                         <application>
@@ -74,6 +75,10 @@
                             <type>REGEX</type>
                             <params>summary:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
 \1</params>
+                        </step>
+                        <step>
+                            <type>MULTIPLIER</type>
+                            <params>0.001</params>
                         </step>
                     </preprocessing>
                     <master_item>
@@ -248,7 +253,8 @@
                             <delay>0</delay>
                             <history>30d</history>
                             <trends>90d</trends>
-                            <units>ms</units>
+                            <value_type>FLOAT</value_type>
+                            <units>s</units>
                             <description>Максимальное значение длительности среди серверных вызовов, выполняющихся в настоящий момент в данном кластере</description>
                             <applications>
                                 <application>
@@ -260,6 +266,10 @@
                                     <type>REGEX</type>
                                     <params>CL#{#CLSTR_UUID}:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
 \1</params>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>0.001</params>
                                 </step>
                             </preprocessing>
                             <master_item>
@@ -374,7 +384,7 @@
                             <preprocessing>
                                 <step>
                                     <type>REGEX</type>
-                                    <params>{#CLSTR_NAME}:(\d+):\d+:\d+:\d+:\d+
+                                    <params>CL#{#CLSTR_UUID}:(\d+):\d+:\d+:\d+:\d+
 \1</params>
                                 </step>
                             </preprocessing>
@@ -502,7 +512,8 @@
                             <delay>0</delay>
                             <history>30d</history>
                             <trends>90d</trends>
-                            <units>ms</units>
+                            <value_type>FLOAT</value_type>
+                            <units>s</units>
                             <description>Максимальное значение длительности среди серверных вызовов, выполняющихся в настоящий момент в данной информационной базе</description>
                             <applications>
                                 <application>
@@ -514,6 +525,10 @@
                                     <type>REGEX</type>
                                     <params>IB#{#IB_UUID}:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
 \1</params>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>0.001</params>
                                 </step>
                             </preprocessing>
                             <master_item>
