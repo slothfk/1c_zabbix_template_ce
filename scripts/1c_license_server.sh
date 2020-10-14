@@ -30,8 +30,10 @@ function licenses_summary {
 
 function license_info {
 
-    echo ${LICENSE_CODE[$( "${RING_TOOL}" license info --send-statistics false --name ${1} | \
-        grep -Pe '0{7}10{2}\d+' | perl -pe 's/.*: (\d{10})/\1/' )]}
+    CURRENT_CODE=$( "${RING_TOOL}" license info --send-statistics false --name ${1} | \
+        grep -Pe '0{7}10{2}\d+' | perl -pe 's/.*: (\d{10})/\1/; s/^$//' )
+
+    [[ -n ${CURRENT_CODE} ]] && echo ${LICENSE_CODE[${CURRENT_CODE}]}
 
 }
 
