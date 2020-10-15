@@ -51,43 +51,40 @@ function get_clusters_sessions {
         timeout -s HUP ${RAS_PARAMS[timeout]} rac session list --cluster=${CURR_CLSTR%%,*} \
             ${RAS_PARAMS[auth]} ${HOSTNAME}:${RAS_PARAMS[port]} 2>/dev/null | \
             grep -Pe "^(infobase|app-id|hibernate|duration-current)\s" | \
-            perl -pe 's/ //g; s/\n/ /; s/infobase:/\n/; s/.*://' | grep -v "^$" | \
+            perl -pe 's/ //g; s/\n/ /; s/infobase:/\n/; s/.*://; s/(1CV8[^ ]*|WebClient)/cl/; 
+                s/BackgroundJob/bg/; s/WSConnection/ws/; s/HTTPServiceConnection/hs/' | grep -v "^$" | \
             awk -v cluster="CL#${CURR_CLSTR%%,*}" '{ 
                 ib_mark="IB#"$1;
-                sc[cluster]+=1; sc[ib_mark]+=1; 
-                switch ( $2 ) { 
-                    case "BackgroundJob":
-                        bg[cluster]+=1; bg[ib_mark]+=1
-                        break
-                    case "WSConnection":
-                        ws[cluster]+=1; ws[ib_mark]+=1
-                        break
-                    case "HTTPServiceConnection":
-                        hs[cluster]+=1; hs[ib_mark]+=1
-                        break
-                    }
-                if ( $3 == "yes" ) { hc[cluster]+=1; hc[ib_mark]+=1 } 
+                ss[cluster]+=1; ss[ib_mark]+=1; 
+                if ( $2 != "cl" ) { sc[$2,cluster]+=1; sc[$2,ib_mark]+=1; }
+                if ( $3 == "yes" ) { sc["hb",cluster]+=1; sc["hb",ib_mark]+=1 } 
                 if ( $4 != 0) { 
                     as[cluster]+=1; as[ib_mark]+=1; 
-                    if ( as_max[cluster] < $4 ) { 
-                        as_max[cluster]=$4; as_max[ib_mark]=$4; 
-                    } else if ( as_max[ib_mark] < $4 ) { as_max[ib_mark]=$4; }
+                    if ( asd[$2,cluster] < $4 ) { 
+                        asd[$2,cluster]=$4; asd[$2,ib_mark]=$4; 
+                    } else if ( asd[$2,ib_mark] < $4 ) { asd[$2,ib_mark]=$4; }
                 } }
-                END { for (i in sc) { 
-                    print i":"(sc[i]?sc[i]:0)":"(bg[i]?bg[i]:0)":"(hc[i]?hc[i]:0)":"\
-                        (ws[i]?ws[i]:0)":"(hs[i]?hs[i]:0)":"(as[i]?as[i]:0)":"(as_max[i]?as_max[i]:0) } }'
+                END { for (i in ss) { 
+                    print i":"(ss[i]?ss[i]:0)":"(sc["bg",i]?sc["bg",i]:0)":"(sc["hb",i]?sc["hb",i]:0)":"\
+                        (sc["ws",i]?sc["ws",i]:0)":"(sc["hs",i]?sc["hs",i]:0)":"(as[i]?as[i]:0)":"\
+                        (asd["cl",i]?asd["cl",i]:0)":"(asd["bg",i]?asd["bg",i]:0)":"\
+                        (asd["ws",i]?asd["ws",i]:0)":"(asd["hs",i]?asd["hs",i]:0) } }'
     done
 }
 
 function get_session_amounts {
 
     ( execute_tasks get_clusters_sessions $( pop_clusters_list self ) ) | \
-        awk -F: 'BEGIN {sc=0; hc=0; bg=0; ws=0; hs=0; as=0; as_max=0 } 
-            { print $0; 
-            if ($1 !~ /^IB/) { sc+=$2; bg+=$3; hc+=$4; ws+=$5; hs+=$6; as+=$7;
-                if ( as_max < $8 ) { as_max=$8; } 
+        awk -F: '{ print $0; 
+            if ($1 !~ /^IB/) { sc["all"]+=$2; sc["bg"]+=$3; sc["hb"]+=$4; sc["ws"]+=$5; sc["hs"]+=$6; sc["as"]+=$7;
+                if ( asd["cl"] < $8 ) { asd["cl"]=$8; } 
+                if ( asd["bg"] < $9 ) { asd["bg"]=$9; } 
+                if ( asd["ws"] < $10 ) { asd["ws"]=$10; } 
+                if ( asd["hs"] < $11 ) { asd["hs"]=$11; } 
             } } 
-            END { print "summary:"sc":"bg":"hc":"ws":"hs":"as":"as_max }' | sed 's/<sp>/ /g'
+            END { print "summary:"(sc["all"]?sc["all"]:0)":"(sc["bg"]?sc["bg"]:0)":"(sc["hb"]?sc["hb"]:0)":"\
+                (sc["ws"]?sc["ws"]:0)":"(sc["hs"]?sc["hs"]:0)":"(sc["as"]?sc["as"]:0)":"(asd["cl"]?asd["cl"]:0)":"\
+                (asd["bg"]?asd["bg"]:0)":"(asd["ws"]?asd["ws"]:0)":"(asd["hs"]?asd["hs"]:0) }' | sed 's/<sp>/ /g'
 
 }
 
