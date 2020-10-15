@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-10-14T12:48:26Z</date>
+    <date>2020-10-15T11:11:49Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -32,7 +32,7 @@
             </applications>
             <items>
                 <item>
-                    <name>[1С/Центральный сервер] Количество активных сеансов</name>
+                    <name>[1С/Сеансы] Количество активных</name>
                     <type>DEPENDENT</type>
                     <key>1c.cs.sessions.as</key>
                     <delay>0</delay>
@@ -56,37 +56,7 @@
                     </master_item>
                 </item>
                 <item>
-                    <name>[1С/Центральный сервер] Максимальная длительность текущего вызова</name>
-                    <type>DEPENDENT</type>
-                    <key>1c.cs.sessions.asm</key>
-                    <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
-                    <value_type>FLOAT</value_type>
-                    <units>s</units>
-                    <description>Максимальное значение длительности среди серверных вызовов, выполняющихся в настоящий момент</description>
-                    <applications>
-                        <application>
-                            <name>[1С] Сеансы</name>
-                        </application>
-                    </applications>
-                    <preprocessing>
-                        <step>
-                            <type>REGEX</type>
-                            <params>summary:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
-\1</params>
-                        </step>
-                        <step>
-                            <type>MULTIPLIER</type>
-                            <params>0.001</params>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
-                    </master_item>
-                </item>
-                <item>
-                    <name>[1С/Центральный сервер] Количество сеансов фоновых заданий</name>
+                    <name>[1С/Сеансы] Количество фоновых заданий</name>
                     <type>DEPENDENT</type>
                     <key>1c.cs.sessions.bg</key>
                     <delay>0</delay>
@@ -109,7 +79,67 @@
                     </master_item>
                 </item>
                 <item>
-                    <name>[1С/Центральный сервер] Количество спящих сеансов</name>
+                    <name>[1С/Сеансы] Текущая длительность вызова фонового задания</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.cs.sessions.bgd</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <units>s</units>
+                    <description>Максимальное значение длительности среди серверных вызовов фоновых заданий, выполняющихся в настоящий момент</description>
+                    <applications>
+                        <application>
+                            <name>[1С] Сеансы</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>summary:\d+:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                        </step>
+                        <step>
+                            <type>MULTIPLIER</type>
+                            <params>0.001</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>[1С/Сеансы] Текущая длительность пользовательского вызова</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.cs.sessions.cld</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <units>s</units>
+                    <description>Максимальное значение длительности среди пользовательских (интерактивных) серверных вызовов, выполняющихся в настоящий момент</description>
+                    <applications>
+                        <application>
+                            <name>[1С] Сеансы</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>summary:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                        </step>
+                        <step>
+                            <type>MULTIPLIER</type>
+                            <params>0.001</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>[1С/Сеансы] Количество спящих</name>
                     <type>DEPENDENT</type>
                     <key>1c.cs.sessions.hb</key>
                     <delay>0</delay>
@@ -132,7 +162,37 @@
                     </master_item>
                 </item>
                 <item>
-                    <name>[1С/Центральный сервер] Количество сеансов http-сервисов</name>
+                    <name>[1С/Сеансы] Текущая длительность вызова http-сервиса</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.cs.sessions.hsd</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <units>s</units>
+                    <description>Максимальное значение длительности среди серверных вызовов http-сервисов, выполняющихся в настоящий момент</description>
+                    <applications>
+                        <application>
+                            <name>[1С] Сеансы</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>summary:\d+:\d+:\d+:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                        </step>
+                        <step>
+                            <type>MULTIPLIER</type>
+                            <params>0.001</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>[1С/Сеансы] Количество http-сервисов</name>
                     <type>DEPENDENT</type>
                     <key>1c.cs.sessions.http</key>
                     <delay>0</delay>
@@ -155,7 +215,7 @@
                     </master_item>
                 </item>
                 <item>
-                    <name>[1С/Центральный сервер] Общее количество сеансов</name>
+                    <name>[1С/Сеансы] Общее количество</name>
                     <type>DEPENDENT</type>
                     <key>1c.cs.sessions.total</key>
                     <delay>0</delay>
@@ -178,7 +238,7 @@
                     </master_item>
                 </item>
                 <item>
-                    <name>[1С/Центральный сервер] Количество сеансов веб-сервисов</name>
+                    <name>[1С/Сеансы] Количество веб-сервисов</name>
                     <type>DEPENDENT</type>
                     <key>1c.cs.sessions.ws</key>
                     <delay>0</delay>
@@ -194,6 +254,36 @@
                             <type>REGEX</type>
                             <params>summary:\d+:\d+:\d+:(\d+):\d+
 \1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>[1С/Сеансы] Текущая длительность вызова веб-сервиса</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.cs.sessions.wsd</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <units>s</units>
+                    <description>Максимальное значение длительности среди серверных вызовов веб-сервисов, выполняющихся в настоящий момент</description>
+                    <applications>
+                        <application>
+                            <name>[1С] Сеансы</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>summary:\d+:\d+:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                        </step>
+                        <step>
+                            <type>MULTIPLIER</type>
+                            <params>0.001</params>
                         </step>
                     </preprocessing>
                     <master_item>
@@ -232,7 +322,7 @@
                         <trigger>
                             <expression>{last()}=0</expression>
                             <name>[1С/RAS] Сервис недоступен на {HOST.NAME}</name>
-                            <priority>AVERAGE</priority>
+                            <priority>HIGH</priority>
                         </trigger>
                     </triggers>
                 </item>
@@ -246,36 +336,6 @@
                     <status>DISABLED</status>
                     <lifetime>7d</lifetime>
                     <item_prototypes>
-                        <item_prototype>
-                            <name>[1С/Кластер/{#CLSTR_NAME}] Максимальная длительность текущего вызова</name>
-                            <type>DEPENDENT</type>
-                            <key>1c.cs.sessions.asm[{#CLSTR_UUID}]</key>
-                            <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
-                            <value_type>FLOAT</value_type>
-                            <units>s</units>
-                            <description>Максимальное значение длительности среди серверных вызовов, выполняющихся в настоящий момент в данном кластере</description>
-                            <applications>
-                                <application>
-                                    <name>[1С] Сеансы</name>
-                                </application>
-                            </applications>
-                            <preprocessing>
-                                <step>
-                                    <type>REGEX</type>
-                                    <params>CL#{#CLSTR_UUID}:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
-\1</params>
-                                </step>
-                                <step>
-                                    <type>MULTIPLIER</type>
-                                    <params>0.001</params>
-                                </step>
-                            </preprocessing>
-                            <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
-                            </master_item>
-                        </item_prototype>
                         <item_prototype>
                             <name>[1С/Кластер/{#CLSTR_NAME}] Количество активных сеансов</name>
                             <type>DEPENDENT</type>
@@ -294,6 +354,36 @@
                                     <type>REGEX</type>
                                     <params>CL#{#CLSTR_UUID}:\d+:\d+:\d+:\d+:\d+:(\d+)
 \1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Текущая длительность вызова фонового задания</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.bgd[{#CLSTR_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>s</units>
+                            <description>Максимальное значение длительности сред серверных вызовов фоновых заданий, выполняющихся в настоящий момент в данном кластере</description>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>CL#{#CLSTR_UUID}:\d+:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>0.001</params>
                                 </step>
                             </preprocessing>
                             <master_item>
@@ -324,6 +414,36 @@
                             </master_item>
                         </item_prototype>
                         <item_prototype>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Текущая длительность пользовательского вызова</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.cld[{#CLSTR_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>s</units>
+                            <description>Максимальное значение длительности среди пользовательских (интерактивных) серверных вызовов, выполняющихся в настоящий момент в данном кластере</description>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>CL#{#CLSTR_UUID}:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>0.001</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
                             <name>[1С/Кластер/{#CLSTR_NAME}] Количество спящих сеансов</name>
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.hb[{#CLSTR_UUID}]</key>
@@ -340,6 +460,36 @@
                                     <type>REGEX</type>
                                     <params>CL#{#CLSTR_UUID}:\d+:\d+:(\d+):\d+:\d+
 \1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Текущая длительность вызова http-сервиса</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.hsd[{#CLSTR_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>s</units>
+                            <description>Максимальное значение длительности сред серверных вызовов http-сервисов, выполняющихся в настоящий момент в данном кластере</description>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>CL#{#CLSTR_UUID}:\d+:\d+:\d+:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>0.001</params>
                                 </step>
                             </preprocessing>
                             <master_item>
@@ -393,6 +543,36 @@
                             </master_item>
                         </item_prototype>
                         <item_prototype>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Текущая длительность вызова веб-сервиса</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.wsd[{#CLSTR_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>s</units>
+                            <description>Максимальное значение длительности сред серверных вызовов веб-сервисов, выполняющихся в настоящий момент в данном кластере</description>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>CL#{#CLSTR_UUID}:\d+:\d+:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>0.001</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
                             <name>[1С/Кластер/{#CLSTR_NAME}] Количество сеансов веб-сервисов</name>
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.ws[{#CLSTR_UUID}]</key>
@@ -417,6 +597,42 @@
                         </item_prototype>
                     </item_prototypes>
                     <graph_prototypes>
+                        <graph_prototype>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Максимальная длительность текущего вызова</name>
+                            <graph_items>
+                                <graph_item>
+                                    <color>199C0D</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.cld[{#CLSTR_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <color>F63100</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.bgd[{#CLSTR_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <color>2774A4</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.wsd[{#CLSTR_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>3</sortorder>
+                                    <color>F7941D</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.hsd[{#CLSTR_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
                         <graph_prototype>
                             <name>[1С/Кластер/{#CLSTR_NAME}] Текущие сеансы</name>
                             <graph_items>
@@ -472,14 +688,6 @@
                                         <key>1c.cs.sessions.as[{#CLSTR_UUID}]</key>
                                     </item>
                                 </graph_item>
-                                <graph_item>
-                                    <sortorder>6</sortorder>
-                                    <color>FFFF00</color>
-                                    <item>
-                                        <host>Template App 1C Enterprise Central Server</host>
-                                        <key>1c.cs.sessions.asm[{#CLSTR_UUID}]</key>
-                                    </item>
-                                </graph_item>
                             </graph_items>
                         </graph_prototype>
                     </graph_prototypes>
@@ -506,36 +714,6 @@
                             </applications>
                         </item_prototype>
                         <item_prototype>
-                            <name>[1С/Инфобаза/{#IB_NAME}] Максимальная длительность текущего вызова</name>
-                            <type>DEPENDENT</type>
-                            <key>1c.cs.sessions.asm[{#IB_UUID}]</key>
-                            <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
-                            <value_type>FLOAT</value_type>
-                            <units>s</units>
-                            <description>Максимальное значение длительности среди серверных вызовов, выполняющихся в настоящий момент в данной информационной базе</description>
-                            <applications>
-                                <application>
-                                    <name>[1С] Сеансы</name>
-                                </application>
-                            </applications>
-                            <preprocessing>
-                                <step>
-                                    <type>REGEX</type>
-                                    <params>IB#{#IB_UUID}:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
-\1</params>
-                                </step>
-                                <step>
-                                    <type>MULTIPLIER</type>
-                                    <params>0.001</params>
-                                </step>
-                            </preprocessing>
-                            <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
-                            </master_item>
-                        </item_prototype>
-                        <item_prototype>
                             <name>[1С/Инфобаза/{#IB_NAME}] Количество активных сеансов</name>
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.as[{#IB_UUID}]</key>
@@ -553,6 +731,36 @@
                                     <type>REGEX</type>
                                     <params>IB#{#IB_UUID}:\d+:\d+:\d+:\d+:\d+:(\d+)
 \1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Текущая длительность вызова фонового задания</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.bgd[{#IB_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>s</units>
+                            <description>Максимальное значение длительности среди серверных вызовов фоновых заданий, выполняющихся в настоящий момент в данной информационной базе</description>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>IB#{#IB_UUID}:\d+:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>0.001</params>
                                 </step>
                             </preprocessing>
                             <master_item>
@@ -583,6 +791,43 @@
                             </master_item>
                         </item_prototype>
                         <item_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Текущая длительность пользовательского вызова</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.cld[{#IB_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>s</units>
+                            <description>Максимальное значение длительности среди пользовательских (интерактивных) серверных вызовов, выполняющихся в настоящий момент в данной информационной базе</description>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>IB#{#IB_UUID}:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>0.001</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}&gt;{$CALL_DUR_THRESHOLD}</expression>
+                                    <name>[1С/Ифобаза/{#IB_NAME}] Превышен порог длительности пользовательского вызова</name>
+                                    <priority>AVERAGE</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
                             <name>[1С/Инфобаза/{#IB_NAME}] Количество спящих сеансов</name>
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.hb[{#IB_UUID}]</key>
@@ -599,6 +844,36 @@
                                     <type>REGEX</type>
                                     <params>IB#{#IB_UUID}:\d+:\d+:(\d+):\d+:\d+
 \1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Текущая длительность вызова http-сервиса</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.hsd[{#IB_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>s</units>
+                            <description>Максимальное значение длительности среди серверных вызовов http-сервисов, выполняющихся в настоящий момент в данной информационной базе</description>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>IB#{#IB_UUID}:\d+:\d+:\d+:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>0.001</params>
                                 </step>
                             </preprocessing>
                             <master_item>
@@ -652,6 +927,36 @@
                             </master_item>
                         </item_prototype>
                         <item_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Текущая длительность вызова веб-сервиса</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.wsd[{#IB_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>s</units>
+                            <description>Максимальное значение длительности среди серверных вызовов веб-сервисов, выполняющихся в настоящий момент в данной информационной базе</description>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>IB#{#IB_UUID}:\d+:\d+:\d+:\d+:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>0.001</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
                             <name>[1С/Инфобаза/{#IB_NAME}] Количество сеансов веб-сервисов</name>
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.ws[{#IB_UUID}]</key>
@@ -676,6 +981,42 @@
                         </item_prototype>
                     </item_prototypes>
                     <graph_prototypes>
+                        <graph_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Максимальная длительность текущего вызова</name>
+                            <graph_items>
+                                <graph_item>
+                                    <color>199C0D</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.cld[{#IB_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <color>F63100</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.bgd[{#IB_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <color>2774A4</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.wsd[{#IB_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>3</sortorder>
+                                    <color>F7941D</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise Central Server</host>
+                                        <key>1c.cs.sessions.hsd[{#IB_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
                         <graph_prototype>
                             <name>[1С/Инфобаза/{#IB_NAME}] Текущие сеансы</name>
                             <graph_items>
@@ -732,20 +1073,17 @@
                                         <key>1c.cs.sessions.as[{#IB_UUID}]</key>
                                     </item>
                                 </graph_item>
-                                <graph_item>
-                                    <sortorder>6</sortorder>
-                                    <color>FFFF00</color>
-                                    <item>
-                                        <host>Template App 1C Enterprise Central Server</host>
-                                        <key>1c.cs.sessions.asm[{#IB_UUID}]</key>
-                                    </item>
-                                </graph_item>
                             </graph_items>
                         </graph_prototype>
                     </graph_prototypes>
                 </discovery_rule>
             </discovery_rules>
             <macros>
+                <macro>
+                    <macro>{$CALL_DUR_THRESHOLD}</macro>
+                    <value>60</value>
+                    <description>Порог длительности пользовательского вызова, сек</description>
+                </macro>
                 <macro>
                     <macro>{$IBNAME_WITH_CLSTR}</macro>
                     <value>0</value>
@@ -763,7 +1101,7 @@
                 <macro>
                     <macro>{$RAS_TIMEOUT}</macro>
                     <value>1.5</value>
-                    <description>Время ожидания ответа от сервиса RAS</description>
+                    <description>Время ожидания ответа от сервиса RAS, сек</description>
                 </macro>
                 <macro>
                     <macro>{$RAS_USER}</macro>
@@ -785,6 +1123,42 @@
         </template>
     </templates>
     <graphs>
+        <graph>
+            <name>[1С/Центральный сервер] Максимальная длительность текущего вызова</name>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template App 1C Enterprise Central Server</host>
+                        <key>1c.cs.sessions.cld</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>F63100</color>
+                    <item>
+                        <host>Template App 1C Enterprise Central Server</host>
+                        <key>1c.cs.sessions.bgd</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <color>2774A4</color>
+                    <item>
+                        <host>Template App 1C Enterprise Central Server</host>
+                        <key>1c.cs.sessions.wsd</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>3</sortorder>
+                    <color>F7941D</color>
+                    <item>
+                        <host>Template App 1C Enterprise Central Server</host>
+                        <key>1c.cs.sessions.hsd</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
         <graph>
             <name>[1С/Центральный сервер] Текущие сеансы</name>
             <graph_items>
@@ -839,15 +1213,6 @@
                     <item>
                         <host>Template App 1C Enterprise Central Server</host>
                         <key>1c.cs.sessions.as</key>
-                    </item>
-                </graph_item>
-                <graph_item>
-                    <sortorder>6</sortorder>
-                    <color>FFFF00</color>
-                    <yaxisside>RIGHT</yaxisside>
-                    <item>
-                        <host>Template App 1C Enterprise Central Server</host>
-                        <key>1c.cs.sessions.asm</key>
                     </item>
                 </graph_item>
             </graph_items>
