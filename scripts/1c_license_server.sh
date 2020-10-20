@@ -46,10 +46,10 @@ function get_license_counts {
             ${RAS_PARAMS[auth]} ${1%%:*}:${RAS_PARAMS[port]} 2>/dev/null | \
             grep -Pe "(user-name|rmngr-address|app-id)" | \
             perl -pe 's/ //g; s/\n/|/; s/rmngr-address:(\"(.*)\"|)\||/\2/; s/app-id://; s/user-name:/\n/;' | \
-            awk -F"|" -v hostname=${HOSTNAME,,} -v cluster=${CURR_CLSTR##*,} 'BEGIN { sc=0; hc=0; cc=0; wc=0 } \
+            awk -F"|" -v hostname=${HOSTNAME,,} -v cluster=${CURR_CLSTR%%,*} 'BEGIN { sc=0; hc=0; cc=0; wc=0 } \
                 { if ($1 != "") { sc+=1; uc[$1]; if ( index(tolower($3), hostname) > 0 ) { hc+=1 } \
                 if ($2 == "WebClient") { wc+=1 } if ($3 == "") { cc+=1 } } } \
-                END {print cluster":"hc":"length(uc)":"sc":"cc":"wc }'
+                END {print "CL#"cluster":"hc":"length(uc)":"sc":"cc":"wc }'
     done
 
 }
@@ -65,13 +65,28 @@ function used_license {
 
 function get_clusters_list {
 
-    [[ ! -f ${CLSTR_CACHE} ]] && error "Не найден файл списка кластеров!"
-
-    cut -f2 -d: ${CLSTR_CACHE} | perl -pe 's/;[^\n]/\n/; s/;//' | \
+    pop_clusters_list | cut -f2 -d: | perl -pe 's/;[^\n]/\n/; s/;//' | \
         awk 'BEGIN {FS=","; print "{\"data\":[" } \
-            {print "{\"{#CLSTR_UUID}\":\""$1"\",\"{#CLSTR_NAME}\":"$3"}," } \
+            {print "{\"{#CLSTR_UUID}\":\""$1"\",\"{#CLSTR_NAME}\":\""$3"\"}," } \
             END { print "]}" }' | \
-        perl -pe 's/\n//;' | perl -pe 's/(.*),]}/\1]}\n/'
+        perl -pe 's/\n//;' | perl -pe 's/(.*),]}/\1]}\n/; s/<sp>/ /g'
+
+}
+
+function check_clusters_disconnection {
+
+    LOST_CLSTR=$( check_clusters_cache lost | sed 's/ /<sp>/g; s/"//g' )
+    
+    if [[ -n ${LOST_CLSTR} ]]; then
+        echo "Произошло отключение от кластера (сервер, имя):"
+        for CURR_RMNGR in ${LOST_CLSTR}; do
+            for CURR_CLSTR in ${CURR_RMNGR//;/ }; do
+                echo "${CURR_RMNGR%:*} - ${CURR_CLSTR##*,}" | sed 's/<sp>/ /g'
+            done
+        done
+    else
+        echo "OK"
+    fi
 
 }
 
@@ -79,5 +94,6 @@ case ${1} in
     info) licenses_summary ;;
     used) shift; make_ras_params ${@}; used_license ;;
     clusters) get_clusters_list ;;
+    check) check_clusters_disconnection ;;
     *) error "${ERROR_UNKNOWN_MODE}" ;;
 esac

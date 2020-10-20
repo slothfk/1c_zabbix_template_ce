@@ -114,27 +114,9 @@ function push_clusters_list {
         [[ -n ${CURR_CLSTR} ]] && echo "${1%%:*}:${CURR_CLSTR}" >> ${CLSTR_CACHE}
     }
 
-    # Получим список менеджеров кластеров, в которых участвует данный сервер, следующего вида:
-    #   <имя_сервера>:<номер_порта_0>[|<номер_порта_1>[|..<номер_порта_N>]]
-    RMNGR_LIST=( $( { [ -z ${IS_WINDOWS} ] && pgrep -ax rphost ||
-        wmic path win32_process where "caption like 'rphost%'" get CommandLine | grep rphost; } |
-        sed -r 's/.*-regport ([^ ]+).*/\0|\1/; s/.*-reghost ([^ ]+).*\|/\1:/' | sort -u | \
-        awk -F: '{ if ( clstr_list[$1]== "" ) { clstr_list[$1]=$2 } \
-            else { clstr_list[$1]=clstr_list[$1]"|"$2 } } \
-            END { for ( i in clstr_list ) { print i":"clstr_list[i]} }' ) )
+    cat /dev/null > ${CLSTR_CACHE}
 
-    # Проверка необходимости обновления временного файла:
-    #   - если временный файл не сущствует
-    #   - если количество строк во временном файле отличается от количества элементов
-    #     списка менеджеров кластеров
-    #   - если временный файл старше 1 часа
-    if [[ ! -e ${CLSTR_CACHE} || ${#RMNGR_LIST[@]} -ne $(grep -c "." ${CLSTR_CACHE}) ||
-        $(date -r ${CLSTR_CACHE} "+%s") -lt $(date -d "last hour" "+%s") ]]; then
-
-        cat /dev/null > ${CLSTR_CACHE}
-
-        execute_tasks push_clusters_uuid ${RMNGR_LIST[@]}
-    fi
+    execute_tasks push_clusters_uuid ${@}
 
 }
 
@@ -142,9 +124,47 @@ function push_clusters_list {
 #  - если в первом параметре указано self, то выводится только список кластеров текущего сервера
 function pop_clusters_list {
 
-    push_clusters_list # Обновить список перед извлечением
+    [[ ! -f ${CLSTR_CACHE} ]] && error "Не найден файл списка кластеров!"
 
     ( [[ -n ${1} && ${1} == "self" ]] && \
         grep -i "^${HOSTNAME}" "${CLSTR_CACHE}" | cut -f2 -d: || cat "${CLSTR_CACHE}" ) | sed 's/ /<sp>/g; s/"//g'
+
+}
+
+# Проверить актуальность файла списка кластеров
+function check_clusters_cache {
+
+    # Получим список менеджеров кластеров, в которых участвует данный сервер, следующего вида:
+    #   <имя_сервера>:<номер_порта_0>[|<номер_порта_1>[|..<номер_порта_N>]]
+    RMNGR_LIST=( $( if [ -z ${IS_WINDOWS} ]; then pgrep -ax rphost; else
+        wmic path win32_process where "caption like 'rphost%'" get CommandLine | grep rphost; fi |
+        sed -r 's/.*-regport ([^ ]+).*/\0|\1/; s/.*-reghost ([^ ]+).*\|/\1:/' | sort -u |
+        awk -F: '{ if ( clstr_list[$1]== "" ) { clstr_list[$1]=$2 } \
+            else { clstr_list[$1]=clstr_list[$1]"|"$2 } } \
+            END { for ( i in clstr_list ) { print i":"clstr_list[i]} }' ) )
+
+    # Проверка необходимости обновления временного файла:
+    #   - если временный файл не существует
+    #   - если количество строк во временном файле отличается от количества элементов
+    #     списка менеджеров кластеров
+    #   - если временный файл старше 1 часа
+    if [[ -e ${CLSTR_CACHE} ]]; then
+        if [[ ${1} == "lost" ]]; then
+            cp ${CLSTR_CACHE} ${CLSTR_CACHE}.${$}
+            for CURR_RMNGR in ${RMNGR_LIST[@]}; do
+                CURR_LOST=$( grep ${CURR_RMNGR%:*} ${CLSTR_CACHE}.${$} | \
+                    sed -re "s/[^:^;]+,(${CURR_RMNGR#*:}),[^;]+;//" )
+                sed -i -re "s/^${CURR_RMNGR%:*}.*$/${CURR_LOST}/; /[^:]+:$/d" ${CLSTR_CACHE}.${$}
+            done
+            grep -v "^$" ${CLSTR_CACHE}.${$} || [[ ${#RMNGR_LIST[@]} -ne $(grep -vc "^$" ${CLSTR_CACHE}) ]] && 
+                push_clusters_list ${RMNGR_LIST[@]}
+            rm -f ${CLSTR_CACHE}.${$} &>/dev/null
+        elif [[ ${#RMNGR_LIST[@]} -ne $(grep -vc "^$" ${CLSTR_CACHE}) ||
+            $(date -r ${CLSTR_CACHE} "+%s") -lt $(date -d "last hour" "+%s") ]]; then
+            push_clusters_list ${RMNGR_LIST[@]}
+        fi
+    else
+        push_clusters_list ${RMNGR_LIST[@]}
+    fi
 
 }

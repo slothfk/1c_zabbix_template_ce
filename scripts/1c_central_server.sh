@@ -35,18 +35,16 @@ function get_infobases_list {
 
 function get_clusters_list {
 
-    [[ ! -f ${CLSTR_CACHE} ]] && error "Не найден файл списка кластеров!"
-
-    grep -i "^${HOSTNAME}" ${CLSTR_CACHE} | cut -f2 -d: | \
-        perl -pe 's/;[^\n]/\n/; s/;//' | \
+    pop_clusters_list self | perl -pe 's/;[^\n]/\n/; s/;//' | \
         awk 'BEGIN {FS=","; print "{\"data\":[" } \
-            {print "{\"{#CLSTR_UUID}\":\""$1"\",\"{#CLSTR_NAME}\":"$3"}," } \
+            {print "{\"{#CLSTR_UUID}\":\""$1"\",\"{#CLSTR_NAME}\":\""$3"\"}," } \
             END { print "]}" }' | \
-        perl -pe 's/\n//;' | perl -pe 's/(.*),]}/\1]}\n/'
+        perl -pe 's/\n//;' | perl -pe 's/(.*),]}/\1]}\n/; s/<sp>/ /g'
 
 }
 
 function get_clusters_sessions {
+
     for CURR_CLSTR in ${1//;/ }; do
         timeout -s HUP ${RAS_PARAMS[timeout]} rac session list --cluster=${CURR_CLSTR%%,*} \
             ${RAS_PARAMS[auth]} ${HOSTNAME}:${RAS_PARAMS[port]} 2>/dev/null | \
@@ -70,9 +68,12 @@ function get_clusters_sessions {
                         (asd["cl",i]?asd["cl",i]:0)":"(asd["bg",i]?asd["bg",i]:0)":"\
                         (asd["ws",i]?asd["ws",i]:0)":"(asd["hs",i]?asd["hs",i]:0) } }'
     done
+
 }
 
 function get_session_amounts {
+
+    check_clusters_cache
 
     ( execute_tasks get_clusters_sessions $( pop_clusters_list self ) ) | \
         awk -F: '{ print $0; 
