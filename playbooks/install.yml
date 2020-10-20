@@ -10,7 +10,6 @@
 
 - hosts: 1c_ls
   roles:
-    - 1c_ws
     - 1c_ls
 
 - hosts: 1c_cs
