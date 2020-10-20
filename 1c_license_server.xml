@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-09-21T11:37:09Z</date>
+    <date>2020-10-20T11:08:22Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -13,14 +13,7 @@
             <name>Template App 1C Enterprise License Server</name>
             <description>Шаблон для мониторинга сервиса лицензирования сервера 1С Предприятия&#13;
 &#13;
-Является потомком шаблона рабочего сервера 1С Предприятия!&#13;
-&#13;
 Подробнее https://slothfk.github.io/1c_zabbix_template_ce/</description>
-            <templates>
-                <template>
-                    <name>Template App 1C Enterprise Work Server</name>
-                </template>
-            </templates>
             <groups>
                 <group>
                     <name>Templates (Kaminsoft)</name>
@@ -28,10 +21,33 @@
             </groups>
             <applications>
                 <application>
+                    <name>[1С] Информация</name>
+                </application>
+                <application>
                     <name>[1С] Программные лицензии</name>
                 </application>
             </applications>
             <items>
+                <item>
+                    <name>[1С/Сервер лицензирования] Проверка кластеров</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>1c.ls.check</key>
+                    <history>30d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>[1С] Информация</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{str(OK)}=0</expression>
+                            <name>[1С/Сервер лицензирования] Отключение от кластера</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
                 <item>
                     <name>[1С/Лицензии] Количество лицензий на клиенте</name>
                     <type>DEPENDENT</type>
@@ -220,11 +236,13 @@
                     <name>[1С/Лицензии] Активные сеансы</name>
                     <type>ZABBIX_ACTIVE</type>
                     <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
-                    <delay>60s</delay>
                     <history>0</history>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
                     <applications>
+                        <application>
+                            <name>[1С] Информация</name>
+                        </application>
                         <application>
                             <name>[1С] Программные лицензии</name>
                         </application>
@@ -444,13 +462,6 @@ or &#13;
             <name>[1С/Лицензии] Количество лицензий с клиентских компьютеров &gt; 50%</name>
             <status>DISABLED</status>
             <priority>WARNING</priority>
-            <manual_close>YES</manual_close>
-        </trigger>
-        <trigger>
-            <expression>{Template App 1C Enterprise License Server:1c.ws.rmngr.count.last()}&lt;{Template App 1C Enterprise License Server:1c.ws.rmngr.count.avg(600)}</expression>
-            <name>[1С/Сервер лицензирования] Отключение от кластера</name>
-            <priority>HIGH</priority>
-            <description>Если сервер лицензирования выведен из состава кластера, закройте проблему вручную!</description>
             <manual_close>YES</manual_close>
         </trigger>
     </triggers>
