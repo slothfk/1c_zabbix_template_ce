@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-10-20T11:08:22Z</date>
+    <date>2020-10-20T11:47:02Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -261,7 +261,7 @@
                         <item_prototype>
                             <name>[1С/Лицензии/{#CLSTR_NAME}] Количество лицензий на клиенте</name>
                             <type>DEPENDENT</type>
-                            <key>1c.ls.license.client[{#CLSTR_NAME}]</key>
+                            <key>1c.ls.license.client[{#CLSTR_UUID}]</key>
                             <delay>0</delay>
                             <history>30d</history>
                             <trends>90d</trends>
@@ -273,7 +273,7 @@
                             <preprocessing>
                                 <step>
                                     <type>REGEX</type>
-                                    <params>{#CLSTR_NAME}:\d+:\d+:\d+:(\d+):\d+
+                                    <params>CL#{#CLSTR_UUID}:\d+:\d+:\d+:(\d+):\d+
 \1</params>
                                 </step>
                             </preprocessing>
@@ -284,7 +284,7 @@
                         <item_prototype>
                             <name>[1С/Лицензии/{#CLSTR_NAME}] Общее количество сеансов</name>
                             <type>DEPENDENT</type>
-                            <key>1c.ls.license.total[{#CLSTR_NAME}]</key>
+                            <key>1c.ls.license.total[{#CLSTR_UUID}]</key>
                             <delay>0</delay>
                             <history>30d</history>
                             <trends>90d</trends>
@@ -296,7 +296,7 @@
                             <preprocessing>
                                 <step>
                                     <type>REGEX</type>
-                                    <params>{#CLSTR_NAME}:\d+:\d+:(\d+):\d+:\d+
+                                    <params>CL#{#CLSTR_UUID}:\d+:\d+:(\d+):\d+:\d+
 \1</params>
                                 </step>
                             </preprocessing>
@@ -307,7 +307,7 @@
                         <item_prototype>
                             <name>[1С/Лицензии/{#CLSTR_NAME}] Количество уникальных пользователей</name>
                             <type>DEPENDENT</type>
-                            <key>1c.ls.license.uniq[{#CLSTR_NAME}]</key>
+                            <key>1c.ls.license.uniq[{#CLSTR_UUID}]</key>
                             <delay>0</delay>
                             <history>30d</history>
                             <trends>90d</trends>
@@ -319,7 +319,7 @@
                             <preprocessing>
                                 <step>
                                     <type>REGEX</type>
-                                    <params>{#CLSTR_NAME}:\d+:(\d+):\d+:\d+:\d+
+                                    <params>CL#{#CLSTR_UUID}:\d+:(\d+):\d+:\d+:\d+
 \1</params>
                                 </step>
                             </preprocessing>
@@ -330,7 +330,7 @@
                         <item_prototype>
                             <name>[1С/Лицензии/{#CLSTR_NAME}] Количество выданных лицензий</name>
                             <type>DEPENDENT</type>
-                            <key>1c.ls.license.used[{#CLSTR_NAME}]</key>
+                            <key>1c.ls.license.used[{#CLSTR_UUID}]</key>
                             <delay>0</delay>
                             <history>30d</history>
                             <trends>90d</trends>
@@ -342,7 +342,7 @@
                             <preprocessing>
                                 <step>
                                     <type>REGEX</type>
-                                    <params>{#CLSTR_NAME}:(\d+):\d+:\d+:\d+:\d+
+                                    <params>CL#{#CLSTR_UUID}:(\d+):\d+:\d+:\d+:\d+
 \1</params>
                                 </step>
                             </preprocessing>
@@ -353,7 +353,7 @@
                         <item_prototype>
                             <name>[1С/Лицензии/{#CLSTR_NAME}] Количество веб-клиентов</name>
                             <type>DEPENDENT</type>
-                            <key>1c.ls.license.webclient[{#CLSTR_NAME}]</key>
+                            <key>1c.ls.license.webclient[{#CLSTR_UUID}]</key>
                             <delay>0</delay>
                             <history>30d</history>
                             <trends>90d</trends>
@@ -365,7 +365,7 @@
                             <preprocessing>
                                 <step>
                                     <type>REGEX</type>
-                                    <params>{#CLSTR_NAME}:\d+:\d+:\d+:\d+:(\d+)
+                                    <params>CL#{#CLSTR_UUID}:\d+:\d+:\d+:\d+:(\d+)
 \1</params>
                                 </step>
                             </preprocessing>
@@ -382,7 +382,7 @@
                                     <color>1B5E20</color>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
-                                        <key>1c.ls.license.used[{#CLSTR_NAME}]</key>
+                                        <key>1c.ls.license.used[{#CLSTR_UUID}]</key>
                                     </item>
                                 </graph_item>
                                 <graph_item>
@@ -390,7 +390,7 @@
                                     <color>2774A4</color>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
-                                        <key>1c.ls.license.uniq[{#CLSTR_NAME}]</key>
+                                        <key>1c.ls.license.uniq[{#CLSTR_UUID}]</key>
                                     </item>
                                 </graph_item>
                                 <graph_item>
@@ -398,7 +398,7 @@
                                     <color>FC6EA3</color>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
-                                        <key>1c.ls.license.client[{#CLSTR_NAME}]</key>
+                                        <key>1c.ls.license.client[{#CLSTR_UUID}]</key>
                                     </item>
                                 </graph_item>
                                 <graph_item>
@@ -406,7 +406,7 @@
                                     <color>6C59DC</color>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
-                                        <key>1c.ls.license.webclient[{#CLSTR_NAME}]</key>
+                                        <key>1c.ls.license.webclient[{#CLSTR_UUID}]</key>
                                     </item>
                                 </graph_item>
                                 <graph_item>
@@ -414,7 +414,7 @@
                                     <color>F7941D</color>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
-                                        <key>1c.ls.license.total[{#CLSTR_NAME}]</key>
+                                        <key>1c.ls.license.total[{#CLSTR_UUID}]</key>
                                     </item>
                                 </graph_item>
                             </graph_items>
