@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-10-20T11:47:02Z</date>
+    <date>2020-10-23T09:11:01Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -430,6 +430,24 @@
                 <macro>
                     <macro>{$LIC_UTIL_LIMIT}</macro>
                     <value>0.9</value>
+                </macro>
+                <macro>
+                    <macro>{$RAS_PASS}</macro>
+                    <description>Пароль пользователя администратора кластера</description>
+                </macro>
+                <macro>
+                    <macro>{$RAS_PORT}</macro>
+                    <value>1545</value>
+                    <description>Сетевой порт службы RAS</description>
+                </macro>
+                <macro>
+                    <macro>{$RAS_TIMEOUT}</macro>
+                    <value>1.5</value>
+                    <description>Таймаут ожидания ответа от службы RAS</description>
+                </macro>
+                <macro>
+                    <macro>{$RAS_USER}</macro>
+                    <description>Имя пользователя администратора кластера</description>
                 </macro>
             </macros>
         </template>
