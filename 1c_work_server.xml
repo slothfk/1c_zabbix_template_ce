@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-10-27T07:49:06Z</date>
+    <date>2020-10-27T13:14:32Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -750,9 +750,16 @@
         </graph>
         <graph>
             <name>[1С/Рабочий сервер] Объем памяти процессов</name>
+            <type>STACKED</type>
+            <ymax_type_1>ITEM</ymax_type_1>
+            <ymax_item_1>
+                <host>Template App 1C Enterprise Work Server</host>
+                <key>1c.ws.ram</key>
+            </ymax_item_1>
             <graph_items>
                 <graph_item>
-                    <color>F63100</color>
+                    <color>199C0D</color>
+                    <yaxisside>RIGHT</yaxisside>
                     <item>
                         <host>Template App 1C Enterprise Work Server</host>
                         <key>1c.ws.ram</key>
@@ -760,7 +767,7 @@
                 </graph_item>
                 <graph_item>
                     <sortorder>1</sortorder>
-                    <color>199C0D</color>
+                    <color>2774A4</color>
                     <item>
                         <host>Template App 1C Enterprise Work Server</host>
                         <key>1c.ws.rphost.memory</key>
@@ -768,7 +775,7 @@
                 </graph_item>
                 <graph_item>
                     <sortorder>2</sortorder>
-                    <color>2774A4</color>
+                    <color>F7941D</color>
                     <item>
                         <host>Template App 1C Enterprise Work Server</host>
                         <key>1c.ws.rmngr.memory</key>
@@ -776,7 +783,7 @@
                 </graph_item>
                 <graph_item>
                     <sortorder>3</sortorder>
-                    <color>F7941D</color>
+                    <color>F63100</color>
                     <item>
                         <host>Template App 1C Enterprise Work Server</host>
                         <key>1c.ws.ragent.memory</key>
