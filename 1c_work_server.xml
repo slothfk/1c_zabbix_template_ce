@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-09-21T11:38:36Z</date>
+    <date>2020-10-27T07:49:06Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -303,6 +303,20 @@
                         <application>
                             <name>[1С] Информация</name>
                         </application>
+                        <application>
+                            <name>[1С] Производительность</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>[1С/Рабочий процесс] Доступная производительность</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>1c.ws.perfs[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <description>Среднее значение доступной производительности рабочих процессов данного сервера</description>
+                    <applications>
                         <application>
                             <name>[1С] Производительность</name>
                         </application>
@@ -735,6 +749,42 @@
             </graph_items>
         </graph>
         <graph>
+            <name>[1С/Рабочий сервер] Объем памяти процессов</name>
+            <graph_items>
+                <graph_item>
+                    <color>F63100</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.ws.ram</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.ws.rphost.memory</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <color>2774A4</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.ws.rmngr.memory</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>3</sortorder>
+                    <color>F7941D</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.ws.ragent.memory</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
             <name>[1С/Рабочий сервер] Ошибки процессов</name>
             <graph_items>
                 <graph_item>
@@ -758,6 +808,48 @@
                     <item>
                         <host>Template App 1C Enterprise Work Server</host>
                         <key>1c.ws.rphost.excps</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>[1С/Рабочий сервер] Процессы сервера</name>
+            <show_triggers>NO</show_triggers>
+            <graph_items>
+                <graph_item>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.ws.rphost.count</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>F63100</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.ws.ragent.count</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <drawtype>BOLD_LINE</drawtype>
+                    <color>2774A4</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.ws.rmngr.count</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>3</sortorder>
+                    <drawtype>BOLD_LINE</drawtype>
+                    <color>F7941D</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.ws.perfs[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </item>
                 </graph_item>
             </graph_items>
