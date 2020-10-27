@@ -168,3 +168,17 @@ function check_clusters_cache {
     fi
 
 }
+
+function get_processes_perfomance {
+
+    CLSTR_LIST=${1#*:}
+    [[ $( expr index ${1} : ) -eq 0 ]] && RAS_HOST=${HOSTNAME} || RAS_HOST=${1%:*}
+
+    for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
+        timeout -s HUP ${RAS_PARAMS[timeout]} rac process list --cluster=${CURR_CLSTR%%,*} \
+            ${RAS_PARAMS[auth]} ${RAS_HOST}:${RAS_PARAMS[port]} | # 2>/dev/null | \
+            grep -Pe "^(host|available-perfomance|$)" | perl -pe "s/.*: ([^.]+).*\n/\1:/" | \
+            awk -F: '{ apc[$1]+=1; aps[$1]+=$2 } END { for (i in apc) { print i":"aps[i]/apc[i] } }'
+    done
+
+}

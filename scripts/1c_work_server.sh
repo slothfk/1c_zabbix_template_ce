@@ -179,6 +179,15 @@ function get_physical_memory {
         wmic computersystem get totalphysicalmemory | grep -Pe "^\d"
 }
 
+function get_available_perfomance {
+
+    check_clusters_cache
+
+    ( execute_tasks get_processes_perfomance $( pop_clusters_list ) ) | grep -i ${HOSTNAME} |
+        awk -F: '{ apc+=1; aps+=$2 } END { if ( apc > 0) { print aps/apc } else { print "0" } }'
+
+}
+
 case ${1} in
     calls | locks | excps) check_log_dir ${2} ${1};
         LOG_FILE=$(date --date="last hour" "+%y%m%d%H");
@@ -190,6 +199,7 @@ case ${1} in
     memory) get_memory_counts ;;
     ram) get_physical_memory ;;
     dump_logs) shift; dump_logs ${@} ;;
+    perfomance) shift; make_ras_params ${@}; get_available_perfomance ;;
     *) error "${ERROR_UNKNOWN_MODE}" ;;
 esac
 
