@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-10-27T13:14:32Z</date>
+    <date>2020-10-27T14:39:23Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -824,16 +824,6 @@
             <show_triggers>NO</show_triggers>
             <graph_items>
                 <graph_item>
-                    <drawtype>GRADIENT_LINE</drawtype>
-                    <color>199C0D</color>
-                    <item>
-                        <host>Template App 1C Enterprise Work Server</host>
-                        <key>1c.ws.rphost.count</key>
-                    </item>
-                </graph_item>
-                <graph_item>
-                    <sortorder>1</sortorder>
-                    <drawtype>GRADIENT_LINE</drawtype>
                     <color>F63100</color>
                     <item>
                         <host>Template App 1C Enterprise Work Server</host>
@@ -841,12 +831,20 @@
                     </item>
                 </graph_item>
                 <graph_item>
-                    <sortorder>2</sortorder>
+                    <sortorder>1</sortorder>
                     <drawtype>BOLD_LINE</drawtype>
                     <color>2774A4</color>
                     <item>
                         <host>Template App 1C Enterprise Work Server</host>
                         <key>1c.ws.rmngr.count</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.ws.rphost.count</key>
                     </item>
                 </graph_item>
                 <graph_item>
@@ -857,6 +855,14 @@
                     <item>
                         <host>Template App 1C Enterprise Work Server</host>
                         <key>1c.ws.perfs[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>4</sortorder>
+                    <color>0040FF</color>
+                    <item>
+                        <host>Template App 1C Enterprise Work Server</host>
+                        <key>1c.ws.rphost.change</key>
                     </item>
                 </graph_item>
             </graph_items>
