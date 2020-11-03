@@ -134,27 +134,25 @@ function get_memory_counts {
     RPHOST_PID_HASH="${TMPDIR}/1c_rphost_pid_hash"
 
     for PROCESS in ${PROCESS_NAMES[@]}; do
-        PROCESS_MEMORY=0; unset PID_LIST
+        PROCESS_MEMORY=0; unset PROC_INFO
         if [ -z ${IS_WINDOWS} ]; then
-            PID_LIST=$(pgrep -xd, ${PROCESS})
-            for CURRENT_PID in ${PID_LIST//,/ }; do
-                (( PROCESS_MEMORY+=$(cut -f2 -d" " /proc/${CURRENT_PID}/statm)*${MEMORY_PAGE_SIZE} )) ;
-            done
+            PROC_INFO[0]="$(pgrep -xd, ${PROCESS})"
+            (( PROC_INFO[1]=$(echo -n ${PROC_INFO[0]} | xargs -P2 -i -d, cat /proc/{}/statm | \
+                awk '{ mem+=$2 } END { print mem }')*${MEMORY_PAGE_SIZE} )) ;
         else
-            for PROC_INFO in $(wmic path win32_process where "caption like '${PROCESS}%'" \
-                get processid,workingsetsize /format:csv | grep -v "^$" | tail -n+2 ); do
-                (( PROCESS_MEMORY+=$( echo "${PROC_INFO}" | cut -f3 -d, ) )) ;
-                PID_LIST+=$( echo "${PROC_INFO}" | cut -f2 -d, )","
-            done
+            PROC_INFO=( $(wmic path win32_process where "caption like '${PROCESS}%'" \
+                get processid,workingsetsize /format:csv | awk -F, \
+                    '/.*,[0-9]+,[0-9]+/ { if (pl=="") {pl=$2} else {pl=pl","$2}; pm+=$3 } 
+                    END {print pl" "pm }') );
         fi
 
         if [[ ${PROCESS} == "rphost" ]]; then 
             RPHOST_OLD_HASH=$(cat ${RPHOST_PID_HASH} 2>/dev/null)
-            echo ${PID_LIST} | md5sum | cut -f1 -d\  > ${RPHOST_PID_HASH}
+            echo ${PROC_INFO[0]} | md5sum | cut -f1 -d\  > ${RPHOST_PID_HASH}
             [[ ${RPHOST_OLD_HASH} == $(cat ${RPHOST_PID_HASH}) ]]
             CHANGE=${?}
         fi
-        echo ${PROCESS}: $(echo ${PID_LIST//,/ } | wc -w) ${PROCESS_MEMORY} ${CHANGE}
+        echo ${PROCESS}: $(echo ${PROC_INFO[0]//,/ } | wc -w) ${PROC_INFO[1]} ${CHANGE}
     done
 
 }
