@@ -24,7 +24,7 @@ function get_infobases_list {
     for CURRENT_CLUSTER in ${CLUSTERS_LIST//;/ }; do
         BASE_LIST=$(timeout -s HUP ${RAS_PARAMS[timeout]} rac infobase summary list \
             --cluster ${CURRENT_CLUSTER%%,*} ${RAS_PARAMS[auth]} ${HOSTNAME}:${RAS_PARAMS[port]} | \
-            grep -Pe '(infobase|name)' | \
+            awk '/(infobase|name)/' | \
             perl -pe 's/[ "]//g; s/^name:(.*)$/\1\n/; s/^infobase:(.*)/\1,/; s/\n//' | perl -pe 's/\n/;/' )
         for CURRENT_BASE in ${BASE_LIST//;/ }; do
             BASE_INFO+="{ \"{#CLSTR_UUID}\":\"${CURRENT_CLUSTER%%,*}\",\"{#CLSTR_NAME}\":\"${CURRENT_CLUSTER##*,}\",\"{#IB_UUID}\":\"${CURRENT_BASE%,*}\",\"{#IB_NAME}\":\"${CURRENT_BASE#*,}\" }, "
@@ -48,7 +48,7 @@ function get_clusters_sessions {
     for CURR_CLSTR in ${1//;/ }; do
         timeout -s HUP ${RAS_PARAMS[timeout]} rac session list --cluster=${CURR_CLSTR%%,*} \
             ${RAS_PARAMS[auth]} ${HOSTNAME}:${RAS_PARAMS[port]} 2>/dev/null | \
-            grep -Pe "^(infobase|app-id|hibernate|duration-current)\s" | \
+            awk '/^(infobase|app-id|hibernate|duration-current)\s/' | \
             perl -pe 's/ //g; s/\n/ /; s/infobase:/\n/; s/.*://; s/(1CV8[^ ]*|WebClient)/cl/; 
                 s/BackgroundJob/bg/; s/WSConnection/ws/; s/HTTPServiceConnection/hs/' | grep -v "^$" | \
             awk -v cluster="CL#${CURR_CLSTR%%,*}" '{ 

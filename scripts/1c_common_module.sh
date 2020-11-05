@@ -107,9 +107,9 @@ function push_clusters_list {
     # Сохранить список UUID кластеров во временный файл
     function push_clusters_uuid {
         CURR_CLSTR=$( timeout -s HUP ${RAS_PARAMS[timeout]} rac cluster list \
-            ${1%%:*}:${RAS_PARAMS[port]} 2>/dev/null | grep -Pe '^($|cluster|name|port)' | \
+            ${1%%:*}:${RAS_PARAMS[port]} 2>/dev/null | awk '/^($|cluster|name|port)/' | \
             perl -pe "s/.*: /,/; s/(.+)\n/\1/;" | sed 's/^,//' | \
-            grep -Pe ${1##*:} | perl -pe 's/\n/;/' )
+            awk "/${1##*:}/" | perl -pe 's/\n/;/' )
 
         [[ -n ${CURR_CLSTR} ]] && echo "${1%%:*}:${CURR_CLSTR}" >> ${CLSTR_CACHE}
     }
@@ -176,8 +176,8 @@ function get_processes_perfomance {
 
     for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
         timeout -s HUP ${RAS_PARAMS[timeout]} rac process list --cluster=${CURR_CLSTR%%,*} \
-            ${RAS_PARAMS[auth]} ${RAS_HOST}:${RAS_PARAMS[port]} | # 2>/dev/null | \
-            grep -Pe "^(host|available-perfomance|$)" | perl -pe "s/.*: ([^.]+).*\n/\1:/" | \
+            ${RAS_PARAMS[auth]} ${RAS_HOST}:${RAS_PARAMS[port]} | 2>/dev/null | \
+            awk '/^(host|available-perfomance|$)/' | perl -pe "s/.*: ([^.]+).*\n/\1:/" | \
             awk -F: '{ apc[$1]+=1; aps[$1]+=$2 } END { for (i in apc) { print i":"aps[i]/apc[i] } }'
     done
 

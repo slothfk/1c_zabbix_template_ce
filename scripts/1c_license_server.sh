@@ -31,7 +31,7 @@ function licenses_summary {
 function license_info {
 
     CURRENT_CODE=$( "${RING_TOOL}" license info --send-statistics false --name ${1} | \
-        grep -Pe '0{7}10{2}\d+' | perl -pe 's/.*: (\d{10})/\1/; s/^$//' )
+        awk '/0{7}10{2}[0-9]+/' | perl -pe 's/.*: (\d{10})/\1/; s/^$//' )
 
     [[ -n ${CURRENT_CODE} ]] && echo ${LICENSE_CODE[${CURRENT_CODE}]}
 
@@ -44,7 +44,7 @@ function get_license_counts {
     for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
         timeout -s HUP ${RAS_PARAMS[timeout]} rac session list --licenses --cluster=${CURR_CLSTR%%,*} \
             ${RAS_PARAMS[auth]} ${1%%:*}:${RAS_PARAMS[port]} 2>/dev/null | \
-            grep -Pe "(user-name|rmngr-address|app-id)" | \
+            awk '/(user-name|rmngr-address|app-id)/' | \
             perl -pe 's/ //g; s/\n/|/; s/rmngr-address:(\"(.*)\"|)\||/\2/; s/app-id://; s/user-name:/\n/;' | \
             awk -F"|" -v hostname=${HOSTNAME,,} -v cluster=${CURR_CLSTR%%,*} 'BEGIN { sc=0; hc=0; cc=0; wc=0 } \
                 { if ($1 != "") { sc+=1; uc[$1]; if ( index(tolower($3), hostname) > 0 ) { hc+=1 } \

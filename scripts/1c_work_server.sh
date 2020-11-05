@@ -39,7 +39,7 @@ function get_calls_info {
 
     put_brack_line
 
-    cat ${LOG_DIR}/rphost_*/${LOG_FILE}.log 2>/dev/null | grep -Pe "CALL,.*(Context|Module)" | \
+    cat ${LOG_DIR}/rphost_*/${LOG_FILE}.log 2>/dev/null | awk "/CALL,.*(Context|Module)/" | \
 	sed -re 's/,Module=(.*),Method=/,Context=ОбщийМодуль.ФоновыйВызов : ОбщийМодуль.\1.Модуль./' | \
         sed -re "s/[0-9]+:[0-9]+.[0-9]+-//; s/,Method=[^,]+//; s/,[a-zA-Z:]+=/,/g" | \
         awk -F, -v mode=${MODE} '{ if ($4) {count[$4"->"$5]+=1; durations[$4"->"$5]+=$1; \
@@ -88,7 +88,7 @@ function get_locks_info {
     echo "lock: $(cat ${LOG_DIR}/rphost_*/${LOG_FILE}.log 2>/dev/null | grep -c ',TLOCK,')"
 
     RESULT=($(cat ${LOG_DIR}/rphost_*/${LOG_FILE}.log 2>/dev/null | \
-        grep -P "(TDEADLOCK|TTIMEOUT|TLOCK.*,WaitConnections=\d+)" | \
+        awk "/(TDEADLOCK|TTIMEOUT|TLOCK.*,WaitConnections=[0-9]+)/" | \
         sed -re "s/[0-9]{2}:[0-9]{2}.[0-9]{6}-//; s/,[a-zA-Z\:]+=/,/g" | \
         awk -F"," -v lts=${WAIT_LIMIT} 'BEGIN {dl=0; to=0; lw=0} { if ($2 == "TDEADLOCK") {dl+=1} \
             else if ($2 == "TTIMEOUT") { to+=1 } \
@@ -134,7 +134,7 @@ function get_memory_counts {
     RPHOST_PID_HASH="${TMPDIR}/1c_rphost_pid_hash"
 
     for PROCESS in ${PROCESS_NAMES[@]}; do
-        PROCESS_MEMORY=0; unset PID_LIST
+        unset PID_LIST
         if [ -z ${IS_WINDOWS} ]; then
             PID_LIST=$(pgrep -xd, ${PROCESS})
             for CURRENT_PID in ${PID_LIST//,/ }; do
@@ -176,7 +176,7 @@ function dump_logs {
 
 function get_physical_memory {
     [ -z ${IS_WINDOWS} ] && free -b | grep -m1 "^[^ ]" | awk '{ print $2 }' ||
-        wmic computersystem get totalphysicalmemory | grep -Pe "^\d"
+        wmic computersystem get totalphysicalmemory | awk "/^[0-9]/"
 }
 
 function get_available_perfomance {
