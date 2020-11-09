@@ -176,7 +176,7 @@ function get_processes_perfomance {
 
     for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
         timeout -s HUP ${RAS_PARAMS[timeout]} rac process list --cluster=${CURR_CLSTR%%,*} \
-            ${RAS_PARAMS[auth]} ${RAS_HOST}:${RAS_PARAMS[port]} | 2>/dev/null | \
+            ${RAS_PARAMS[auth]} ${RAS_HOST}:${RAS_PARAMS[port]} 2>/dev/null | \
             awk '/^(host|available-perfomance|$)/' | perl -pe "s/.*: ([^.]+).*\n/\1:/" | \
             awk -F: '{ apc[$1]+=1; aps[$1]+=$2 } END { for (i in apc) { print i":"aps[i]/apc[i] } }'
     done
