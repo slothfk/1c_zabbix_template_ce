@@ -13,6 +13,12 @@
 <pre>"C:\Program Files\Git\bin\bash.exe" "C:\Program Files\Zabbix Agent\scripts\1c_central_server.sh"</pre>
 обязательно заключая пути в кавычки!
 
+*ВАЖНО:* Указывать имя каталога в макросе *{$LOG_DIR}* требуется в виде
+<pre>/c/Logs</pre>
+вместо привычных
+<pre>C:\Logs</pre>
+Имена каталогов чувствительны к регистру!
+
 Все остальные настройки, касающиеся агента и сервера **Zabbix** делаются ка написано [здесь](./install.md)
 
 [Назад](../README.md)
