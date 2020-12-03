@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-10-27T14:39:23Z</date>
+    <date>2020-12-03T08:01:24Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -614,7 +614,7 @@
                 </macro>
                 <macro>
                     <macro>{$MAX_LOCK_WAIT}</macro>
-                    <value>5</value>
+                    <value>20</value>
                     <description>Пороговая величина времени ожидания на управляемых блокировках, сек</description>
                 </macro>
                 <macro>
