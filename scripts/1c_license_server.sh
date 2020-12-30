@@ -10,13 +10,6 @@
 WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
 source "${WORK_DIR}"/1c_common_module.sh 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
-declare -A LICENSE_CODE=(    # Коды пользовательских лицензий
-    [0000000100005]=5        # 5 пользователей
-    [0000000100015]=10       # 10 пользователей
-    [0000000100050]=50       # 50 пользователей
-    [0000000100100]=100      # 100 пользователей
-    [0000000100500]=500 )    # 500 пользователей
-
 function licenses_summary {
 
     RING_TOOL=$(check_ring_license) || exit 1
@@ -31,9 +24,9 @@ function licenses_summary {
 function license_info {
 
     CURRENT_CODE=$( "${RING_TOOL}" license info --send-statistics false --name ${1} | \
-        awk '/0{7}10{2}[0-9]+/' | perl -pe 's/.*: (\d{10})/\1/; s/^$//' )
+        sed -re 's/(.*0{7}10{3}1)5/\10/' | awk -F':' '/0{7}[10]0(0{3}[35]|10{3}|00[125]0|0[135]00)/ { print $2; exit}' )
 
-    [[ -n ${CURRENT_CODE} ]] && echo ${LICENSE_CODE[${CURRENT_CODE}]}
+    [[ -n ${CURRENT_CODE} ]] && echo ${CURRENT_CODE:10}
 
 }
 
