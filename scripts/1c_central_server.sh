@@ -60,10 +60,8 @@ function get_clusters_sessions {
             awk -v cluster="CL#${CURR_CLSTR%%,*}" -v ib_cache="${IB_CACHE}" 'BEGIN {
                 ss[cluster]=0;
                 while ( getline ib_str < ib_cache > 0) {
-                    if (ib_str ~ "^"substr(cluster,4)) { split(ib_str, ib_uuid);
-                        i="IB#"ib_uuid[2]; ss[i]=0; as[i]=0;
-                        sc["bg",i]=0; sc["hb",i]=0; sc["ws",i]=0; sc["hs",i]=0;
-                        asd["cl",i]=0; asd["bg",i]=0; asd["ws",i]=0; asd["hs",i]=0 }
+                    if (ib_str ~ "^"substr(cluster,4)) { 
+                        split(ib_str, ib_uuid); ss["IB#"ib_uuid[2]]=0; }
                 } }
                 { ib_mark="IB#"$1;
                 ss[cluster]+=1; ss[ib_mark]+=1; 
