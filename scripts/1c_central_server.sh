@@ -10,6 +10,9 @@
 WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
 source "${WORK_DIR}"/1c_common_module.sh 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
+# Файл списка информационных баз
+IB_CACHE=${TMPDIR}/1c_infobase_cache
+
 function get_infobase_status {
     curl -u "${2}:${3}" --header "SOAPAction: http://www.1c.ru/SSL/RemoteControl_1_0_0_1#RemoteControl:GetCurrentState" \
         -d '<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
@@ -18,6 +21,8 @@ function get_infobase_status {
 }
 
 function get_infobases_list {
+
+    cat /dev/null > ${IB_CACHE}
 
     CLUSTERS_LIST=$( pop_clusters_list self )
     BASE_INFO='{"data":[ '
@@ -28,6 +33,7 @@ function get_infobases_list {
             perl -pe 's/[ "]//g; s/^name:(.*)$/\1\n/; s/^infobase:(.*)/\1,/; s/\n//' | perl -pe 's/\n/;/' )
         for CURRENT_BASE in ${BASE_LIST//;/ }; do
             BASE_INFO+="{ \"{#CLSTR_UUID}\":\"${CURRENT_CLUSTER%%,*}\",\"{#CLSTR_NAME}\":\"${CURRENT_CLUSTER##*,}\",\"{#IB_UUID}\":\"${CURRENT_BASE%,*}\",\"{#IB_NAME}\":\"${CURRENT_BASE#*,}\" }, "
+            echo "${CURRENT_CLUSTER%%,*} ${CURRENT_BASE%,*}" >> ${IB_CACHE}
         done
     done
     echo "${BASE_INFO%, } ]}" | sed 's/<sp>/ /g'
@@ -51,8 +57,15 @@ function get_clusters_sessions {
             awk '/^(infobase|app-id|hibernate|duration-current)\s/' | \
             perl -pe 's/ //g; s/\n/ /; s/infobase:/\n/; s/.*://; s/(1CV8[^ ]*|WebClient)/cl/; 
                 s/BackgroundJob/bg/; s/WSConnection/ws/; s/HTTPServiceConnection/hs/' | grep -v "^$" | \
-            awk -v cluster="CL#${CURR_CLSTR%%,*}" '{ 
-                ib_mark="IB#"$1;
+            awk -v cluster="CL#${CURR_CLSTR%%,*}" -v ib_cache="${IB_CACHE}" 'BEGIN {
+                ss[cluster]=0;
+                while ( getline ib_str < ib_cache > 0) {
+                    if (ib_str ~ "^"substr(cluster,4)) { split(ib_str, ib_uuid);
+                        i="IB#"ib_uuid[2]; ss[i]=0; as[i]=0;
+                        sc["bg",i]=0; sc["hb",i]=0; sc["ws",i]=0; sc["hs",i]=0;
+                        asd["cl",i]=0; asd["bg",i]=0; asd["ws",i]=0; asd["hs",i]=0 }
+                } }
+                { ib_mark="IB#"$1;
                 ss[cluster]+=1; ss[ib_mark]+=1; 
                 if ( $2 != "cl" ) { sc[$2,cluster]+=1; sc[$2,ib_mark]+=1; }
                 if ( $3 == "yes" ) { sc["hb",cluster]+=1; sc["hb",ib_mark]+=1 } 
