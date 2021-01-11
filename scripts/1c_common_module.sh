@@ -152,7 +152,7 @@ function check_clusters_cache {
         if [[ ${1} == "lost" ]]; then
             cp ${CLSTR_CACHE} ${CLSTR_CACHE}.${$}
             for CURR_RMNGR in ${RMNGR_LIST[@]}; do
-                CURR_LOST=$( grep ${CURR_RMNGR%:*} ${CLSTR_CACHE}.${$} | \
+                CURR_LOST=$( grep "^${CURR_RMNGR%:*}" ${CLSTR_CACHE}.${$} | \
                     sed -re "s/[^:^;]+,(${CURR_RMNGR#*:}),[^;]+;//" )
                 sed -i -re "s/^${CURR_RMNGR%:*}.*$/${CURR_LOST}/; /[^:]+:$/d" ${CLSTR_CACHE}.${$}
             done
