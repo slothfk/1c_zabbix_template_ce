@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-10-15T11:11:49Z</date>
+    <date>2021-01-18T09:54:05Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -1106,18 +1106,6 @@
                 <macro>
                     <macro>{$RAS_USER}</macro>
                     <description>Имя пользователя - администратора кластера</description>
-                </macro>
-                <macro>
-                    <macro>{$RC_BASE_URL}</macro>
-                    <value>http://localhost/</value>
-                </macro>
-                <macro>
-                    <macro>{$RC_PASS}</macro>
-                    <value>zabbix</value>
-                </macro>
-                <macro>
-                    <macro>{$RC_USER}</macro>
-                    <value>zabbix</value>
                 </macro>
             </macros>
         </template>
