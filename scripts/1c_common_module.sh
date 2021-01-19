@@ -150,7 +150,7 @@ function check_clusters_cache {
     #   - если временный файл старше 1 часа
     if [[ -e ${CLSTR_CACHE} ]]; then
         if [[ ${1} == "lost" ]]; then
-            cp ${CLSTR_CACHE} ${CLSTR_CACHE}.${$} && trap "rm -f ${CLSTR_CACHE}.${$}" 0 1 2 3 9 15
+            cp ${CLSTR_CACHE} ${CLSTR_CACHE}.${$} && trap "rm -f ${CLSTR_CACHE}.${$}; exit 1" 1 2 3 15
             for CURR_RMNGR in ${RMNGR_LIST[@]}; do
                 CURR_LOST=$( grep "^${CURR_RMNGR%:*}" ${CLSTR_CACHE}.${$} | \
                     sed -re "s/[^:^;]+,(${CURR_RMNGR#*:}),[^;]+;//" )
@@ -158,6 +158,7 @@ function check_clusters_cache {
             done
             grep -v "^$" ${CLSTR_CACHE}.${$} || [[ ${#RMNGR_LIST[@]} -ne $(grep -vc "^$" ${CLSTR_CACHE}) ]] && 
                 push_clusters_list ${RMNGR_LIST[@]}
+            rm -f ${CLSTR_CACHE}.${$} &>/dev/null
         elif [[ ${#RMNGR_LIST[@]} -ne $(grep -vc "^$" ${CLSTR_CACHE}) ||
             $(date -r ${CLSTR_CACHE} "+%s") -lt $(date -d "last hour" "+%s") ]]; then
             push_clusters_list ${RMNGR_LIST[@]}
