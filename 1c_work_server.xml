@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2020-12-03T08:01:24Z</date>
+    <date>2021-02-08T08:08:29Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -349,6 +349,12 @@
                             <expression>{last()}=0</expression>
                             <name>[1С/Агент сервера] Нет запущенных процессов</name>
                             <priority>HIGH</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>[1С/Кластер] Отсутствуют все процессы кластера</name>
+                                    <expression>{Template App 1C Enterprise Work Server:1c.ws.ragent.count.last()}=0 and {Template App 1C Enterprise Work Server:1c.ws.rmngr.count.last()}=0 and {Template App 1C Enterprise Work Server:1c.ws.rphost.count.last()}=0</expression>
+                                </dependency>
+                            </dependencies>
                         </trigger>
                     </triggers>
                 </item>
@@ -440,6 +446,12 @@
                             <expression>{last()}=0</expression>
                             <name>[1С/Менеджер кластера] Нет запущенных процессов</name>
                             <priority>HIGH</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>[1С/Агент сервера] Нет запущенных процессов</name>
+                                    <expression>{Template App 1C Enterprise Work Server:1c.ws.ragent.count.last()}=0</expression>
+                                </dependency>
+                            </dependencies>
                         </trigger>
                     </triggers>
                 </item>
@@ -550,6 +562,12 @@
                             <expression>{last()}=0</expression>
                             <name>[1С/Рабочий процесс] Нет запущенных процессов</name>
                             <priority>HIGH</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>[1С/Агент сервера] Нет запущенных процессов</name>
+                                    <expression>{Template App 1C Enterprise Work Server:1c.ws.ragent.count.last()}=0</expression>
+                                </dependency>
+                            </dependencies>
                         </trigger>
                     </triggers>
                 </item>
@@ -604,7 +622,7 @@
             <macros>
                 <macro>
                     <macro>{$EXCP_THRESHOLD}</macro>
-                    <value>100</value>
+                    <value>250</value>
                     <description>Пороговое количество исключений на процесс</description>
                 </macro>
                 <macro>
@@ -655,6 +673,11 @@
             <priority>AVERAGE</priority>
         </trigger>
         <trigger>
+            <expression>{Template App 1C Enterprise Work Server:1c.ws.ragent.count.last()}=0 and {Template App 1C Enterprise Work Server:1c.ws.rmngr.count.last()}=0 and {Template App 1C Enterprise Work Server:1c.ws.rphost.count.last()}=0</expression>
+            <name>[1С/Кластер] Отсутствуют все процессы кластера</name>
+            <priority>HIGH</priority>
+        </trigger>
+        <trigger>
             <expression>{Template App 1C Enterprise Work Server:1c.ws.rmngr.excps.last()}/{Template App 1C Enterprise Work Server:1c.ws.rmngr.count.avg(3600)}&gt;{$EXCP_THRESHOLD}</expression>
             <name>[1С/Менеджер кластера] Количество исключений свыше {$EXCP_THRESHOLD}</name>
             <priority>AVERAGE</priority>
@@ -673,6 +696,12 @@
             <expression>{Template App 1C Enterprise Work Server:1c.ws.rmngr.memory.last()}&gt;={Template App 1C Enterprise Work Server:1c.ws.rphost.memory.last()}</expression>
             <name>[1С/Рабочий сервер] Объем памяти rmngr превышает объем rphost</name>
             <priority>HIGH</priority>
+            <dependencies>
+                <dependency>
+                    <name>[1С/Рабочий процесс] Нет запущенных процессов</name>
+                    <expression>{Template App 1C Enterprise Work Server:1c.ws.rphost.count.last()}=0</expression>
+                </dependency>
+            </dependencies>
         </trigger>
     </triggers>
     <graphs>
