@@ -1,12 +1,8 @@
 ---
 # tasks file for 1c_ws
 
-- name: Install required packages
-  yum:
-    name: '{{ packages }}'
-  vars:
-    packages:
-    - zabbix-get
+#- name: Install required packages
+- include: "install-{{ ansible_os_family }}.yml"
 
 - name: Copy userparameter for work server
   copy:

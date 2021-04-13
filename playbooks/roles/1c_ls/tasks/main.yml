@@ -1,13 +1,8 @@
 ---
 # tasks file for 1c_ls
 
-- name: Install required packages
-  yum:
-    name: '{{ packages }}'
-    state: latest
-  vars:
-    packages:
-    - zabbix-sender
+#- name: Install required packages
+- include: "install-{{ ansible_os_family }}.yml"
 
 - name: Copy userparameter for license server
   copy:

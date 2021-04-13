@@ -1,0 +1,7 @@
+- name: Install required packages
+  apt:
+    name: '{{ packages }}'
+    state: latest
+  vars:
+    packages:
+    - zabbix-sender

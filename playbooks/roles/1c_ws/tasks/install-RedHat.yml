@@ -1,0 +1,6 @@
+- name: Install required packages
+  yum:
+    name: '{{ packages }}'
+  vars:
+    packages:
+    - zabbix-get

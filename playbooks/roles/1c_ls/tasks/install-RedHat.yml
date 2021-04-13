@@ -1,0 +1,7 @@
+- name: Install required packages
+  yum:
+    name: '{{ packages }}'
+    state: latest
+  vars:
+    packages:
+    - zabbix-sender
