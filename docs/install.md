@@ -26,7 +26,7 @@ drwxr-xr-x 2 zabbix  grp1cv8 4096 Aug 27  2019 problem_log
 <pre>$ sudo usermod -a -G grp1cv8 zabbix</pre>
 
 На сервере лицензирования необходимо добавить скрипт **1c_ls_license_info.sh** в задачи **cron**, например так:
-<pre>$ sudo ln -s /etc/zabbix/scripts/1c_ls_license_info.sh /etc/cron.hourly/</pre>
+<pre>$ sudo ln -s /etc/zabbix/scripts/1c_ls_license_info.sh /etc/cron.hourly/1c_ls_license_info</pre>
 
 ## Установка с помощью ansible
 Если в рабочем окружении используется **ansible**, то для развертывания шаблона на сервера с **CentOS** можно воспользоваться сценарием **playbooks/install.yml**. Для этого требуется создать файл **inventory** по примеру **playbooks/inventory.sample**, добавив в соответствующие группы (**1c_cs**, **1c_ls** и **1c_ws**) "нужные" сервера
