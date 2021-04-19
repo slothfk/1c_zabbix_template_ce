@@ -7,6 +7,12 @@
 # Email: fedotov@kaminsoft.ru
 #
 
+# Вывести сообщение об ошибке переданное в аргументе и выйти с кодом 1
+function error {
+    echo "ОШИБКА: ${1}" >&2
+    exit 1
+}
+
 # Тип операционной системы GNU/Linux или MS Windows
 [[ "$(uname -s)" != "Linux" ]] && IS_WINDOWS=1
 
@@ -14,8 +20,10 @@
 [[ -z ${IS_WINDOWS} ]] && HOSTNAME=$(hostname -s) || HOSTNAME=$(hostname)
 
 # Добавление пути к бинарным файлам 1С Предприятия
-[[ -z ${IS_WINDOWS} ]] && PATH=${PATH}:$(ls -d /opt/1C/v8*/[xi]* | tail -n1) ||
-    PATH=${PATH}:$(ls -d /c/Program\ Files*/1cv8/8.* | tail -n1)/bin
+[[ -z ${IS_WINDOWS} ]] && RAC_PATH="$(find /opt/1C/v8* /opt/1cv8/ 2>/dev/null -name rac | tail -n1)" ||
+    RAC_PATH="$(ls -d /c/Program\ Files*/1cv8/8.* | tail -n1)/bin/"
+
+[[ -n ${RAC_PATH} ]] && PATH="${PATH}:${RAC_PATH%/*}" || error "Не найдена платформа 1С Предприятия!"
 
 # Модуль менеджера задач
 TM_MODULE="1c_common_tm.sh"
@@ -33,12 +41,6 @@ declare -A RAS_PARAMS=([port]=1545 [timeout]=1.5 [auth]="")
 # Общие для всех скрпитов тексты ошибок
 ERROR_UNKNOWN_MODE="Неизвестный режим работы скрипта!"
 ERROR_UNKNOWN_PARAM="Неизвестный параметр для данного режима работы скрипта!"
-
-# Вывести сообщение об ошибке переданное в аргументе и выйти с кодом 1
-function error {
-    echo "ОШИБКА: ${1}" >&2
-    exit 1
-}
 
 # Вывести разделительную строку длинной ${1} из символов ${2}
 # По-умолчанию раделительная строка - это 80 символов "-"
