@@ -20,7 +20,7 @@ function error {
 [[ -z ${IS_WINDOWS} ]] && HOSTNAME=$(hostname -s) || HOSTNAME=$(hostname)
 
 # Добавление пути к бинарным файлам 1С Предприятия
-[[ -z ${IS_WINDOWS} ]] && RAC_PATH="$(find /opt/1C/v8* /opt/1cv8/ 2>/dev/null -name rac | tail -n1)" ||
+[[ -z ${IS_WINDOWS} ]] && RAC_PATH="$( { find /opt/1C/v8* /opt/1cv8/ -name rac ; } 2>/dev/null | tail -n1 )" ||
     RAC_PATH="$(ls -d /c/Program\ Files*/1cv8/8.* | tail -n1)/bin/"
 
 [[ -n ${RAC_PATH} ]] && PATH="${PATH}:${RAC_PATH%/*}" || error "Не найдена платформа 1С Предприятия!"
