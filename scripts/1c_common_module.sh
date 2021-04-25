@@ -9,8 +9,7 @@
 
 # Вывести сообщение об ошибке переданное в аргументе и выйти с кодом 1
 function error {
-    echo "ОШИБКА: ${1}" >&2
-    exit 1
+    echo "ОШИБКА: ${1}" >&2 ; exit 1
 }
 
 # Тип операционной системы GNU/Linux или MS Windows
@@ -18,25 +17,28 @@ function error {
 
 # Имя сервера, используемое в кластере 1С Предприятия
 [[ -z ${IS_WINDOWS} ]] && HOSTNAME=$(hostname -s) || HOSTNAME=$(hostname)
+export HOSTNAME
 
 # Добавление пути к бинарным файлам 1С Предприятия
 [[ -z ${IS_WINDOWS} ]] && RAC_PATH="$( { find /opt/1C/v8* /opt/1cv8/ -name rac ; } 2>/dev/null | tail -n1 )" ||
     RAC_PATH="$(ls -d /c/Program\ Files*/1cv8/8.* | tail -n1)/bin/"
+export RAC_PATH
 
-[[ -n ${RAC_PATH} ]] && PATH="${PATH}:${RAC_PATH%/*}" || error "Не найдена платформа 1С Предприятия!"
-
-# Модуль менеджера задач
-TM_MODULE="1c_common_tm.sh"
-[[ -f "${WORK_DIR}"/${TM_MODULE} ]] && source "${WORK_DIR}"/${TM_MODULE} 2>/dev/null && TM_AVAILABLE=1
+[[ -n ${RAC_PATH} ]] && export PATH="${PATH}:${RAC_PATH%/*}" || error "Не найдена платформа 1С Предприятия!"
 
 # Проверить инициализацию переменной TMPDIR
 [[ -z ${TMPDIR} ]] && export TMPDIR="/tmp"
 
 # Файл списка кластеров
-CLSTR_CACHE="${TMPDIR}/1c_clusters_cache"
+export CLSTR_CACHE="${TMPDIR}/1c_clusters_cache"
 
 # Параметры взаимодействия с сервисом RAS
-declare -A RAS_PARAMS=([port]=1545 [timeout]=1.5 [auth]="")
+RAS_PORT="1545"
+RAS_TIMEOUT="1.5"
+RAS_AUTH=""
+
+# Максимальное число параллельных потоков
+MAX_THREADS=$(( $(nproc) / 2 )) && [[ ${MAX_THREADS} -eq 0 ]] && MAX_THREADS=1 
 
 # Общие для всех скрпитов тексты ошибок
 ERROR_UNKNOWN_MODE="Неизвестный режим работы скрипта!"
@@ -53,17 +55,11 @@ function put_brack_line {
 
 # Выполнить серию команд ${1} с параметром, являющимся элементом массива ${@}, следующим за ${1}
 function execute_tasks {
+    [[ ${#@} -le 1 ]] && exit # Если список задач пуст, то выходим
     TASK_CMD=${1}
     shift
-
-    if [[ -z ${TM_AVAILABLE} || ${#@} -eq 1 ]]; then
-        for CURR_TASK in ${@}; do
-            ${TASK_CMD} ${CURR_TASK}
-        done
-    else
-        TASKS_LIST=(${@})
-        tasks_manager ${TASK_CMD} 3
-    fi
+    export -f ${TASK_CMD}
+    echo ${@} | xargs -d' ' -n1 -P${MAX_THREADS} -i bash -c "${TASK_CMD} \${@}" _ {}
 }
 
 # Проверить наличие ring license и вернуть путь до ring
@@ -85,21 +81,21 @@ function get_license_list {
 }
 
 # Установить параметры взаимодействия с сервисом RAS
-#  Метод заменяет значения в массиве RAS_PARAMS значениями,
-#  указанными в параметрах:
+#  Метод устанавливает значения, указанные в параметрах:
 #  * ${1} - номер порта RAS
 #  * ${2} - максимальное время ожидания ответа RAS
 #  * ${3} - пользователь администратор кластрера
 #  * ${4} - пароль пользователя администратора кластера
 function make_ras_params {
 
-    [[ -n ${1} ]] && RAS_PARAMS[port]=${1}
+    [[ -n ${1} ]] && RAS_PORT=${1}
 
-    [[ -n ${2} ]] && RAS_PARAMS[timeout]=${2}
+    [[ -n ${2} ]] && RAS_TIMEOUT=${2}
 
-    [[ -n ${3} ]] && RAS_PARAMS[auth]="--cluster-user=${3}"
+    [[ -n ${3} ]] && RAS_AUTH="--cluster-user=${3}"
+    [[ -n ${4} ]] && RAS_AUTH+=" --cluster-pwd=${4}"
 
-    [[ -n ${4} ]] && RAS_PARAMS[auth]+=" --cluster-pwd=${4}"
+    export RAS_PORT RAS_TIMEOUT RAS_AUTH
 
 }
 
@@ -108,8 +104,8 @@ function push_clusters_list {
 
     # Сохранить список UUID кластеров во временный файл
     function push_clusters_uuid {
-        CURR_CLSTR=$( timeout -s HUP ${RAS_PARAMS[timeout]} rac cluster list \
-            ${1%%:*}:${RAS_PARAMS[port]} 2>/dev/null | awk '/^($|cluster|name|port)/' | \
+        CURR_CLSTR=$( timeout -s HUP ${RAS_TIMEOUT} rac cluster list \
+            ${1%%:*}:${RAS_PORT} 2>/dev/null | awk '/^($|cluster|name|port)/' | \
             perl -pe "s/.*: /,/; s/(.+)\n/\1/;" | sed 's/^,//' | \
             awk "/${1##*:}/" | perl -pe 's/\n/;/' )
 
@@ -177,8 +173,8 @@ function get_processes_perfomance {
     [[ $( expr index ${1} : ) -eq 0 ]] && RAS_HOST=${HOSTNAME} || RAS_HOST=${1%:*}
 
     for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
-        timeout -s HUP ${RAS_PARAMS[timeout]} rac process list --cluster=${CURR_CLSTR%%,*} \
-            ${RAS_PARAMS[auth]} ${RAS_HOST}:${RAS_PARAMS[port]} 2>/dev/null | \
+        timeout -s HUP ${RAS_TIMEOUT} rac process list --cluster=${CURR_CLSTR%%,*} \
+            ${RAS_AUTH} ${RAS_HOST}:${RAS_PORT} 2>/dev/null | \
             awk '/^(host|available-perfomance|$)/' | perl -pe "s/.*: ([^.]+).*\n/\1:/" | \
             awk -F: '{ apc[$1]+=1; aps[$1]+=$2 } END { for (i in apc) { print i":"aps[i]/apc[i] } }'
     done

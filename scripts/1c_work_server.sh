@@ -11,10 +11,10 @@ WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
 source "${WORK_DIR}"/1c_common_module.sh 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
 # Коды завершения процедуры архивирования файлов технологического журнала
-DUMP_CODE_0=0   # Архивированение файлов ТЖ выполнено успешно
-DUMP_CODE_1=1   # Файл архива ТЖ уже существует
-DUMP_CODE_2=2   # При архивировании файлов ТЖ возникли ошибки
-DUMP_CODE_3=3   # Не удалось выполнить архивирование ТЖ на удаленом сервере
+export DUMP_CODE_0=0   # Архивированение файлов ТЖ выполнено успешно
+export DUMP_CODE_1=1   # Файл архива ТЖ уже существует
+export DUMP_CODE_2=2   # При архивировании файлов ТЖ возникли ошибки
+export DUMP_CODE_3=3   # Не удалось выполнить архивирование ТЖ на удаленом сервере
 
 function check_log_dir {
     [[ ! -d "${1}/zabbix/${2}" ]] && error "Неверно задан каталог технологического журнала!"
@@ -107,14 +107,15 @@ function get_locks_info {
         for CURRENT_HOST in $( pop_clusters_list ); do
             CLSTR_LIST=${CURRENT_HOST#*:}
             for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
-                SRV_LIST+=( $(timeout -s HUP ${RAS_PARAMS[timeout]} rac server list --cluster=${CURR_CLSTR%,*} \
-                    ${RAS_PARAMS[auth]} ${CURRENT_HOST%:*}:${RAS_PARAMS[port]} 2>/dev/null| grep agent-host | sort -u | \
+                SRV_LIST+=( $(timeout -s HUP ${RAS_TIMEOUT} rac server list --cluster=${CURR_CLSTR%,*} \
+                    ${RAS_AUTH} ${CURRENT_HOST%:*}:${RAS_PORT} 2>/dev/null| grep agent-host | sort -u | \
                     sed -r "s/.*: (.*)$/\1/; s/\"//g") )
             done
         done
 
     fi
 
+    export -f dump_logs
     execute_tasks save_logs $(echo ${SRV_LIST[@]} | perl -pe 's/ /\n/g' | sort -u)
 
     find ${LOG_DIR%/*}/problem_log/ -mtime +${STORE_PERIOD} -name "*.tgz" -delete 2>/dev/null
@@ -188,8 +189,8 @@ function get_available_perfomance {
 
 case ${1} in
     calls | locks | excps) check_log_dir ${2} ${1};
-        LOG_FILE=$(date --date="last hour" "+%y%m%d%H");
-        LOG_DIR="${2%/}/zabbix/${1}" ;;&
+        export LOG_FILE=$(date --date="last hour" "+%y%m%d%H");
+        export LOG_DIR="${2%/}/zabbix/${1}" ;;&
     memory | excps) PROCESS_NAMES=(ragent rmngr rphost) ;;&
     calls) shift 2; get_calls_info ${@} ;;
     locks) shift 2; get_locks_info ${@} ;;

@@ -7,13 +7,13 @@
 # Email: fedotov@kaminsoft.ru
 #
 
-WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
+export WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
 source "${WORK_DIR}"/1c_common_module.sh 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
 function licenses_summary {
 
-    RING_TOOL=$(check_ring_license) || exit 1
-    
+    RING_TOOL=$(check_ring_license) && export RING_TOOL || exit 1
+        
     ( execute_tasks license_info $(get_license_list "${RING_TOOL}") ) | \
         awk 'BEGIN { files=0; users=0 } 
             { files+=1; users+=$1 } 
@@ -35,8 +35,8 @@ function get_license_counts {
     CLSTR_LIST=${1##*:}
 
     for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
-        timeout -s HUP ${RAS_PARAMS[timeout]} rac session list --licenses --cluster=${CURR_CLSTR%%,*} \
-            ${RAS_PARAMS[auth]} ${1%%:*}:${RAS_PARAMS[port]} 2>/dev/null | \
+        timeout -s HUP ${RAS_TIMEOUT} rac session list --licenses --cluster=${CURR_CLSTR%%,*} \
+            ${RAS_AUTH} ${1%%:*}:${RAS_PORT} 2>/dev/null | \
             awk '/(user-name|rmngr-address|app-id)/' | \
             perl -pe 's/ //g; s/\n/|/; s/rmngr-address:(\"(.*)\"|)\||/\2/; s/app-id://; s/user-name:/\n/;' | \
             awk -F"|" -v hostname=${HOSTNAME,,} -v cluster=${CURR_CLSTR%%,*} 'BEGIN { sc=0; hc=0; cc=0; wc=0 } \
@@ -48,6 +48,8 @@ function get_license_counts {
 }
 
 function used_license {
+
+    check_clusters_cashe
 
     ( execute_tasks get_license_counts $( pop_clusters_list ) ) | \
         awk -F: 'BEGIN {ul=0; as=0; cl=0; uu=0; wc=0} \

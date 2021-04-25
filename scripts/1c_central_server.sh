@@ -7,11 +7,11 @@
 # Email: fedotov@kaminsoft.ru
 #
 
-WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
+export WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
 source "${WORK_DIR}"/1c_common_module.sh 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
 # Файл списка информационных баз
-IB_CACHE=${TMPDIR}/1c_infobase_cache
+export IB_CACHE=${TMPDIR}/1c_infobase_cache
 
 function get_infobase_status {
     curl -u "${2}:${3}" --header "SOAPAction: http://www.1c.ru/SSL/RemoteControl_1_0_0_1#RemoteControl:GetCurrentState" \
@@ -27,8 +27,8 @@ function get_infobases_list {
     CLUSTERS_LIST=$( pop_clusters_list self )
     BASE_INFO='{"data":[ '
     for CURRENT_CLUSTER in ${CLUSTERS_LIST//;/ }; do
-        BASE_LIST=$(timeout -s HUP ${RAS_PARAMS[timeout]} rac infobase summary list \
-            --cluster ${CURRENT_CLUSTER%%,*} ${RAS_PARAMS[auth]} ${HOSTNAME}:${RAS_PARAMS[port]} | \
+        BASE_LIST=$(timeout -s HUP ${RAS_TIMEOUT} rac infobase summary list \
+            --cluster ${CURRENT_CLUSTER%%,*} ${RAS_AUTH} ${HOSTNAME}:${RAS_PORT} | \
             awk '/(infobase|name)/' | \
             perl -pe 's/[ "]//g; s/^name:(.*)$/\1\n/; s/^infobase:(.*)/\1,/; s/\n//' | perl -pe 's/\n/;/' )
         for CURRENT_BASE in ${BASE_LIST//;/ }; do
@@ -52,8 +52,8 @@ function get_clusters_list {
 function get_clusters_sessions {
 
     for CURR_CLSTR in ${1//;/ }; do
-        timeout -s HUP ${RAS_PARAMS[timeout]} rac session list --cluster=${CURR_CLSTR%%,*} \
-            ${RAS_PARAMS[auth]} ${HOSTNAME}:${RAS_PARAMS[port]} 2>/dev/null | \
+        timeout -s HUP ${RAS_TIMEOUT} rac session list --cluster=${CURR_CLSTR%%,*} \
+            ${RAS_AUTH} ${HOSTNAME}:${RAS_PORT} 2>/dev/null | \
             awk '/^(infobase|app-id|hibernate|duration-current)\s/' | \
             perl -pe 's/ //g; s/\n/ /; s/infobase:/\n/; s/.*://; s/(1CV8[^ ]*|WebClient)/cl/; 
                 s/BackgroundJob/bg/; s/WSConnection/ws/; s/HTTPServiceConnection/hs/' | grep -v "^$" | \
