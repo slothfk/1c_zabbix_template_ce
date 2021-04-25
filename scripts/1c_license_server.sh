@@ -49,7 +49,7 @@ function get_license_counts {
 
 function used_license {
 
-    check_clusters_cashe
+    check_clusters_cache
 
     ( execute_tasks get_license_counts $( pop_clusters_list ) ) | \
         awk -F: 'BEGIN {ul=0; as=0; cl=0; uu=0; wc=0} \
