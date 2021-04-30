@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2021-02-09T07:41:23Z</date>
+    <date>2021-04-30T05:59:02Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -669,7 +669,7 @@
             <priority>AVERAGE</priority>
         </trigger>
         <trigger>
-            <expression>{Template App 1C Enterprise Work Server:1c.ws.rmngr.memory.last()}&gt;={Template App 1C Enterprise Work Server:1c.ws.rphost.memory.last()} and {Template App 1C Enterprise Work Server:1c.ws.rphost.count.last()}&gt;0</expression>
+            <expression>{Template App 1C Enterprise Work Server:1c.ws.rmngr.memory.last()}&gt;={Template App 1C Enterprise Work Server:1c.ws.rphost.memory.max(90)}</expression>
             <name>[1С/Рабочий сервер] Объем памяти rmngr превышает объем rphost</name>
             <priority>HIGH</priority>
         </trigger>
