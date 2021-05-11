@@ -97,12 +97,14 @@ function get_locks_info {
             if ( lw > 0 ) { print "Ожидания на блокировках (установлен порог "lts" сек):<nl>"; \
             for ( i in lws ) { print "> "i" - "lws[i]/1000000" сек.<nl>" } } }'))
 
-    echo ${RESULT[@]} | perl -pe 's/<nl>\s?/\n/g'
+    echo "${RESULT[@]}" | perl -pe 's/<nl>\s?/\n/g'
 
-    if [[ ${RESULT[1]%<*} != 0 || ${RESULT[3]%<*} != 0 || \
-        $( awk "BEGIN { print (${RESULT[5]%<*} > ${WAIT_LIMIT}) }" ) == 1 ]]; then
+    if [[ "${RESULT[1]%<*}" != 0 || "${RESULT[3]%<*}" != 0 ||
+        $( awk -v value="${RESULT[5]%<*}" -v limit="${WAIT_LIMIT}" 'BEGIN { print ( value > limit ) }' ) == 1 ]]; then
 
         shift; make_ras_params ${@}
+
+        check_clusters_cache
 
         for CURRENT_HOST in $( pop_clusters_list ); do
             CLSTR_LIST=${CURRENT_HOST#*:}
