@@ -1,2 +1,5 @@
 ---
 # vars file for 1c_ws
+packages:
+- zabbix-agent
+- gawk

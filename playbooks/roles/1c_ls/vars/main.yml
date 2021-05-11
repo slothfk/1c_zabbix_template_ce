@@ -1,2 +1,4 @@
 ---
 # vars file for 1c_ls
+packages:
+- zabbix-sender

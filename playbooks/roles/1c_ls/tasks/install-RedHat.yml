@@ -2,6 +2,3 @@
   yum:
     name: '{{ packages }}'
     state: latest
-  vars:
-    packages:
-    - zabbix-sender
