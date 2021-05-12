@@ -49,6 +49,7 @@ function get_license_counts {
 
 function used_license {
 
+    MAX_THREADS=0 # Отключаем ограничение по количеству параллельно выполняемых задач
     check_clusters_cache
 
     ( execute_tasks get_license_counts $( pop_clusters_list ) ) | \
