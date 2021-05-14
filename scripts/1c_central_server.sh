@@ -54,30 +54,34 @@ function get_clusters_sessions {
     for CURR_CLSTR in ${1//;/ }; do
         timeout -s HUP ${RAS_TIMEOUT} rac session list --cluster=${CURR_CLSTR%%,*} \
             ${RAS_AUTH} ${HOSTNAME}:${RAS_PORT} 2>/dev/null | \
-            awk '/^(infobase|app-id|hibernate|duration-current)\s/' | \
-            perl -pe 's/ //g; s/\n/ /; s/infobase:/\n/; s/.*://; s/(1CV8[^ ]*|WebClient)/cl/; 
-                s/BackgroundJob/bg/; s/WSConnection/ws/; s/HTTPServiceConnection/hs/' | grep -v "^$" | \
-            awk -v cluster="CL#${CURR_CLSTR%%,*}" -v ib_cache="${IB_CACHE}" 'BEGIN {
+            awk -F':' '/^(infobase|app-id|hibernate|duration-current|user-name|session-id)\s/ \
+                { if ( $1 ~ "session-id" ) { print "<nl>"; }; print $2; }' |
+            perl -pe 's/^[ ]+//; s/\n/|/; s/<nl>/\n/; s/(1CV8[^|]*|WebClient)/cl/; s/BackgroundJob/bg/;
+                s/WSConnection/ws/; s/HTTPServiceConnection/hs/' | grep -v "^$" | sed -r "s/^\|//" |
+            awk -v cluster="CL#${CURR_CLSTR%%,*}" -v ib_cache="${IB_CACHE}" -F'|' 'BEGIN {
                 ss[cluster]=0;
                 while ( getline ib_str < ib_cache > 0) {
-                    if (ib_str ~ "^"substr(cluster,4)) { 
-                        split(ib_str, ib_uuid); ss["IB#"ib_uuid[2]]=0; }
+                    if (ib_str ~ "^"substr(cluster,4)) {
+                        split(ib_str, ib_uuid, " "); ss["IB#"ib_uuid[2]]=0; }
                 } }
-                { ib_mark="IB#"$1;
-                ss[cluster]+=1; ss[ib_mark]+=1; 
-                if ( $2 != "cl" ) { sc[$2,cluster]+=1; sc[$2,ib_mark]+=1; }
-                if ( $3 == "yes" ) { sc["hb",cluster]+=1; sc["hb",ib_mark]+=1 } 
-                if ( $4 != 0) { 
-                    as[cluster]+=1; as[ib_mark]+=1; 
-                    if ( asd[$2,cluster] < $4 ) { 
-                        asd[$2,cluster]=$4; asd[$2,ib_mark]=$4; 
-                    } else if ( asd[$2,ib_mark] < $4 ) { asd[$2,ib_mark]=$4; }
+                { ib_mark="IB#"$2;
+                ss[cluster]+=1; ss[ib_mark]+=1;
+                if ( $4 != "cl" ) { sc[$4,cluster]+=1; sc[$4,ib_mark]+=1; }
+                if ( $5 == "yes" ) { sc["hb",cluster]+=1; sc["hb",ib_mark]+=1 }
+                if ( $6 != 0) {
+                    as[cluster]+=1; as[ib_mark]+=1;
+                    if ( asd[$4,cluster] < $6 ) {
+                        asd[$4,cluster]=$6; asd[$4,ib_mark]=$6;
+			if ( $4 == "cl" ) { asu[ib_mark]=$3" ("$1")"; }
+                    } else if ( asd[$4,ib_mark] < $6 ) { asd[$4,ib_mark]=$6;
+			if ( $4 == "cl" ) { asu[ib_mark]=$3" ("$1")"; }
+	            }
                 } }
-                END { for (i in ss) { 
+                END { for (i in ss) {
                     print i":"(ss[i]?ss[i]:0)":"(sc["bg",i]?sc["bg",i]:0)":"(sc["hb",i]?sc["hb",i]:0)":"\
                         (sc["ws",i]?sc["ws",i]:0)":"(sc["hs",i]?sc["hs",i]:0)":"(as[i]?as[i]:0)":"\
                         (asd["cl",i]?asd["cl",i]:0)":"(asd["bg",i]?asd["bg",i]:0)":"\
-                        (asd["ws",i]?asd["ws",i]:0)":"(asd["hs",i]?asd["hs",i]:0) } }'
+                        (asd["ws",i]?asd["ws",i]:0)":"(asd["hs",i]?asd["hs",i]:0)":"asu[i] } }'
     done
 
 }
