@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2021-05-14T04:31:57Z</date>
+    <date>2021-05-14T12:43:35Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -718,7 +718,7 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.asu[{#IB_UUID}]</key>
                             <delay>0</delay>
-                            <history>0</history>
+                            <history>7d</history>
                             <trends>0</trends>
                             <value_type>TEXT</value_type>
                             <description>Пользовательский сеанс (имя пользователя, номер сеанса) с самым долгим активным текущим вызовом (время вызова текущее)</description>
