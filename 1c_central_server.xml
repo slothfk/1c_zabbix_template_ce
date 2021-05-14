@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2021-01-18T09:54:05Z</date>
+    <date>2021-05-14T04:31:57Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -712,6 +712,31 @@
                                     <name>[1С] Доступность</name>
                                 </application>
                             </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Сеанс длительного пользовательского вызова</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.sessions.asu[{#IB_UUID}]</key>
+                            <delay>0</delay>
+                            <history>0</history>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>Пользовательский сеанс (имя пользователя, номер сеанса) с самым долгим активным текущим вызовом (время вызова текущее)</description>
+                            <applications>
+                                <application>
+                                    <name>[1С] Сеансы</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>IB#{#IB_UUID}:\d+:\d+:\d+:\d+:\d+:\d+:\d+:\d+:\d+:\d+:(.*)
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
                         </item_prototype>
                         <item_prototype>
                             <name>[1С/Инфобаза/{#IB_NAME}] Количество активных сеансов</name>
