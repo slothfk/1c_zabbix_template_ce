@@ -180,3 +180,20 @@ function get_processes_perfomance {
     done
 
 }
+
+# Получить каталог кластера (при условии одного сервиса 1С)
+# TODO: Обрабатывать ситуацию с несколькоими сервисами 1С
+function get_server_directory {
+    if [ -z ${IS_WINDOWS} ]; then
+        SRV1CV8_DATA="$(pgrep -a ragent | sed -r 's/.*-d ([^ ]+).*/\1/' )"
+        # Если каталог кластера не задан в параметре, то установим значение по умолчанию
+        [[ -z ${SRV1CV8_DATA} ]] && SRV1CV8_DATA="$(awk -v uid="^$(awk '/Uid/ {print $2}' /proc/$(pgrep ragent)/status 2>/dev/null)$" -F: \
+            '$3 ~ uid {print $6}' /etc/passwd)/.1cv8/1C/1cv8"
+    else
+        SRV1CV8_DATA="$(wmic path win32_process where "caption like 'ragent.exe'" get commandline /format:csv | \
+            awk -F, '/ragent/ { print $2 }' | sed -re 's/.*-d "([^"]+).*/\1/')"
+        #TODO: Задавать значение SRV1CV8_DATA в случае если не удалось определить из строки запуска
+        #        (такое возможно при ручном запуске ragent)
+    fi
+    echo "${SRV1CV8_DATA}"
+}
