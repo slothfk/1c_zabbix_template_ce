@@ -104,12 +104,19 @@ function get_session_amounts {
 
 }
 
+function get_infobases_restrictions {
+    [[ -z ${IS_WINDOWS} ]] && COMMAND_PREFIX="sudo -u ${USR1CV8}" || COMMAND_PREFIX=""
+        get_server_directory | xargs -I{{}} ${COMMAND_PREFIX} find {{}} -maxdepth 2 -name 1CV8Clst.lst -exec grep DBMS -A1 {} + |
+        perl -pe 's/([^}],)\r?\n/\1/' |
+        perl -pe 's/.*{(\w{8}-\w{4}-\w{4}-\w{4}-\w{12}),.+{([01]).+},([01]),.*/IB#\1,\2,\3/'
+}
 
 case ${1} in
     ib_status) shift; get_infobase_status ${@} ;;
     sessions) shift; make_ras_params ${@}; get_session_amounts ;;
     infobases) shift 2; make_ras_params ${@}; get_infobases_list ;;
     clusters) get_clusters_list ;;
+    ib_restrict) get_infobases_restrictions ;;
     *) error "${ERROR_UNKNOWN_MODE}" ;;
 esac
 

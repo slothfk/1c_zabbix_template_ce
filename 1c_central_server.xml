@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2021-05-14T12:43:35Z</date>
+    <date>2021-05-20T10:09:10Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -31,6 +31,20 @@
                 </application>
             </applications>
             <items>
+                <item>
+                    <name>[1С/Инфобаза] Ограничения</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>1c.cs.ib.restrictions</key>
+                    <delay>5m</delay>
+                    <history>0</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>[1С] Информация</name>
+                        </application>
+                    </applications>
+                </item>
                 <item>
                     <name>[1С/Сеансы] Количество активных</name>
                     <type>DEPENDENT</type>
@@ -712,6 +726,66 @@
                                     <name>[1С] Доступность</name>
                                 </application>
                             </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Блокировка регламентных заданий</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.ib.sched_deny[{#IB_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <applications>
+                                <application>
+                                    <name>[1С] Информация</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>IB#{#IB_UUID},\d+,(\d+)
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.ib.restrictions</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}=1</expression>
+                                    <name>[1С/Ифобаза/{#IB_NAME}] Включена блокировка регламентных заданий</name>
+                                    <priority>AVERAGE</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Блокировка начала сеансов</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.cs.ib.sess_deny[{#IB_UUID}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>90d</trends>
+                            <applications>
+                                <application>
+                                    <name>[1С] Информация</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>IB#{#IB_UUID},(\d+),\d+
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.cs.ib.restrictions</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}=1</expression>
+                                    <name>[1С/Ифобаза/{#IB_NAME}] Включена блокировка начала сеансов</name>
+                                    <priority>AVERAGE</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
                         </item_prototype>
                         <item_prototype>
                             <name>[1С/Инфобаза/{#IB_NAME}] Сеанс длительного пользовательского вызова</name>

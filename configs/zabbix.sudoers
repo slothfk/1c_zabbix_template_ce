@@ -1,0 +1,3 @@
+Defaults: zabbix !requiretty
+
+zabbix  ALL = (usr1cv8) NOPASSWD: /usr/bin/find * -name 1CV8Clst.lst -exec grep DBMS -A1 {} +

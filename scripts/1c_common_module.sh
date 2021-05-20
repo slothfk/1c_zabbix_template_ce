@@ -12,6 +12,9 @@ function error {
     echo "ОШИБКА: ${1}" >&2 ; exit 1
 }
 
+# Системный пользователь для запуска сервера 1С Предприятия
+export USR1CV8="usr1cv8"
+
 # Тип операционной системы GNU/Linux или MS Windows
 [[ "$(uname -s)" != "Linux" ]] && IS_WINDOWS=1
 
