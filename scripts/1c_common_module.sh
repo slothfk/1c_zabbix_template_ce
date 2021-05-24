@@ -194,7 +194,7 @@ function get_server_directory {
             '$3 ~ uid {print $6}' /etc/passwd)/.1cv8/1C/1cv8"
     else
         SRV1CV8_DATA="$(wmic path win32_process where "caption like 'ragent.exe'" get commandline /format:csv | \
-            awk -F, '/ragent/ { print $2 }' | sed -re 's/.*-d "([^"]+).*/\1/')"
+            awk -F, '/ragent/ { print $2 }' | sed -re 's/.*-d "([^"]+).*/\1/; s/^/\//; s/\\/\//g; s/://')"
         #TODO: Задавать значение SRV1CV8_DATA в случае если не удалось определить из строки запуска
         #        (такое возможно при ручном запуске ragent)
     fi
