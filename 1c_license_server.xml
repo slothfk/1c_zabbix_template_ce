@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2021-02-26T15:12:38Z</date>
+    <date>2021-05-26T05:02:57Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -450,6 +450,59 @@
                     <description>Имя пользователя администратора кластера</description>
                 </macro>
             </macros>
+            <screens>
+                <screen>
+                    <name>[1С/Лицензии] Использование активированных лицензий</name>
+                    <hsize>1</hsize>
+                    <vsize>2</vsize>
+                    <screen_items>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>[1С/Лицензии] Использование активированных лицензий</name>
+                                <host>Template App 1C Enterprise License Server</host>
+                            </resource>
+                            <width>1200</width>
+                            <height>200</height>
+                            <x>0</x>
+                            <y>0</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                        <screen_item>
+                            <resourcetype>20</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>[1С/Лицензии/{#CLSTR_NAME}] Использование активированных лицензий</name>
+                                <host>Template App 1C Enterprise License Server</host>
+                            </resource>
+                            <width>600</width>
+                            <height>150</height>
+                            <x>0</x>
+                            <y>1</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>2</max_columns>
+                        </screen_item>
+                    </screen_items>
+                </screen>
+            </screens>
         </template>
     </templates>
     <triggers>
