@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2021-05-20T10:09:10Z</date>
+    <date>2021-07-08T06:14:14Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -713,20 +713,6 @@
                     <delay>1h</delay>
                     <lifetime>7d</lifetime>
                     <item_prototypes>
-                        <item_prototype>
-                            <name>[1С/Инфобаза/{#IB_NAME}] Доступность</name>
-                            <type>ZABBIX_ACTIVE</type>
-                            <key>1c.cs.ib.availability[{$RC_BASE_URL}/{#IB_NAME},{$RC_USER},{$RC_PWD}]</key>
-                            <delay>30s</delay>
-                            <history>30d</history>
-                            <trends>0</trends>
-                            <value_type>TEXT</value_type>
-                            <applications>
-                                <application>
-                                    <name>[1С] Доступность</name>
-                                </application>
-                            </applications>
-                        </item_prototype>
                         <item_prototype>
                             <name>[1С/Инфобаза/{#IB_NAME}] Блокировка регламентных заданий</name>
                             <type>DEPENDENT</type>
