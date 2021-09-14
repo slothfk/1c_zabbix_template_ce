@@ -62,7 +62,7 @@ function execute_tasks {
     TASK_CMD=${1}
     shift
     export -f ${TASK_CMD}
-    echo ${@} | xargs -d' ' -n1 -P${MAX_THREADS} -i bash -c "${TASK_CMD} \${@}" _ {}
+    echo ${@} | xargs -d' ' -P${MAX_THREADS} -i bash -c "${TASK_CMD} \${@}" _ {}
 }
 
 # Проверить наличие ring license и вернуть путь до ring
