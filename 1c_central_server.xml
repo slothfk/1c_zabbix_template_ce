@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2021-07-08T06:14:14Z</date>
+    <date>2021-10-11T09:04:50Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -319,7 +319,6 @@
                 </item>
                 <item>
                     <name>[1С/Центральный сервер] Статус сервиса RAS</name>
-                    <type>SIMPLE</type>
                     <key>net.tcp.service[tcp,,{$RAS_PORT}]</key>
                     <delay>30s</delay>
                     <history>30d</history>
