@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2021-04-30T05:59:02Z</date>
+    <date>2021-10-13T07:24:47Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -501,13 +501,6 @@
                     <master_item>
                         <key>1c.ws.memory</key>
                     </master_item>
-                    <triggers>
-                        <trigger>
-                            <expression>{count(5m,1)}&gt;=3</expression>
-                            <name>[1С/Рабочий процесс] Частые изменения в списке процессов</name>
-                            <priority>HIGH</priority>
-                        </trigger>
-                    </triggers>
                 </item>
                 <item>
                     <name>[1С/Рабочий процесс] Число процессов</name>
@@ -667,6 +660,11 @@
             <expression>{Template App 1C Enterprise Work Server:1c.ws.rphost.memory.last()}/{Template App 1C Enterprise Work Server:1c.ws.ram.last()}&gt;{$RPHOST_MAX_MEM}</expression>
             <name>[1С/Рабочий процесс] Превышено пороговое значение используемой памяти</name>
             <priority>AVERAGE</priority>
+        </trigger>
+        <trigger>
+            <expression>{Template App 1C Enterprise Work Server:1c.ws.rphost.count.avg(5m)}={Template App 1C Enterprise Work Server:1c.ws.rphost.count.last()} and {Template App 1C Enterprise Work Server:1c.ws.rphost.change.count(5m,1)}&gt;=3</expression>
+            <name>[1С/Рабочий процесс] Частые изменения в списке процессов</name>
+            <priority>HIGH</priority>
         </trigger>
         <trigger>
             <expression>{Template App 1C Enterprise Work Server:1c.ws.rmngr.memory.last()}&gt;={Template App 1C Enterprise Work Server:1c.ws.rphost.memory.max(90)}</expression>
