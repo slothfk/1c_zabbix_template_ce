@@ -17,9 +17,9 @@
 - name: Copy main script for license server
   copy:
     src: 1c_license_server.sh
-    dest: /etc/zabbix/scripts/
-    owner: root
-    group: root
+    dest: /var/lib/zabbix/scripts/
+    owner: zabbix
+    group: zabbix
     mode: 0755
 
 - name: Make cron job for license info

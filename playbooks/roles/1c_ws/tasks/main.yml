@@ -17,9 +17,9 @@
 - name: Copy main script for work server
   copy:
     src: 1c_work_server.sh
-    dest: /etc/zabbix/scripts/
-    owner: root
-    group: root
+    dest: /var/lib/zabbix/scripts/
+    owner: zabbix
+    group: zabbix
     mode: 0755
 
 - name: Make directory for 1C tech log

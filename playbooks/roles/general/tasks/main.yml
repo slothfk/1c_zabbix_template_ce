@@ -2,16 +2,16 @@
 # tasks file for general
 - name: Make directory for template scripts
   file:
-    path: /etc/zabbix/scripts
+    path: /var/lib/zabbix/scripts
     state: directory
-    owner: root
-    group: root
+    owner: zabbix
+    group: zabbix
     mode: 0755
 
 - name: Copy common module script
   copy:
     src: 1c_common_module.sh
-    dest: /etc/zabbix/scripts/
-    owner: root
-    group: root
+    dest: /var/lib/zabbix/scripts/
+    owner: zabbix
+    group: zabbix
     mode: 0755

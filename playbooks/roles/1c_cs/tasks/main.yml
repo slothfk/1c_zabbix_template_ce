@@ -23,7 +23,7 @@
 - name: Copy main script for central server
   copy:
     src: 1c_central_server.sh
-    dest: /etc/zabbix/scripts/
-    owner: root
-    group: root
+    dest: /var/lib/zabbix/scripts/
+    owner: zabbix
+    group: zabbix
     mode: 0755
