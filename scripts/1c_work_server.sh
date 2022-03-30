@@ -141,7 +141,7 @@ function get_memory_counts {
         if [ -z ${IS_WINDOWS} ]; then
             PROC_INFO[0]="$(pgrep -xd, ${PROCESS})"
             (( PROC_INFO[1]=$(echo -n ${PROC_INFO[0]} | xargs -P2 -i -d, cat /proc/{}/statm | \
-                awk '{ mem+=$2 } END { print mem }')*${MEMORY_PAGE_SIZE} )) ;
+                awk 'BEGIN { mem=0 } { mem+=$2 } END { print mem }')*${MEMORY_PAGE_SIZE} )) ;
         else
             PROC_INFO=( $(wmic path win32_process where "caption like '${PROCESS}%'" \
                 get processid,workingsetsize /format:csv | awk -F, \
