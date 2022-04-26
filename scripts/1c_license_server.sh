@@ -24,7 +24,8 @@ function licenses_summary {
 function license_info {
 
     CURRENT_CODE=$( "${RING_TOOL}" license info --send-statistics false --name ${1} | \
-        sed -re 's/(.*0{7}10{3}1)5/\10/' | awk -F':' '/0{7}[10]0(0{3}[35]|10{3}|00[125]0|0[135]00)/ { print $2; exit}' )
+        sed -re 's/(0{7}10{3}1)5/\10/; s/(0{7}[10]0)10{3}/\10500/' | \
+        awk -F':' '/0{7}[10]0(0{3}[35]|00[125]0|0[135]00)/ { print $2; exit}' )
 
     [[ -n ${CURRENT_CODE} ]] && echo ${CURRENT_CODE:10}
 
