@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2021-05-26T05:02:57Z</date>
+    <date>2022-05-18T10:26:54Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -256,7 +256,7 @@
                     <key>1c.ls.clusters.discovery</key>
                     <delay>1h</delay>
                     <status>DISABLED</status>
-                    <lifetime>7d</lifetime>
+                    <lifetime>90d</lifetime>
                     <item_prototypes>
                         <item_prototype>
                             <name>[1С/Лицензии/{#CLSTR_NAME}] Количество лицензий на клиенте</name>
@@ -379,6 +379,7 @@
                             <name>[1С/Лицензии/{#CLSTR_NAME}] Использование активированных лицензий</name>
                             <graph_items>
                                 <graph_item>
+                                    <drawtype>GRADIENT_LINE</drawtype>
                                     <color>1B5E20</color>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
@@ -387,7 +388,7 @@
                                 </graph_item>
                                 <graph_item>
                                     <sortorder>1</sortorder>
-                                    <color>2774A4</color>
+                                    <color>FFFFFF</color>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
                                         <key>1c.ls.license.uniq[{#CLSTR_UUID}]</key>
@@ -551,6 +552,7 @@ or &#13;
                 </graph_item>
                 <graph_item>
                     <sortorder>1</sortorder>
+                    <drawtype>GRADIENT_LINE</drawtype>
                     <color>1B5E20</color>
                     <item>
                         <host>Template App 1C Enterprise License Server</host>
@@ -559,7 +561,7 @@ or &#13;
                 </graph_item>
                 <graph_item>
                     <sortorder>2</sortorder>
-                    <color>2774A4</color>
+                    <color>FFFFFF</color>
                     <item>
                         <host>Template App 1C Enterprise License Server</host>
                         <key>1c.ls.license.uniq</key>
