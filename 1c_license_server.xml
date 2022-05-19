@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2022-05-18T10:26:54Z</date>
+    <date>2022-05-19T03:51:01Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -510,7 +510,7 @@
         <trigger>
             <expression>{$LIC_CORP}=0 and {Template App 1C Enterprise License Server:1c.ls.license.used.last()}&gt;={Template App 1C Enterprise License Server:1c.ls.license.user.last()}&#13;
 or &#13;
-{$LIC_CORP}=1 and  ({Template App 1C Enterprise License Server:1c.ls.license.total.last()})&gt;=({Template App 1C Enterprise License Server:1c.ls.license.user.last()}*1.1)</expression>
+{$LIC_CORP}=1 and  ({Template App 1C Enterprise License Server:1c.ls.license.uniq.last()})&gt;=({Template App 1C Enterprise License Server:1c.ls.license.user.last()}*1.1)</expression>
             <name>[1С/Лицензии] Использованы все доступные клиентские лицензии</name>
             <priority>HIGH</priority>
             <manual_close>YES</manual_close>
@@ -525,7 +525,7 @@ or &#13;
                     <name>[1С/Лицензии] Использованы все доступные клиентские лицензии</name>
                     <expression>{$LIC_CORP}=0 and {Template App 1C Enterprise License Server:1c.ls.license.used.last()}&gt;={Template App 1C Enterprise License Server:1c.ls.license.user.last()}&#13;
 or &#13;
-{$LIC_CORP}=1 and  ({Template App 1C Enterprise License Server:1c.ls.license.total.last()})&gt;=({Template App 1C Enterprise License Server:1c.ls.license.user.last()}*1.1)</expression>
+{$LIC_CORP}=1 and  ({Template App 1C Enterprise License Server:1c.ls.license.uniq.last()})&gt;=({Template App 1C Enterprise License Server:1c.ls.license.user.last()}*1.1)</expression>
                 </dependency>
             </dependencies>
         </trigger>
