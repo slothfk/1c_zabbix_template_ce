@@ -27,7 +27,11 @@ export HOSTNAME
     RAC_PATH="$(ls -d /c/Program\ Files*/1cv8/8.* | tail -n1)/bin/"
 export RAC_PATH
 
-[[ -n ${RAC_PATH} ]] && export PATH="${PATH}:${RAC_PATH%/*}" || error "Не найдена платформа 1С Предприятия!"
+if [[ -n ${RAC_PATH} ]]; then
+    export PATH="${PATH}:${RAC_PATH%/*}"
+else
+    error "Не найдена платформа 1С Предприятия!"
+fi
 
 # Проверить инициализацию переменной TMPDIR
 [[ -z ${TMPDIR} ]] && export TMPDIR="/tmp"
@@ -61,8 +65,8 @@ function execute_tasks {
     [[ ${#@} -le 1 ]] && exit # Если список задач пуст, то выходим
     TASK_CMD=${1}
     shift
-    export -f ${TASK_CMD}
-    echo ${@} | xargs -d' ' -P${MAX_THREADS} -i bash -c "${TASK_CMD} \${@}" _ {}
+    export -f "${TASK_CMD?}"
+    echo "${@}" | xargs -d' ' -P${MAX_THREADS} -I task_args bash -c "${TASK_CMD} \${@}" _ task_args
 }
 
 # Проверить наличие ring license и вернуть путь до ring
@@ -107,8 +111,8 @@ function push_clusters_list {
 
     # Сохранить список UUID кластеров во временный файл
     function push_clusters_uuid {
-        CURR_CLSTR=$( timeout -s HUP ${RAS_TIMEOUT} rac cluster list \
-            ${1%%:*}:${RAS_PORT} 2>/dev/null | awk '/^($|cluster|name|port)/' | \
+        CURR_CLSTR=$( timeout -s HUP "${RAS_TIMEOUT}" rac cluster list \
+            "${1%%:*}:${RAS_PORT}" 2>/dev/null | awk '/^($|cluster|name|port)/' | \
             perl -pe "s/.*: /,/; s/(.+)\n/\1/;" | sed 's/^,//' | \
             awk "/${1##*:}/" | perl -pe 's/\n/;/' )
 
@@ -117,7 +121,7 @@ function push_clusters_list {
 
     cat /dev/null > ${CLSTR_CACHE}
 
-    execute_tasks push_clusters_uuid ${@}
+    execute_tasks push_clusters_uuid "${@}"
 
 }
 
@@ -151,21 +155,21 @@ function check_clusters_cache {
     #   - если временный файл старше 1 часа
     if [[ -e ${CLSTR_CACHE} ]]; then
         if [[ ${1} == "lost" ]]; then
-            cp ${CLSTR_CACHE} ${CLSTR_CACHE}.${$} && trap "rm -f ${CLSTR_CACHE}.${$}; exit 1" 1 2 3 15
-            for CURR_RMNGR in ${RMNGR_LIST[@]}; do
+            cp ${CLSTR_CACHE} ${CLSTR_CACHE}.${$} && trap "rm -f "${CLSTR_CACHE}.${$}"; exit 1" 1 2 3 15
+            for CURR_RMNGR in "${RMNGR_LIST[@]}"; do
                 CURR_LOST=$( grep "^${CURR_RMNGR%:*}" ${CLSTR_CACHE}.${$} | \
                     sed -re "s/[^:^;]+,(${CURR_RMNGR#*:}),[^;]+;//" )
                 sed -i -re "s/^${CURR_RMNGR%:*}.*$/${CURR_LOST}/; /[^:]+:$/d" ${CLSTR_CACHE}.${$}
             done
             grep -v "^$" ${CLSTR_CACHE}.${$} || [[ ${#RMNGR_LIST[@]} -ne $(grep -vc "^$" ${CLSTR_CACHE}) ]] && 
-                push_clusters_list ${RMNGR_LIST[@]}
+                push_clusters_list "${RMNGR_LIST[@]}"
             rm -f ${CLSTR_CACHE}.${$} &>/dev/null
         elif [[ ${#RMNGR_LIST[@]} -ne $(grep -vc "^$" ${CLSTR_CACHE}) ||
             $(date -r ${CLSTR_CACHE} "+%s") -lt $(date -d "last hour" "+%s") ]]; then
-            push_clusters_list ${RMNGR_LIST[@]}
+            push_clusters_list "${RMNGR_LIST[@]}"
         fi
     else
-        push_clusters_list ${RMNGR_LIST[@]}
+        push_clusters_list "${RMNGR_LIST[@]}"
     fi
 
 }
@@ -176,8 +180,8 @@ function get_processes_perfomance {
     [[ $( expr index ${1} : ) -eq 0 ]] && RAS_HOST=${HOSTNAME} || RAS_HOST=${1%:*}
 
     for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
-        timeout -s HUP ${RAS_TIMEOUT} rac process list --cluster=${CURR_CLSTR%%,*} \
-            ${RAS_AUTH} ${RAS_HOST}:${RAS_PORT} 2>/dev/null | \
+        timeout -s HUP "${RAS_TIMEOUT}" rac process list "--cluster=${CURR_CLSTR%%,*}" \
+            ${RAS_AUTH} "${RAS_HOST}:${RAS_PORT}" 2>/dev/null | \
             awk '/^(host|available-perfomance|$)/' | perl -pe "s/.*: ([^.]+).*\n/\1:/" | \
             awk -F: '{ apc[$1]+=1; aps[$1]+=$2 } END { for (i in apc) { print i":"aps[i]/apc[i] } }'
     done
@@ -190,7 +194,7 @@ function get_server_directory {
     if [ -z ${IS_WINDOWS} ]; then
         SRV1CV8_DATA="$(pgrep -a ragent | sed -r 's/.*-d ([^ ]+).*/\1/' )"
         # Если каталог кластера не задан в параметре, то установим значение по умолчанию
-        [[ -z ${SRV1CV8_DATA} ]] && SRV1CV8_DATA="$(awk -v uid="^$(awk '/Uid/ {print $2}' /proc/$(pgrep ragent)/status 2>/dev/null)$" -F: \
+        [[ -z ${SRV1CV8_DATA} ]] && SRV1CV8_DATA="$(awk -v uid="^$(awk '/Uid/ {print $2}' /proc/"$(pgrep ragent)"/status 2>/dev/null)$" -F: \
             '$3 ~ uid {print $6}' /etc/passwd)/.1cv8/1C/1cv8"
     else
         SRV1CV8_DATA="$(wmic path win32_process where "caption like 'ragent.exe'" get commandline /format:csv | \

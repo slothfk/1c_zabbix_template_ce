@@ -7,33 +7,26 @@
 # Email: fedotov@kaminsoft.ru
 #
 
-export WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
-source "${WORK_DIR}"/1c_common_module.sh 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
+WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
+source "${WORK_DIR}/1c_common_module.sh" 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
 # Файл списка информационных баз
 export IB_CACHE=${TMPDIR}/1c_infobase_cache
 
-function get_infobase_status {
-    curl -u "${2}:${3}" --header "SOAPAction: http://www.1c.ru/SSL/RemoteControl_1_0_0_1#RemoteControl:GetCurrentState" \
-        -d '<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
-        xmlns:ns1="http://www.1c.ru/SSL/RemoteControl_1_0_0_1"><env:Body><ns1:GetCurrentState/>
-        </env:Body></env:Envelope>' ${1}/ws/RemoteControl | perl -pe 's/.*m:return[^>]+>(\w+)<.*/\1/'
-}
-
 function get_infobases_list {
 
-    cat /dev/null > ${IB_CACHE}
+    cat /dev/null > "${IB_CACHE}"
 
     CLUSTERS_LIST=$( pop_clusters_list self )
     BASE_INFO='{"data":[ '
     for CURRENT_CLUSTER in ${CLUSTERS_LIST//;/ }; do
-        BASE_LIST=$(timeout -s HUP ${RAS_TIMEOUT} rac infobase summary list \
-            --cluster ${CURRENT_CLUSTER%%,*} ${RAS_AUTH} ${HOSTNAME}:${RAS_PORT} | \
+        BASE_LIST=$(timeout -s HUP "${RAS_TIMEOUT}" rac infobase summary list \
+            --cluster "${CURRENT_CLUSTER%%,*}" ${RAS_AUTH} "${HOSTNAME}:${RAS_PORT}" | \
             awk '/(infobase|name)/' | \
             perl -pe 's/[ "]//g; s/^name:(.*)$/\1\n/; s/^infobase:(.*)/\1,/; s/\n//' | perl -pe 's/\n/;/' )
         for CURRENT_BASE in ${BASE_LIST//;/ }; do
             BASE_INFO+="{ \"{#CLSTR_UUID}\":\"${CURRENT_CLUSTER%%,*}\",\"{#CLSTR_NAME}\":\"${CURRENT_CLUSTER##*,}\",\"{#IB_UUID}\":\"${CURRENT_BASE%,*}\",\"{#IB_NAME}\":\"${CURRENT_BASE#*,}\" }, "
-            echo "${CURRENT_CLUSTER%%,*} ${CURRENT_BASE%,*}" >> ${IB_CACHE}
+            echo "${CURRENT_CLUSTER%%,*} ${CURRENT_BASE%,*}" >> "${IB_CACHE}"
         done
     done
     echo "${BASE_INFO%, } ]}" | sed 's/<sp>/ /g'
@@ -52,8 +45,8 @@ function get_clusters_list {
 function get_clusters_sessions {
 
     for CURR_CLSTR in ${1//;/ }; do
-        timeout -s HUP ${RAS_TIMEOUT} rac session list --cluster=${CURR_CLSTR%%,*} \
-            ${RAS_AUTH} ${HOSTNAME}:${RAS_PORT} 2>/dev/null | \
+        timeout -s HUP "${RAS_TIMEOUT}" rac session list --cluster="${CURR_CLSTR%%,*}" \
+            ${RAS_AUTH} "${HOSTNAME}:${RAS_PORT}" 2>/dev/null | \
             awk -F':' '/^(infobase|app-id|hibernate|duration-current|user-name|session-id)\s/ \
                 { if ( $1 ~ "session-id" ) { print "<nl>"; }; print $2; }' |
             perl -pe 's/^[ ]+//; s/\n/|/; s/<nl>/\n/; s/(1CV8[^|]*|WebClient)/cl/; s/BackgroundJob/bg/;
@@ -105,16 +98,20 @@ function get_session_amounts {
 }
 
 function get_infobases_restrictions {
-    [[ -z ${IS_WINDOWS} ]] && COMMAND_PREFIX="sudo -u ${USR1CV8}" || COMMAND_PREFIX=""
-        get_server_directory | xargs -I{{}} ${COMMAND_PREFIX} find {{}} -maxdepth 2 -name 1CV8Clst.lst -exec grep DBMS -A1 {} + |
+    if [[ -z ${IS_WINDOWS} ]]; then
+        COMMAND_PREFIX=( sudo -u "${USR1CV8}" )
+    else 
+        COMMAND_PREFIX=()
+    fi
+    get_server_directory | xargs -I server_directory "${COMMAND_PREFIX[@]}" find server_directory -maxdepth 2 -name 1CV8Clst.lst -exec grep DBMS -A1 {} + |
         perl -pe 's/([^}],)\r?\n/\1/' |
-        perl -pe 's/.*{(\w{8}-\w{4}-\w{4}-\w{4}-\w{12}),.+{([01]).+},([01]),.*/IB#\1,\2,\3/'
+        perl -pe 's/.*{(\w{8}-\w{4}-\w{4}-\w{4}-\w{12}),.+{([01]),([0-9]+),([0-9]+),.+},([01]),.*/IB#\1,\2,\3,\4,\5/' | 
+        awk -v current_date="$(date +%Y%m%d%H%M%S)" -F, '{ if ( $2 == "1" && $3 < current_date && $4 > current_date ) { sl=1 } else { sl=0 }; print $1","sl","$5}'
 }
 
 case ${1} in
-    ib_status) shift; get_infobase_status ${@} ;;
-    sessions) shift; make_ras_params ${@}; get_session_amounts ;;
-    infobases) shift 2; make_ras_params ${@}; get_infobases_list ;;
+    sessions) shift; make_ras_params "${@}"; get_session_amounts ;;
+    infobases) shift 2; make_ras_params "${@}"; get_infobases_list ;;
     clusters) get_clusters_list ;;
     ib_restrict) get_infobases_restrictions ;;
     *) error "${ERROR_UNKNOWN_MODE}" ;;
