@@ -135,10 +135,10 @@ function pop_clusters_list {
     [[ ! -f ${CLSTR_CACHE} ]] && error "Не найден файл списка кластеров!"
 
     if [[ -n ${1} && ${1} == "self" ]]; then
-        grep -i "^${HOSTNAME}" "${CLSTR_CACHE}" 
+        grep -i "^${HOSTNAME}" "${CLSTR_CACHE}" | cut -d: -f2
     else
         cat "${CLSTR_CACHE}" 
-    fi | sed -r 's/.*[:]//; s/ /<sp>/g; s/"//g'
+    fi | sed 's/ /<sp>/g; s/"//g'
 
 }
 
@@ -146,7 +146,7 @@ function pop_clusters_list {
 #  - если в первом параметре указано self, то выводится только список кластеров текущего сервера
 function get_clusters_list {
 
-    pop_clusters_list "${1}" | perl -pe 's/;[^\n]/\n/; s/;//' | \
+    pop_clusters_list "${1}" | perl -pe 's/.*[:]//; s/;[^\n]/\n/; s/;//' | \
         awk 'BEGIN {FS=","; print "{\"data\":[" } \
             {print "{\"{#CLSTR_UUID}\":\""$1"\",\"{#CLSTR_NAME}\":\""$3"\"}," } \
             END { print "]}" }' | \
