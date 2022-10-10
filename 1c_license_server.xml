@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2022-05-24T06:17:56Z</date>
+    <date>2022-10-10T06:00:08Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -259,9 +259,9 @@
                     <lifetime>90d</lifetime>
                     <item_prototypes>
                         <item_prototype>
-                            <name>[1С/Лицензии/{#CLSTR_NAME}] Количество лицензий на клиенте</name>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Количество лицензий на клиенте</name>
                             <type>DEPENDENT</type>
-                            <key>1c.ls.license.client[{#CLSTR_UUID}]</key>
+                            <key>1c.ls.license.client[cluster,{#CLSTR_UUID}]</key>
                             <delay>0</delay>
                             <history>30d</history>
                             <trends>90d</trends>
@@ -282,12 +282,10 @@
                             </master_item>
                         </item_prototype>
                         <item_prototype>
-                            <name>[1С/Лицензии/{#CLSTR_NAME}] Общее количество сеансов</name>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Общее количество сеансов</name>
                             <type>DEPENDENT</type>
-                            <key>1c.ls.license.total[{#CLSTR_UUID}]</key>
+                            <key>1c.ls.license.total[cluster,{#CLSTR_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <applications>
                                 <application>
                                     <name>[1С] Программные лицензии</name>
@@ -305,12 +303,10 @@
                             </master_item>
                         </item_prototype>
                         <item_prototype>
-                            <name>[1С/Лицензии/{#CLSTR_NAME}] Количество уникальных пользователей</name>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Количество уникальных пользователей</name>
                             <type>DEPENDENT</type>
-                            <key>1c.ls.license.uniq[{#CLSTR_UUID}]</key>
+                            <key>1c.ls.license.uniq[cluster,{#CLSTR_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <applications>
                                 <application>
                                     <name>[1С] Программные лицензии</name>
@@ -328,9 +324,9 @@
                             </master_item>
                         </item_prototype>
                         <item_prototype>
-                            <name>[1С/Лицензии/{#CLSTR_NAME}] Количество выданных лицензий</name>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Количество выданных лицензий</name>
                             <type>DEPENDENT</type>
-                            <key>1c.ls.license.used[{#CLSTR_UUID}]</key>
+                            <key>1c.ls.license.used[cluster,{#CLSTR_UUID}]</key>
                             <delay>0</delay>
                             <history>30d</history>
                             <trends>90d</trends>
@@ -351,9 +347,9 @@
                             </master_item>
                         </item_prototype>
                         <item_prototype>
-                            <name>[1С/Лицензии/{#CLSTR_NAME}] Количество веб-клиентов</name>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Количество веб-клиентов</name>
                             <type>DEPENDENT</type>
-                            <key>1c.ls.license.webclient[{#CLSTR_UUID}]</key>
+                            <key>1c.ls.license.webclient[cluster,{#CLSTR_UUID}]</key>
                             <delay>0</delay>
                             <history>30d</history>
                             <trends>90d</trends>
@@ -376,14 +372,14 @@
                     </item_prototypes>
                     <graph_prototypes>
                         <graph_prototype>
-                            <name>[1С/Лицензии/{#CLSTR_NAME}] Использование активированных лицензий</name>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Использование активированных лицензий</name>
                             <graph_items>
                                 <graph_item>
                                     <drawtype>GRADIENT_LINE</drawtype>
                                     <color>1B5E20</color>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
-                                        <key>1c.ls.license.used[{#CLSTR_UUID}]</key>
+                                        <key>1c.ls.license.used[cluster,{#CLSTR_UUID}]</key>
                                     </item>
                                 </graph_item>
                                 <graph_item>
@@ -391,7 +387,7 @@
                                     <color>FFFFFF</color>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
-                                        <key>1c.ls.license.uniq[{#CLSTR_UUID}]</key>
+                                        <key>1c.ls.license.uniq[cluster,{#CLSTR_UUID}]</key>
                                     </item>
                                 </graph_item>
                                 <graph_item>
@@ -399,7 +395,7 @@
                                     <color>FC6EA3</color>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
-                                        <key>1c.ls.license.client[{#CLSTR_UUID}]</key>
+                                        <key>1c.ls.license.client[cluster,{#CLSTR_UUID}]</key>
                                     </item>
                                 </graph_item>
                                 <graph_item>
@@ -407,7 +403,7 @@
                                     <color>6C59DC</color>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
-                                        <key>1c.ls.license.webclient[{#CLSTR_UUID}]</key>
+                                        <key>1c.ls.license.webclient[cluster,{#CLSTR_UUID}]</key>
                                     </item>
                                 </graph_item>
                                 <graph_item>
@@ -415,7 +411,170 @@
                                     <color>F7941D</color>
                                     <item>
                                         <host>Template App 1C Enterprise License Server</host>
-                                        <key>1c.ls.license.total[{#CLSTR_UUID}]</key>
+                                        <key>1c.ls.license.total[cluster,{#CLSTR_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                    </graph_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>[1С/Лицензии] Информационные  базы</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>1c.ls.infobases.discovery[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    <delay>1h</delay>
+                    <status>DISABLED</status>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Количество лицензий на клиенте</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.ls.license.client[infobase,{#IB_UUID}]</key>
+                            <delay>0</delay>
+                            <applications>
+                                <application>
+                                    <name>[1С] Программные лицензии</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>IB#{#IB_UUID}:\d+:\d+:\d+:(\d+):\d+
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Общее количество сеансов</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.ls.license.total[infobase,{#IB_UUID}]</key>
+                            <delay>0</delay>
+                            <applications>
+                                <application>
+                                    <name>[1С] Программные лицензии</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>IB#{#IB_UUID}:\d+:\d+:(\d+):\d+:\d+
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Количество уникальных пользователей</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.ls.license.uniq[infobase,{#IB_UUID}]</key>
+                            <delay>0</delay>
+                            <applications>
+                                <application>
+                                    <name>[1С] Программные лицензии</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>IB#{#IB_UUID}:\d+:(\d+):\d+:\d+:\d+
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Количество выданных лицензий</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.ls.license.used[infobase,{#IB_UUID}]</key>
+                            <delay>0</delay>
+                            <applications>
+                                <application>
+                                    <name>[1С] Программные лицензии</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>IB#{#IB_UUID}:(\d+):\d+:\d+:\d+:\d+
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Количество веб-клиентов</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.ls.license.webclient[infobase,{#IB_UUID}]</key>
+                            <delay>0</delay>
+                            <applications>
+                                <application>
+                                    <name>[1С] Программные лицензии</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>IB#{#IB_UUID}:\d+:\d+:\d+:\d+:(\d+)
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <graph_prototypes>
+                        <graph_prototype>
+                            <name>[1С/Инфобаза/{#IB_NAME}] Использование активированных лицензий</name>
+                            <width>800</width>
+                            <height>300</height>
+                            <graph_items>
+                                <graph_item>
+                                    <drawtype>GRADIENT_LINE</drawtype>
+                                    <color>1B5E20</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise License Server</host>
+                                        <key>1c.ls.license.used[infobase,{#IB_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <color>FFFFFF</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise License Server</host>
+                                        <key>1c.ls.license.uniq[infobase,{#IB_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <color>FC6EA3</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise License Server</host>
+                                        <key>1c.ls.license.client[infobase,{#IB_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>3</sortorder>
+                                    <color>6C59DC</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise License Server</host>
+                                        <key>1c.ls.license.webclient[infobase,{#IB_UUID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>4</sortorder>
+                                    <color>F7941D</color>
+                                    <item>
+                                        <host>Template App 1C Enterprise License Server</host>
+                                        <key>1c.ls.license.total[infobase,{#IB_UUID}]</key>
                                     </item>
                                 </graph_item>
                             </graph_items>
@@ -449,7 +608,7 @@
             </macros>
             <screens>
                 <screen>
-                    <name>[1С/Лицензии] Использование активированных лицензий</name>
+                    <name>[1С/Лицензии] Использование активированных лицензий по информационным базам</name>
                     <hsize>1</hsize>
                     <vsize>2</vsize>
                     <screen_items>
@@ -461,7 +620,7 @@
                                 <host>Template App 1C Enterprise License Server</host>
                             </resource>
                             <width>1200</width>
-                            <height>200</height>
+                            <height>300</height>
                             <x>0</x>
                             <y>0</y>
                             <colspan>1</colspan>
@@ -479,11 +638,62 @@
                             <resourcetype>20</resourcetype>
                             <style>0</style>
                             <resource>
-                                <name>[1С/Лицензии/{#CLSTR_NAME}] Использование активированных лицензий</name>
+                                <name>[1С/Инфобаза/{#IB_NAME}] Использование активированных лицензий</name>
                                 <host>Template App 1C Enterprise License Server</host>
                             </resource>
                             <width>600</width>
-                            <height>150</height>
+                            <height>200</height>
+                            <x>0</x>
+                            <y>1</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>2</max_columns>
+                        </screen_item>
+                    </screen_items>
+                </screen>
+                <screen>
+                    <name>[1С/Лицензии] Использование активированных лицензий по кластерам</name>
+                    <hsize>1</hsize>
+                    <vsize>2</vsize>
+                    <screen_items>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>[1С/Лицензии] Использование активированных лицензий</name>
+                                <host>Template App 1C Enterprise License Server</host>
+                            </resource>
+                            <width>1200</width>
+                            <height>300</height>
+                            <x>0</x>
+                            <y>0</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                        <screen_item>
+                            <resourcetype>20</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>[1С/Кластер/{#CLSTR_NAME}] Использование активированных лицензий</name>
+                                <host>Template App 1C Enterprise License Server</host>
+                            </resource>
+                            <width>600</width>
+                            <height>200</height>
                             <x>0</x>
                             <y>1</y>
                             <colspan>1</colspan>

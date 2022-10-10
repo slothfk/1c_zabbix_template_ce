@@ -7,8 +7,8 @@
 # Email: fedotov@kaminsoft.ru
 #
 
-export WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
-source "${WORK_DIR}"/1c_common_module.sh 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
+WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
+source "${WORK_DIR}/1c_common_module.sh" 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
 function licenses_summary {
 
@@ -27,7 +27,7 @@ function license_info {
         sed -re 's/(0{7}10{3}1)5/\10/; s/(0{7}[10]0)10{3}/\10500/' | \
         awk -F':' '/0{7}[10]0(0{3}[35]|00[125]0|0[135]00)/ { print $2; exit}' )
 
-    [[ -n ${CURRENT_CODE} ]] && echo ${CURRENT_CODE:10}
+    [[ -n ${CURRENT_CODE} ]] && echo "${CURRENT_CODE:10}"
 
 }
 
@@ -35,15 +35,27 @@ function get_license_counts {
 
     CLSTR_LIST=${1##*:}
 
+#awk -v RS='' -v OFS="," '$1=$1' < <(awk '/^(session|infobase|)(\s|$)/ { print $3}' sessions.list ) > ibs.list
+
+#awk -v RS='' -v OFS="," '$1=$1' < <(awk '/^(session|user-name|app-id|rmngr-address|)(\s|$)/ { print $3}' licenses.list ) | 
+#awk -F',' -v OFS="," 'FNR==NR{sess_id[$1]=$2; next} ($1 in sess_id) {print sess_id[$1],$2,$3,$4 }' ibs.list -
+
     for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
-        timeout -s HUP ${RAS_TIMEOUT} rac session list --licenses --cluster=${CURR_CLSTR%%,*} \
-            ${RAS_AUTH} ${1%%:*}:${RAS_PORT} 2>/dev/null | \
-            awk '/(user-name|rmngr-address|app-id)/' | \
-            perl -pe 's/ //g; s/\n/|/; s/rmngr-address:(\"(.*)\"|)\||/\2/; s/app-id://; s/user-name:/\n/;' | \
-            awk -F"|" -v hostname=${HOSTNAME,,} -v cluster=${CURR_CLSTR%%,*} 'BEGIN { sc=0; hc=0; cc=0; wc=0 } \
-                { if ($1 != "") { sc+=1; uc[$1]; if ( index(tolower($3), hostname) > 0 ) { hc+=1 } \
-                if ($2 == "WebClient") { wc+=1 } if ($3 == "") { cc+=1 } } } \
-                END {print "CL#"cluster":"hc":"length(uc)":"sc":"cc":"wc }'
+        timeout -s HUP "${RAS_TIMEOUT}" rac session list --licenses --cluster="${CURR_CLSTR%%,*}" \
+            ${RAS_AUTH} "${1%%:*}:${RAS_PORT}" 2>/dev/null | \
+            awk '/^(session|user-name|app-id|rmngr-address|)(\s|$)/ { print $3}' | awk -v RS='' -v OFS='|' '$1=$1' | \
+        awk -F'|' -v OFS="|" 'FNR==NR{sess_id[$1]=$2; next} ($1 in sess_id) {print sess_id[$1],$2,$3,$4 }' \
+        <( timeout -s HUP "${RAS_TIMEOUT}" rac session list --cluster="${CURR_CLSTR%%,*}" \
+            ${RAS_AUTH} "${1%%:*}:${RAS_PORT}" 2>/dev/null | \
+            awk '/^(session|infobase|)(\s|$)/ { print $3}' | awk -v RS='' -v OFS="|" '$1=$1' ) - | \
+            awk -F'|' -v OFS=':' -v hostname="${HOSTNAME,,}" -v cluster="CL#${CURR_CLSTR%%,*}" \
+                'FNR==NR{ if ($0 ~ "^"substr(cluster,4)) { split($0, ib_uuid, " "); sc["IB#"ib_uuid[2]]=0 }; next} \
+                BEGIN { sc[cluster]=0 }
+                { ib_mark="IB#"$1; if ($2 != "") { sc[cluster]+=1; sc[ib_mark]+=1; uc[cluster][$2]; uc[ib_mark][$2]; \
+                if ( index(tolower($4), hostname) > 0 ) { hc[cluster]+=1; hc[ib_mark]+=1; } \
+                if ($3 == "WebClient") { wc[cluster]+=1; wc[ib_mark]+=1; } \
+                if ($4 == "") { cc[cluster]+=1; cc[ib_mark]+=1; } } } \
+                END {for (i in sc) { print i,(hc[i]?hc[i]:0),(length(uc[i])),(sc[i]?sc[i]:0),(cc[i]?cc[i]:0),(wc[i]?wc[i]:0) } }' "${IB_CACHE}" -
     done
 
 }
@@ -54,9 +66,8 @@ function used_license {
     check_clusters_cache
 
     ( execute_tasks get_license_counts $( pop_clusters_list ) ) | \
-        awk -F: 'BEGIN {ul=0; as=0; cl=0; uu=0; wc=0} \
-            { print $0; ul+=$2; uu+=$3; as+=$4; cl+=$5; wc+=$6; } \
-            END { print "summary:"ul":"uu":"as":"cl":"wc }' | sed 's/<sp>/ /g'
+        awk -F: -v OFS=':' '{ print $0; if ($1 !~ /^IB/) { ul+=$2; uu+=$3; as+=$4; cl+=$5; wc+=$6; } } \
+            END { print "summary",ul?ul:0,uu?uu:0,as?as:0,cl?cl:0,wc?wc:0 }' | sed 's/<sp>/ /g'
 
 }
 
@@ -89,7 +100,8 @@ function check_clusters_disconnection {
 
 case ${1} in
     info) licenses_summary ;;
-    used) shift; make_ras_params ${@}; used_license ;;
+    used) shift; make_ras_params "${@}"; used_license ;;
+    infobases) shift; make_ras_params "${@}"; get_infobases_list;;
     clusters) get_clusters_list ;;
     check) check_clusters_disconnection ;;
     *) error "${ERROR_UNKNOWN_MODE}" ;;

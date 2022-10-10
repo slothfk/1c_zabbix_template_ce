@@ -10,28 +10,6 @@
 WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
 source "${WORK_DIR}/1c_common_module.sh" 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
-# Файл списка информационных баз
-export IB_CACHE=${TMPDIR}/1c_infobase_cache
-
-function get_infobases_list {
-
-    cat /dev/null > "${IB_CACHE}"
-
-    CLUSTERS_LIST=$( pop_clusters_list self )
-    BASE_INFO='{"data":[ '
-    for CURRENT_CLUSTER in ${CLUSTERS_LIST//;/ }; do
-        BASE_LIST=$(timeout -s HUP "${RAS_TIMEOUT}" rac infobase summary list \
-            --cluster "${CURRENT_CLUSTER%%,*}" ${RAS_AUTH} "${HOSTNAME}:${RAS_PORT}" | \
-            awk '/(infobase|name)/' | \
-            perl -pe 's/[ "]//g; s/^name:(.*)$/\1\n/; s/^infobase:(.*)/\1,/; s/\n//' | perl -pe 's/\n/;/' )
-        for CURRENT_BASE in ${BASE_LIST//;/ }; do
-            BASE_INFO+="{ \"{#CLSTR_UUID}\":\"${CURRENT_CLUSTER%%,*}\",\"{#CLSTR_NAME}\":\"${CURRENT_CLUSTER##*,}\",\"{#IB_UUID}\":\"${CURRENT_BASE%,*}\",\"{#IB_NAME}\":\"${CURRENT_BASE#*,}\" }, "
-            echo "${CURRENT_CLUSTER%%,*} ${CURRENT_BASE%,*}" >> "${IB_CACHE}"
-        done
-    done
-    echo "${BASE_INFO%, } ]}" | sed 's/<sp>/ /g'
-}
-
 function get_clusters_list {
 
     pop_clusters_list self | perl -pe 's/;[^\n]/\n/; s/;//' | \
@@ -111,7 +89,7 @@ function get_infobases_restrictions {
 
 case ${1} in
     sessions) shift; make_ras_params "${@}"; get_session_amounts ;;
-    infobases) shift 2; make_ras_params "${@}"; get_infobases_list ;;
+    infobases) shift 2; make_ras_params "${@}"; get_infobases_list self;;
     clusters) get_clusters_list ;;
     ib_restrict) get_infobases_restrictions ;;
     *) error "${ERROR_UNKNOWN_MODE}" ;;
