@@ -35,11 +35,6 @@ function get_license_counts {
 
     CLSTR_LIST=${1##*:}
 
-#awk -v RS='' -v OFS="," '$1=$1' < <(awk '/^(session|infobase|)(\s|$)/ { print $3}' sessions.list ) > ibs.list
-
-#awk -v RS='' -v OFS="," '$1=$1' < <(awk '/^(session|user-name|app-id|rmngr-address|)(\s|$)/ { print $3}' licenses.list ) | 
-#awk -F',' -v OFS="," 'FNR==NR{sess_id[$1]=$2; next} ($1 in sess_id) {print sess_id[$1],$2,$3,$4 }' ibs.list -
-
     for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
         timeout -s HUP "${RAS_TIMEOUT}" rac session list --licenses --cluster="${CURR_CLSTR%%,*}" \
             ${RAS_AUTH} "${1%%:*}:${RAS_PORT}" 2>/dev/null | \
