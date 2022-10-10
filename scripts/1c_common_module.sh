@@ -135,10 +135,22 @@ function pop_clusters_list {
     [[ ! -f ${CLSTR_CACHE} ]] && error "Не найден файл списка кластеров!"
 
     if [[ -n ${1} && ${1} == "self" ]]; then
-        grep -i "^${HOSTNAME}" "${CLSTR_CACHE}" | cut -f2 -d:
+        grep -i "^${HOSTNAME}" "${CLSTR_CACHE}" 
     else
         cat "${CLSTR_CACHE}" 
-    fi | sed 's/ /<sp>/g; s/"//g'
+    fi | sed -r 's/.*[:]//; s/ /<sp>/g; s/"//g'
+
+}
+
+# Вывести список кластеров в формате json:
+#  - если в первом параметре указано self, то выводится только список кластеров текущего сервера
+function get_clusters_list {
+
+    pop_clusters_list "${1}" | perl -pe 's/;[^\n]/\n/; s/;//' | \
+        awk 'BEGIN {FS=","; print "{\"data\":[" } \
+            {print "{\"{#CLSTR_UUID}\":\""$1"\",\"{#CLSTR_NAME}\":\""$3"\"}," } \
+            END { print "]}" }' | \
+        perl -pe 's/\n//;' | perl -pe 's/(.*),]}/\1]}\n/; s/<sp>/ /g'
 
 }
 
@@ -242,13 +254,12 @@ function get_clusters_infobases {
     [[ ${RMNGR_HOST} == "${CLUSTERS_LIST}" ]] && RMNGR_HOST=${HOSTNAME}
 
     for CURRENT_CLUSTER in ${CLUSTERS_LIST//;/ }; do
-        BASE_LIST=$(timeout -s HUP "${RAS_TIMEOUT}" rac infobase summary list \
+        readarray BASE_LIST < <( timeout -s HUP "${RAS_TIMEOUT}" rac infobase summary list \
             --cluster "${CURRENT_CLUSTER%%,*}" ${RAS_AUTH} "${RMNGR_HOST}:${RAS_PORT}" | \
-            awk '/(infobase|name)/' | \
-            perl -pe 's/[ "]//g; s/^name:(.*)$/\1\n/; s/^infobase:(.*)/\1,/; s/\n//' | perl -pe 's/\n/;/' )
-        for CURRENT_BASE in ${BASE_LIST//;/ }; do
-            echo "{ \"{#CLSTR_UUID}\":\"${CURRENT_CLUSTER%%,*}\",\"{#CLSTR_NAME}\":\"${CURRENT_CLUSTER##*,}\",\"{#IB_UUID}\":\"${CURRENT_BASE%,*}\",\"{#IB_NAME}\":\"${CURRENT_BASE#*,}\" }, "
-            echo "${CURRENT_CLUSTER%%,*} ${CURRENT_BASE%,*}" >> "${IB_CACHE}"
+            awk '/(infobase|name|)(\s|$)/ { print $3 }' | awk -v RS='' -v OFS='|' '$1=$1' )
+        for CURRENT_BASE in "${BASE_LIST[@]}"; do
+            echo "{ \"{#CLSTR_UUID}\":\"${CURRENT_CLUSTER%%,*}\",\"{#CLSTR_NAME}\":\"${CURRENT_CLUSTER##*,}\",\"{#IB_UUID}\":\"${CURRENT_BASE%|*}\",\"{#IB_NAME}\":\"${CURRENT_BASE#*|}\" }, "
+            echo "${CURRENT_CLUSTER%%,*} ${CURRENT_BASE%|*}" >> "${IB_CACHE}"
         done
     done
 }

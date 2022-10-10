@@ -23,7 +23,7 @@ function licenses_summary {
 
 function license_info {
 
-    CURRENT_CODE=$( "${RING_TOOL}" license info --send-statistics false --name ${1} | \
+    CURRENT_CODE=$( "${RING_TOOL}" license info --send-statistics false --name "${1}" | \
         sed -re 's/(0{7}10{3}1)5/\10/; s/(0{7}[10]0)10{3}/\10500/' | \
         awk -F':' '/0{7}[10]0(0{3}[35]|00[125]0|0[135]00)/ { print $2; exit}' )
 
@@ -63,16 +63,6 @@ function used_license {
     ( execute_tasks get_license_counts $( pop_clusters_list ) ) | \
         awk -F: -v OFS=':' '{ print $0; if ($1 !~ /^IB/) { ul+=$2; uu+=$3; as+=$4; cl+=$5; wc+=$6; } } \
             END { print "summary",ul?ul:0,uu?uu:0,as?as:0,cl?cl:0,wc?wc:0 }' | sed 's/<sp>/ /g'
-
-}
-
-function get_clusters_list {
-
-    pop_clusters_list | cut -f2 -d: | perl -pe 's/;[^\n]/\n/; s/;//' | \
-        awk 'BEGIN {FS=","; print "{\"data\":[" } \
-            {print "{\"{#CLSTR_UUID}\":\""$1"\",\"{#CLSTR_NAME}\":\""$3"\"}," } \
-            END { print "]}" }' | \
-        perl -pe 's/\n//;' | perl -pe 's/(.*),]}/\1]}\n/; s/<sp>/ /g'
 
 }
 

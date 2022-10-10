@@ -10,16 +10,6 @@
 WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
 source "${WORK_DIR}/1c_common_module.sh" 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
-function get_clusters_list {
-
-    pop_clusters_list self | perl -pe 's/;[^\n]/\n/; s/;//' | \
-        awk 'BEGIN {FS=","; print "{\"data\":[" } \
-            {print "{\"{#CLSTR_UUID}\":\""$1"\",\"{#CLSTR_NAME}\":\""$3"\"}," } \
-            END { print "]}" }' | \
-        perl -pe 's/\n//;' | perl -pe 's/(.*),]}/\1]}\n/; s/<sp>/ /g'
-
-}
-
 function get_clusters_sessions {
 
     for CURR_CLSTR in ${1//;/ }; do
@@ -90,7 +80,7 @@ function get_infobases_restrictions {
 case ${1} in
     sessions) shift; make_ras_params "${@}"; get_session_amounts ;;
     infobases) shift 2; make_ras_params "${@}"; get_infobases_list self;;
-    clusters) get_clusters_list ;;
+    clusters) get_clusters_list self ;;
     ib_restrict) get_infobases_restrictions ;;
     *) error "${ERROR_UNKNOWN_MODE}" ;;
 esac
