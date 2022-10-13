@@ -48,8 +48,8 @@ RAS_AUTH=""
 MAX_THREADS=$(( $(nproc) / 2 )) && [[ ${MAX_THREADS} -eq 0 ]] && MAX_THREADS=1 
 
 # Общие для всех скрпитов тексты ошибок
-ERROR_UNKNOWN_MODE="Неизвестный режим работы скрипта!"
-ERROR_UNKNOWN_PARAM="Неизвестный параметр для данного режима работы скрипта!"
+export ERROR_UNKNOWN_MODE="Неизвестный режим работы скрипта!"
+export ERROR_UNKNOWN_PARAM="Неизвестный параметр для данного режима работы скрипта!"
 
 # Файл списка информационных баз
 export IB_CACHE=${TMPDIR}/1c_infobase_cache
@@ -114,11 +114,10 @@ function push_clusters_list {
 
     # Сохранить список UUID кластеров во временный файл
     function push_clusters_uuid {
-        CURR_CLSTR=$( timeout -s HUP "${RAS_TIMEOUT}" rac cluster list \
-            "${1%%:*}:${RAS_PORT}" 2>/dev/null | awk '/^($|cluster|name|port)/' | \
-            perl -pe "s/.*: /,/; s/(.+)\n/\1/;" | sed 's/^,//' | \
-            awk "/${1##*:}/" | perl -pe 's/\n/;/' )
-
+        CURR_CLSTR=$( timeout -s HUP "${RAS_TIMEOUT}" rac cluster list "${1%%:*}:${RAS_PORT}" 2>/dev/null | 
+            awk -v FS=' +: +' '/^($|cluster|name|port)/ { if ($1){ print $2 } else {print "==="} }' |
+            awk -v RS='={3}' -v OFS=',' -v ORS=';' '$1=$1' )
+ 
         [[ -n ${CURR_CLSTR} ]] && echo "${1%%:*}:${CURR_CLSTR}" >> ${CLSTR_CACHE}
     }
 
@@ -147,8 +146,8 @@ function pop_clusters_list {
 function get_clusters_list {
 
     pop_clusters_list "${1}" | perl -pe 's/.*[:]//; s/;[^\n]/\n/; s/;//' | \
-        awk 'BEGIN {FS=","; print "{\"data\":[" } \
-            {print "{\"{#CLSTR_UUID}\":\""$1"\",\"{#CLSTR_NAME}\":\""$3"\"}," } \
+        awk 'BEGIN {FS=","; print "{\"data\":[" }
+            {print "{\"{#CLSTR_UUID}\":\""$1"\",\"{#CLSTR_NAME}\":\""$3"\"}," }
             END { print "]}" }' | \
         perl -pe 's/\n//;' | perl -pe 's/(.*),]}/\1]}\n/; s/<sp>/ /g'
 
@@ -159,7 +158,7 @@ function check_clusters_cache {
 
     # Получим список менеджеров кластеров, в которых участвует данный сервер, следующего вида:
     #   <имя_сервера>:<номер_порта_0>[|<номер_порта_1>[|..<номер_порта_N>]]
-    readarray RMNGR_LIST < <( if [ -z ${IS_WINDOWS} ]; then pgrep -ax rphost; else
+    readarray -t RMNGR_LIST < <( if [ -z ${IS_WINDOWS} ]; then pgrep -ax rphost; else
         wmic path win32_process where "caption like 'rphost%'" get CommandLine | grep rphost; fi |
         sed -r 's/.*-regport ([^ ]+).*/\0|\1/; s/.*-reghost ([^ ]+).*\|/\1:/' | sort -u |
         awk -F: '{ if ( clstr_list[$1]== "" ) { clstr_list[$1]=$2 } \
@@ -230,7 +229,7 @@ function get_infobases_list {
 
     cat /dev/null > "${IB_CACHE}"
 
-    readarray SERVERS_LIST < <( pop_clusters_list "${1}" )
+    readarray -t SERVERS_LIST < <( pop_clusters_list "${1}" )
     BASE_INFO='{"data":[ '
     MAX_THREADS=0
     BASE_INFO+="$( execute_tasks get_clusters_infobases "${SERVERS_LIST[@]}" )"
@@ -254,7 +253,7 @@ function get_clusters_infobases {
     [[ ${RMNGR_HOST} == "${CLUSTERS_LIST}" ]] && RMNGR_HOST=${HOSTNAME}
 
     for CURRENT_CLUSTER in ${CLUSTERS_LIST//;/ }; do
-        readarray BASE_LIST < <( timeout -s HUP "${RAS_TIMEOUT}" rac infobase summary list \
+        readarray -t BASE_LIST < <( timeout -s HUP "${RAS_TIMEOUT}" rac infobase summary list \
             --cluster "${CURRENT_CLUSTER%%,*}" ${RAS_AUTH} "${RMNGR_HOST}:${RAS_PORT}" | \
             awk '/(infobase|name|)(\s|$)/ { print $3 }' | awk -v RS='' -v OFS='|' '$1=$1' )
         for CURRENT_BASE in "${BASE_LIST[@]}"; do
