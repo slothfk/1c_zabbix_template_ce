@@ -44,15 +44,15 @@ function get_license_counts {
             ${RAS_AUTH} "${1%%:*}:${RAS_PORT}" 2>/dev/null | \
             awk '/^(session|infobase|)(\s|$)/ { print $3}' | awk -v RS='' -v OFS=":" '$1=$1' ) - | \
             awk -F':' -v OFS=':' -v hostname="${HOSTNAME,,}" -v cluster="CL#${CURR_CLSTR%%,*}" \
-                'FNR==NR{ if ($0 ~ "^"substr(cluster,4)) { split($0, ib_uuid, " "); sc["IB#"ib_uuid[2]]=0 }; next} \
-                BEGIN { sc[cluster]=0 } { \
-                    if ($2 != "") { \
-                        print; ib_mark="IB#"$1; \
-                        sc[cluster]+=1; sc[ib_mark]+=1; uc[cluster][$2]; uc[ib_mark][$2]; \
-                        if ( index(tolower($4), hostname) > 0 ) { hc[cluster]+=1; hc[ib_mark]+=1; } \
-                        if ($3 == "WebClient") { wc[cluster]+=1; wc[ib_mark]+=1; } \
-                        if ($4 == "") { cc[cluster]+=1; cc[ib_mark]+=1; } \
-                    } \
+                'FNR==NR{ if ($0 ~ "^"substr(cluster,4)) { split($0, ib_uuid, " "); sc["IB#"ib_uuid[2]]=0 }; next}
+                BEGIN { sc[cluster]=0 } {
+                    if ($2 != "") {
+                        print; ib_mark="IB#"$1;
+                        sc[cluster]+=1; sc[ib_mark]+=1; uc[cluster][$2]; uc[ib_mark][$2];
+                        if ( index(tolower($4), hostname) > 0 ) { hc[cluster]+=1; hc[ib_mark]+=1; }
+                        if ($3 == "WebClient") { wc[cluster]+=1; wc[ib_mark]+=1; }
+                        if ($4 == "") { cc[cluster]+=1; cc[ib_mark]+=1; }
+                    }
                 } END { 
                     for (i in sc) { 
                         print i,(hc[i]?hc[i]:0),(length(uc[i])),(sc[i]?sc[i]:0),(cc[i]?cc[i]:0),(wc[i]?wc[i]:0) 
@@ -68,15 +68,15 @@ function used_license {
     check_clusters_cache
 
     ( execute_tasks get_license_counts $( pop_clusters_list ) ) | \
-        awk -F: -v OFS=':' -v hostname="${HOSTNAME,,}" '{ \
-            if ( $1 ~/^(IB|CL)/ ) { \
-                print; \
-            } else { \
-                if ( index(tolower($4), hostname) > 0 ) { hc+=1; } \
-                if ($3 == "WebClient") { wc+=1; } \
-                if ($4 == "") { cc+=1; } ; sc+=1; uc[$2]; } \
-            } END { \
-                print "summary",hc?hc:0,length(uc),sc?sc:0,cc?cc:0,wc?wc:0 \
+        awk -F: -v OFS=':' -v hostname="${HOSTNAME,,}" '{
+            if ( $1 ~/^(IB|CL)/ ) {
+                print;
+            } else {
+                if ( index(tolower($4), hostname) > 0 ) { hc+=1; }
+                if ($3 == "WebClient") { wc+=1; }
+                if ($4 == "") { cc+=1; } ; sc+=1; uc[$2]; }
+            } END {
+                print "summary",hc?hc:0,length(uc),sc?sc:0,cc?cc:0,wc?wc:0
             }'
 
 }
