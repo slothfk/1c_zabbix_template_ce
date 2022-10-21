@@ -2,7 +2,7 @@
 #
 # Мониторинг 1С Предприятия 8.3 (общие переменные и функции)
 #
-# (c) 2019-2020, Алексей Ю. Федотов
+# (c) 2019-2022, Алексей Ю. Федотов
 #
 # Email: fedotov@kaminsoft.ru
 #
@@ -236,7 +236,7 @@ function get_infobases_list {
     echo "${BASE_INFO%, } ]}" | sed 's/<sp>/ /g'
 }
 
-# Список информационных баз кластеров, указанного в ${1} сервера 1С
+# Список информационных баз кластеров, указанного в ${1} сервера 1С, в формате json
 # В параметр ${1} передается строка вида:
 #   [<имя_сервера>:]<идентификатор_кластера>,<порт_rmngr>,<имя_кластера>;[<идентификатор_кластера>,<порт_rmngr>,<имя_кластера>;[...]]
 # где
@@ -262,3 +262,40 @@ function get_clusters_infobases {
         done
     done
 }
+
+# Список сеансов кластера, указанного в параметрах:
+#   - ${1} - имя сервера 1С
+#   - ${2} - UUID кластера
+#   - ${3} - необязательный, если принимает значение "license", то выводится информация
+#       только о сеансах, потребляющих клиентскую лицензию
+function get_sessions_list {
+
+    SERVER_NAME=${1}
+    CLUSTER_UUID=${2}
+
+    SESSION_FORMAT="session:session-id:infobase:user-name:app-id:hibernate:duration-current"
+    LICENSE_FORMAT="session:rmngr-address"
+
+    timeout -s HUP "${RAS_TIMEOUT}" rac session list --cluster="${CLUSTER_UUID}" \
+        ${RAS_AUTH} "${SERVER_NAME}:${RAS_PORT}" 2>/dev/null |
+        awk -v FS=' +: +' -v format=${SESSION_FORMAT} \
+        'BEGIN { print "FMT#"format"\n" } ( $0 ~ "^("gensub(":","|","g",format)"|)($| )" ) { if ( $1 == "app-id" ) {
+            switch ($2) {
+                case "WebClient": print "wc"; break;
+                case /1CV8/: print "cl"; break;
+                case "BackgroundJob": print "bg"; break;
+                case "WSConnection": print "ws"; break;
+                case "HTTPServiceConnection": print "hs"; break; 
+                default: print $2; }
+        } else { if ($1 == "user-name" && $2 == "" ) {print "empty" } else { print $2; } } }' |
+        awk -v RS='' -v OFS=':' '$1=$1' | ( if [[ ${3} != "license" ]]; then cat; else
+            awk -F':' -v OFS=":" -v format="${LICENSE_FORMAT#*:}" 'FNR==NR{licenses[$1]=$2; next} ($1 in licenses || $0 ~ "^FMT#") { 
+                if ( $0 ~ "^FMT#" ) { print $0":"format } else { print $0,licenses[$1] } }' \
+            <( timeout -s HUP "${RAS_TIMEOUT}" rac session list --licenses --cluster="${CLUSTER_UUID}" \
+                ${RAS_AUTH} "${SERVER_NAME}:${RAS_PORT}" 2>/dev/null |
+                awk -v format="${LICENSE_FORMAT}" '( $0 ~ "^("gensub(":","|","g",format)"|)($| )" ) { print $3}' |
+                awk -v RS='' -v OFS=':' '$1=$1' | sort -u ) - ; fi )
+
+}
+
+export -f get_sessions_list

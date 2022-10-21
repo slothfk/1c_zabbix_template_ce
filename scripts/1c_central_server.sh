@@ -2,7 +2,7 @@
 #
 # Мониторинг 1С Предприятия 8.3 (центральный сервер)
 #
-# (c) 2020, Алексей Ю. Федотов
+# (c) 2020-2022, Алексей Ю. Федотов
 #
 # Email: fedotov@kaminsoft.ru
 #
@@ -13,36 +13,32 @@ source "${WORK_DIR}/1c_common_module.sh" 2>/dev/null || { echo "ОШИБКА: Н
 function get_clusters_sessions {
 
     for CURR_CLSTR in ${1//;/ }; do
-        timeout -s HUP "${RAS_TIMEOUT}" rac session list --cluster="${CURR_CLSTR%%,*}" \
-            ${RAS_AUTH} "${HOSTNAME}:${RAS_PORT}" 2>/dev/null | \
-            awk -F':' '/^(infobase|app-id|hibernate|duration-current|user-name|session-id)\s/ \
-                { if ( $1 ~ "session-id" ) { print "<nl>"; }; print $2; }' |
-            perl -pe 's/^[ ]+//; s/\n/|/; s/<nl>/\n/; s/(1CV8[^|]*|WebClient)/cl/; s/BackgroundJob/bg/;
-                s/WSConnection/ws/; s/HTTPServiceConnection/hs/' | grep -v "^$" | sed -r "s/^\|//" |
-            awk -v cluster="CL#${CURR_CLSTR%%,*}" -v ib_cache="${IB_CACHE}" -F'|' 'BEGIN {
-                ss[cluster]=0;
-                while ( getline ib_str < ib_cache > 0) {
-                    if (ib_str ~ "^"substr(cluster,4)) {
-                        split(ib_str, ib_uuid, " "); ss["IB#"ib_uuid[2]]=0; }
-                } }
-                { ib_mark="IB#"$2;
-                ss[cluster]+=1; ss[ib_mark]+=1;
-                if ( $4 != "cl" ) { sc[$4,cluster]+=1; sc[$4,ib_mark]+=1; }
-                if ( $5 == "yes" ) { sc["hb",cluster]+=1; sc["hb",ib_mark]+=1 }
-                if ( $6 != 0) {
-                    as[cluster]+=1; as[ib_mark]+=1;
-                    if ( asd[$4,cluster] < $6 ) {
-                        asd[$4,cluster]=$6; asd[$4,ib_mark]=$6;
-			if ( $4 == "cl" ) { asu[ib_mark]=$3" ("$1")"; }
-                    } else if ( asd[$4,ib_mark] < $6 ) { asd[$4,ib_mark]=$6;
-			if ( $4 == "cl" ) { asu[ib_mark]=$3" ("$1")"; }
-	            }
-                } }
-                END { for (i in ss) {
-                    print i":"(ss[i]?ss[i]:0)":"(sc["bg",i]?sc["bg",i]:0)":"(sc["hb",i]?sc["hb",i]:0)":"\
-                        (sc["ws",i]?sc["ws",i]:0)":"(sc["hs",i]?sc["hs",i]:0)":"(as[i]?as[i]:0)":"\
-                        (asd["cl",i]?asd["cl",i]:0)":"(asd["bg",i]?asd["bg",i]:0)":"\
-                        (asd["ws",i]?asd["ws",i]:0)":"(asd["hs",i]?asd["hs",i]:0)":"asu[i] } }'
+        get_sessions_list "${HOSTNAME}" "${CURR_CLSTR%%,*}" |
+            awk -v cluster="CL#${CURR_CLSTR%%,*}" -v OFS=':' -F':' \
+            'FNR==NR{ if ( $0 ~ "^"substr(cluster,4) ) { split($0, ib_uuid, " "); ss["IB#"ib_uuid[2]]=0; }; next }
+            BEGIN { ss[cluster]=0; } { 
+                if ( $0 ~ "^FMT#") { 
+                    split($0,a,"#|:"); for (i in a) { f[a[i]]=i-1 } 
+                } else {
+                    ib_mark="IB#"$f["infobase"];
+                    ss[cluster]+=1; ss[ib_mark]+=1;
+                    if ( $f["app-id"] !~ /(cl|wc)/ ) { sc[$f["app-id"],cluster]+=1; sc[$f["app-id"],ib_mark]+=1; }
+                    if ( $f["hibernate"] == "yes" ) { sc["hb",cluster]+=1; sc["hb",ib_mark]+=1 }
+                    if ( $f["duration-current"] != 0) {
+                        as[cluster]+=1; as[ib_mark]+=1;
+                        if ( asd[$f["app-id"],cluster] < $f["duration-current"] ) {
+                            asd[$f["app-id"],cluster]=$f["duration-current"]; asd[$f["app-id"],ib_mark]=$f["duration-current"];
+			                if ( $f["app-id"] ~ /(cl|wc)/ ) { asu[ib_mark]=$f["user-name"]" ("$f["session-id"]")"; }
+                        } else if ( asd[$f["app-id"],ib_mark] < $f["duration-current"] ) { asd[$f["app-id"],ib_mark]=$f["duration-current"];
+			                if ( $f["app-id"] ~ /(cl|wc)/ ) { asu[ib_mark]=$f["user-name"]" ("$f["session-id"]")"; }
+	                    }
+                    } 
+                } 
+            } END { for (i in ss) {
+                    print i,ss[i]?ss[i]:0,sc["bg",i]?sc["bg",i]:0,sc["hb",i]?sc["hb",i]:0,\
+                        sc["ws",i]?sc["ws",i]:0,sc["hs",i]?sc["hs",i]:0,as[i]?as[i]:0,\
+                        asd["cl",i]?asd["cl",i]:0,asd["bg",i]?asd["bg",i]:0,\
+                        asd["ws",i]?asd["ws",i]:0,asd["hs",i]?asd["hs",i]:0,asu[i] } }' "${IB_CACHE}" -
     done
 
 }
@@ -52,16 +48,16 @@ function get_session_amounts {
     check_clusters_cache
 
     ( execute_tasks get_clusters_sessions $( pop_clusters_list self ) ) | \
-        awk -F: '{ print $0; 
+        awk -F: -v OFS=':' '{ print $0; 
             if ($1 !~ /^IB/) { sc["all"]+=$2; sc["bg"]+=$3; sc["hb"]+=$4; sc["ws"]+=$5; sc["hs"]+=$6; sc["as"]+=$7;
                 if ( asd["cl"] < $8 ) { asd["cl"]=$8; } 
                 if ( asd["bg"] < $9 ) { asd["bg"]=$9; } 
                 if ( asd["ws"] < $10 ) { asd["ws"]=$10; } 
                 if ( asd["hs"] < $11 ) { asd["hs"]=$11; } 
             } } 
-            END { print "summary:"(sc["all"]?sc["all"]:0)":"(sc["bg"]?sc["bg"]:0)":"(sc["hb"]?sc["hb"]:0)":"\
-                (sc["ws"]?sc["ws"]:0)":"(sc["hs"]?sc["hs"]:0)":"(sc["as"]?sc["as"]:0)":"(asd["cl"]?asd["cl"]:0)":"\
-                (asd["bg"]?asd["bg"]:0)":"(asd["ws"]?asd["ws"]:0)":"(asd["hs"]?asd["hs"]:0) }' | sed 's/<sp>/ /g'
+            END { print "summary",sc["all"]?sc["all"]:0,sc["bg"]?sc["bg"]:0,sc["hb"]?sc["hb"]:0,\
+                sc["ws"]?sc["ws"]:0,sc["hs"]?sc["hs"]:0,sc["as"]?sc["as"]:0,asd["cl"]?asd["cl"]:0,\
+                asd["bg"]?asd["bg"]:0,asd["ws"]?asd["ws"]:0,asd["hs"]?asd["hs"]:0 }' | sed 's/<sp>/ /g'
 
 }
 
@@ -84,4 +80,3 @@ case ${1} in
     ib_restrict) get_infobases_restrictions ;;
     *) error "${ERROR_UNKNOWN_MODE}" ;;
 esac
-

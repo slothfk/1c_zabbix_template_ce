@@ -2,7 +2,7 @@
 #
 # Мониторинг 1С Предприятия 8.3 (сервер лицензирования)
 #
-# (c) 2019-2020, Алексей Ю. Федотов
+# (c) 2019-2022, Алексей Ю. Федотов
 #
 # Email: fedotov@kaminsoft.ru
 #
@@ -36,26 +36,23 @@ function get_license_counts {
     CLSTR_LIST=${1##*:}
 
     for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
-        timeout -s HUP "${RAS_TIMEOUT}" rac session list --licenses --cluster="${CURR_CLSTR%%,*}" \
-            ${RAS_AUTH} "${1%%:*}:${RAS_PORT}" 2>/dev/null | \
-            awk '/^(session|user-name|app-id|rmngr-address|)(\s|$)/ { print $3}' | awk -v RS='' -v OFS=':' '$1=$1' | sort -u | \
-        awk -F':' -v OFS=":" 'FNR==NR{sess_id[$1]=$2; next} ($1 in sess_id) {print sess_id[$1],$2,$3,$4 }' \
-        <( timeout -s HUP "${RAS_TIMEOUT}" rac session list --cluster="${CURR_CLSTR%%,*}" \
-            ${RAS_AUTH} "${1%%:*}:${RAS_PORT}" 2>/dev/null | \
-            awk '/^(session|infobase|)(\s|$)/ { print $3}' | awk -v RS='' -v OFS=":" '$1=$1' ) - | \
+        get_sessions_list "${1%%:*}" "${CURR_CLSTR%%,*}" license | 
             awk -F':' -v OFS=':' -v hostname="${HOSTNAME,,}" -v cluster="CL#${CURR_CLSTR%%,*}" \
                 'FNR==NR{ if ($0 ~ "^"substr(cluster,4)) { split($0, ib_uuid, " "); sc["IB#"ib_uuid[2]]=0 }; next}
                 BEGIN { sc[cluster]=0 } {
-                    if ($2 != "") {
-                        print; ib_mark="IB#"$1;
-                        sc[cluster]+=1; sc[ib_mark]+=1; uc[cluster][$2]; uc[ib_mark][$2];
-                        if ( index(tolower($4), hostname) > 0 ) { hc[cluster]+=1; hc[ib_mark]+=1; }
-                        if ($3 == "WebClient") { wc[cluster]+=1; wc[ib_mark]+=1; }
-                        if ($4 == "") { cc[cluster]+=1; cc[ib_mark]+=1; }
+                    print;
+                    if ( $0 ~ "^FMT#") { 
+                        split($0,a,"#|:"); for (i in a) { f[a[i]]=i-1 } 
+                    } else {
+                        ib_mark="IB#"$f["infobase"];
+                        sc[cluster]++; sc[ib_mark]++; uc[cluster][$f["user-name"]]; uc[ib_mark][$f["user-name"]];
+                        if ( index(tolower($f["rmngr-address"]), hostname) > 0 ) { hc[cluster]++; hc[ib_mark]++; }
+                        if ($f["app-id"] == "wc") { wc[cluster]++; wc[ib_mark]++; }
+                        if ($f["rmngr-address"] == "") { cc[cluster]++; cc[ib_mark]++; }
                     }
                 } END { 
                     for (i in sc) { 
-                        print i,(hc[i]?hc[i]:0),(length(uc[i])),(sc[i]?sc[i]:0),(cc[i]?cc[i]:0),(wc[i]?wc[i]:0) 
+                        print i,hc[i]?hc[i]:0,length(uc[i]),sc[i]?sc[i]:0,cc[i]?cc[i]:0,wc[i]?wc[i]:0 
                     } 
                 }' "${IB_CACHE}" -
     done
@@ -64,20 +61,23 @@ function get_license_counts {
 
 function used_license {
 
-    MAX_THREADS=0 # Отключаем ограничение по количеству параллельно выполняемых задач
+    export MAX_THREADS=0 # Отключаем ограничение по количеству параллельно выполняемых задач
     check_clusters_cache
 
     ( execute_tasks get_license_counts $( pop_clusters_list ) ) | \
         awk -F: -v OFS=':' -v hostname="${HOSTNAME,,}" '{
-            if ( $1 ~/^(IB|CL)/ ) {
-                print;
-            } else {
-                if ( index(tolower($4), hostname) > 0 ) { hc+=1; }
-                if ($3 == "WebClient") { wc+=1; }
-                if ($4 == "") { cc+=1; } ; sc+=1; uc[$2]; }
-            } END {
-                print "summary",hc?hc:0,length(uc),sc?sc:0,cc?cc:0,wc?wc:0
-            }'
+            switch ($0) {
+                case /^FMT#/: split($0,a,"#|:"); for (i in a) { f[a[i]]=i-1 }; break
+                case /^(IB|CL)#/: print; break
+                default:
+                    sc++; uc[$f["user-name"]]; 
+                    if ( index(tolower($f["rmngr-address"]), hostname) > 0 ) { hc++ }
+                    if ($f["app-id"] == "wc") { wc++ }
+                    if ($f["rmngr-address"] == "") { cc++ }
+            }
+        } END {
+            print "summary",hc?hc:0,length(uc),sc?sc:0,cc?cc:0,wc?wc:0
+        }'
 
 }
 
