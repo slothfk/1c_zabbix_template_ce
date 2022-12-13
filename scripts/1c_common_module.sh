@@ -255,10 +255,11 @@ function get_clusters_infobases {
     for CURRENT_CLUSTER in ${CLUSTERS_LIST//;/ }; do
         readarray -t BASE_LIST < <( timeout -s HUP "${RAS_TIMEOUT}" rac infobase summary list \
             --cluster "${CURRENT_CLUSTER%%,*}" ${RAS_AUTH} "${RMNGR_HOST}:${RAS_PORT}" | \
-            awk '/(infobase|name|)(\s|$)/ { print $3 }' | awk -v RS='' -v OFS='|' '$1=$1' )
+            awk -v FS=' +: +' '/^(infobase|name|)(\s|$)/ { if ( $2 ) { print $2 } else { print "===" } }' | 
+                awk -v FS='\n' -v RS='={3}\n' -v OFS='|' '$1=$1' | sed 's/|$//' )
         for CURRENT_BASE in "${BASE_LIST[@]}"; do
-            echo "{ \"{#CLSTR_UUID}\":\"${CURRENT_CLUSTER%%,*}\",\"{#CLSTR_NAME}\":\"${CURRENT_CLUSTER##*,}\",\"{#IB_UUID}\":\"${CURRENT_BASE%|*}\",\"{#IB_NAME}\":\"${CURRENT_BASE#*|}\" }, "
-            echo "${CURRENT_CLUSTER%%,*} ${CURRENT_BASE%|*}" >> "${IB_CACHE}"
+            echo "{ \"{#CLSTR_UUID}\":\"${CURRENT_CLUSTER%%,*}\",\"{#CLSTR_NAME}\":\"${CURRENT_CLUSTER##*,}\",\"{#IB_UUID}\":\"${CURRENT_BASE%%|*}\",\"{#IB_NAME}\":\"${CURRENT_BASE#*|}\" }, "
+            echo "${CURRENT_CLUSTER%%,*} ${CURRENT_BASE%%|*}" >> "${IB_CACHE}"
         done
     done
 }
