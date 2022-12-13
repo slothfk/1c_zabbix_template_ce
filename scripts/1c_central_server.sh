@@ -20,24 +20,25 @@ function get_clusters_sessions {
                 if ( $0 ~ "^FMT#") { 
                     split($0,a,"#|:"); for (i in a) { f[a[i]]=i-1 } 
                 } else {
+                    if ( $f["app-id"] ~ /(cl|wc)/ ) { app_id="cl" } else { app_id = $f["app-id"] }
                     ib_mark="IB#"$f["infobase"];
-                    ss[cluster]+=1; ss[ib_mark]+=1;
-                    if ( $f["app-id"] !~ /(cl|wc)/ ) { sc[$f["app-id"],cluster]+=1; sc[$f["app-id"],ib_mark]+=1; }
-                    if ( $f["hibernate"] == "yes" ) { sc["hb",cluster]+=1; sc["hb",ib_mark]+=1 }
+                    ss[cluster]++; ss[ib_mark]++;
+                    if ( app_id == "cl" ) { sc["cl",cluster]++; sc["cl",ib_mark]++ }
+                    if ( $f["hibernate"] == "yes" ) { sc["hb",cluster]++; sc["hb",ib_mark]++ }
                     if ( $f["duration-current"] != 0) {
-                        as[cluster]+=1; as[ib_mark]+=1;
-                        if ( asd[$f["app-id"],cluster] < $f["duration-current"] ) {
-                            asd[$f["app-id"],cluster]=$f["duration-current"]; asd[$f["app-id"],ib_mark]=$f["duration-current"];
-			                if ( $f["app-id"] ~ /(cl|wc)/ ) { asu[cluster]=$f["user-name"]" ("$f["session-id"]")"; }
-                        } else if ( asd[$f["app-id"],ib_mark] < $f["duration-current"] ) { asd[$f["app-id"],ib_mark]=$f["duration-current"];
-			                if ( $f["app-id"] ~ /(cl|wc)/ ) { asu[ib_mark]=$f["user-name"]" ("$f["session-id"]")"; }
+                        as[cluster]++; as[ib_mark]++;
+                        if ( asd[app_id,cluster] < $f["duration-current"] ) {
+                            asd[app_id,cluster]=$f["duration-current"]; asd[app_id,ib_mark]=$f["duration-current"];
+			                if ( app_id == "cl" ) { asu[cluster]=$f["user-name"]" ("$f["session-id"]")"; asu[ib_mark]=$f["user-name"]" ("$f["session-id"]")" }
+                        } else if ( asd[app_id,ib_mark] < $f["duration-current"] ) { asd[app_id,ib_mark]=$f["duration-current"];
+			                if ( app_id == "cl" ) { asu[ib_mark]=$f["user-name"]" ("$f["session-id"]")"; }
 	                    }
                     } 
                 } 
             } END { for (i in ss) {
-                    print i,ss[i]?ss[i]:0,sc["bg",i]?sc["bg",i]:0,sc["hb",i]?sc["hb",i]:0,\
-                        sc["ws",i]?sc["ws",i]:0,sc["hs",i]?sc["hs",i]:0,as[i]?as[i]:0,\
-                        asd["cl",i]?asd["cl",i]:0,asd["bg",i]?asd["bg",i]:0,\
+                    print i,ss[i]?ss[i]:0,sc["bg",i]?sc["bg",i]:0,sc["hb",i]?sc["hb",i]:0,
+                        sc["ws",i]?sc["ws",i]:0,sc["hs",i]?sc["hs",i]:0,as[i]?as[i]:0,
+                        asd["cl",i]?asd["cl",i]:0,asd["bg",i]?asd["bg",i]:0,
                         asd["ws",i]?asd["ws",i]:0,asd["hs",i]?asd["hs",i]:0,asu[i] } }' "${IB_CACHE}" -
         else
             awk -v cluster="CL#${CURR_CLSTR%%,*}" -v OFS=':' -F':' \
@@ -45,21 +46,22 @@ function get_clusters_sessions {
                 if ( $0 ~ "^FMT#") { 
                     split($0,a,"#|:"); for (i in a) { f[a[i]]=i-1 } 
                 } else {
-                    ss[cluster]+=1;
-                    if ( $f["app-id"] !~ /(cl|wc)/ ) { sc[$f["app-id"],cluster]+=1 }
-                    if ( $f["hibernate"] == "yes" ) { sc["hb",cluster]+=1 }
+                    if ( $f["app-id"] ~ /(cl|wc)/ ) { app_id="cl" } else { app_id = $f["app-id"] }
+                    ss[cluster]++;
+                    if ( app_id == "cl" ) { sc["cl",cluster]++ }
+                    if ( $f["hibernate"] == "yes" ) { sc["hb",cluster]++ }
                     if ( $f["duration-current"] != 0) {
-                        as[cluster]+=1;
-                        if ( asd[$f["app-id"],cluster] < $f["duration-current"] ) {
-                            asd[$f["app-id"],cluster]=$f["duration-current"];
-			                if ( $f["app-id"] ~ /(cl|wc)/ ) { asu[cluster]=$f["user-name"]" ("$f["session-id"]")"; }
+                        as[cluster]++;
+                        if ( asd[app_id,cluster] < $f["duration-current"] ) {
+                            asd[app_id,cluster]=$f["duration-current"];
+			                if ( app_id == "cl" ) { asu[cluster]=$f["user-name"]" ("$f["session-id"]")"; }
 	                    }
                     } 
                 } 
             } END { for (i in ss) {
-                    print i,ss[i]?ss[i]:0,sc["bg",i]?sc["bg",i]:0,sc["hb",i]?sc["hb",i]:0,\
-                        sc["ws",i]?sc["ws",i]:0,sc["hs",i]?sc["hs",i]:0,as[i]?as[i]:0,\
-                        asd["cl",i]?asd["cl",i]:0,asd["bg",i]?asd["bg",i]:0,\
+                    print i,ss[i]?ss[i]:0,sc["bg",i]?sc["bg",i]:0,sc["hb",i]?sc["hb",i]:0,
+                        sc["ws",i]?sc["ws",i]:0,sc["hs",i]?sc["hs",i]:0,as[i]?as[i]:0,
+                        asd["cl",i]?asd["cl",i]:0,asd["bg",i]?asd["bg",i]:0,
                         asd["ws",i]?asd["ws",i]:0,asd["hs",i]?asd["hs",i]:0,asu[i] } }'
         fi )
     done
