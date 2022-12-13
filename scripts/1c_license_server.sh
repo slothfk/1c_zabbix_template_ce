@@ -36,7 +36,7 @@ function get_license_counts {
     CLSTR_LIST=${1##*:}
 
     for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
-        get_sessions_list "${1%%:*}" "${CURR_CLSTR%%,*}" license | 
+        get_sessions_list "${1%%:*}" "${CURR_CLSTR%%,*}" license | ( if [[ -s ${IB_CACHE} ]]; then
             awk -F':' -v OFS=':' -v hostname="${HOSTNAME,,}" -v cluster="CL#${CURR_CLSTR%%,*}" \
                 'FNR==NR{ if ($0 ~ "^"substr(cluster,4)) { split($0, ib_uuid, " "); sc["IB#"ib_uuid[2]]=0 }; next}
                 BEGIN { sc[cluster]=0 } {
@@ -55,6 +55,24 @@ function get_license_counts {
                         print i,hc[i]?hc[i]:0,length(uc[i]),sc[i]?sc[i]:0,cc[i]?cc[i]:0,wc[i]?wc[i]:0 
                     } 
                 }' "${IB_CACHE}" -
+        else
+            awk -F':' -v OFS=':' -v hostname="${HOSTNAME,,}" -v cluster="CL#${CURR_CLSTR%%,*}" \
+                'BEGIN { sc[cluster]=0 } {
+                    print;
+                    if ( $0 ~ "^FMT#") { 
+                        split($0,a,"#|:"); for (i in a) { f[a[i]]=i-1 } 
+                    } else {
+                        sc[cluster]++; uc[cluster][$f["user-name"]];
+                        if ( index(tolower($f["rmngr-address"]), hostname) > 0 ) { hc[cluster]++ }
+                        if ($f["app-id"] == "wc") { wc[cluster]++ }
+                        if ($f["rmngr-address"] == "") { cc[cluster]++ }
+                    }
+                } END { 
+                    for (i in sc) { 
+                        print i,hc[i]?hc[i]:0,length(uc[i]),sc[i]?sc[i]:0,cc[i]?cc[i]:0,wc[i]?wc[i]:0 
+                    } 
+                }'
+        fi )
     done
 
 }

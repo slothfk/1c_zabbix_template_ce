@@ -116,9 +116,9 @@ function push_clusters_list {
     function push_clusters_uuid {
         CURR_CLSTR=$( timeout -s HUP "${RAS_TIMEOUT}" rac cluster list "${1%%:*}:${RAS_PORT}" 2>/dev/null | 
             awk -v FS=' +: +' '/^($|cluster|name|port)/ { if ($1){ print $2 } else {print "==="} }' |
-            awk -v RS='={3}' -v OFS=',' -v ORS=';' '$1=$1' )
- 
-        [[ -n ${CURR_CLSTR} ]] && echo "${1%%:*}:${CURR_CLSTR}" >> ${CLSTR_CACHE}
+            awk -v FS='\n' -v RS='={3}\n' -v OFS=',' -v ORS=';' '$1=$1' )
+
+        [[ -n ${CURR_CLSTR} ]] && echo "${1%%:*}:${CURR_CLSTR}" | sed 's/,;/;/g' >> ${CLSTR_CACHE}
     }
 
     cat /dev/null > ${CLSTR_CACHE}
@@ -180,7 +180,7 @@ function check_clusters_cache {
             done
             grep -v "^$" ${CLSTR_CACHE}.${$} || [[ ${#RMNGR_LIST[@]} -ne $(grep -vc "^$" ${CLSTR_CACHE}) ]] && 
                 push_clusters_list "${RMNGR_LIST[@]}"
-            rm -f ${CLSTR_CACHE}.${$} &>/dev/null
+            rm -f ${CLSTR_CACHE}.${$} &>/dev/null   
         elif [[ ${#RMNGR_LIST[@]} -ne $(grep -vc "^$" ${CLSTR_CACHE}) ||
             $(date -r ${CLSTR_CACHE} "+%s") -lt $(date -d "last hour" "+%s") ]]; then
             push_clusters_list "${RMNGR_LIST[@]}"

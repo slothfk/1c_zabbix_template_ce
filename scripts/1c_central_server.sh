@@ -13,7 +13,7 @@ source "${WORK_DIR}/1c_common_module.sh" 2>/dev/null || { echo "ОШИБКА: Н
 function get_clusters_sessions {
 
     for CURR_CLSTR in ${1//;/ }; do
-        get_sessions_list "${HOSTNAME}" "${CURR_CLSTR%%,*}" |
+        get_sessions_list "${HOSTNAME}" "${CURR_CLSTR%%,*}" | ( if [[ -s ${IB_CACHE} ]]; then
             awk -v cluster="CL#${CURR_CLSTR%%,*}" -v OFS=':' -F':' \
             'FNR==NR{ if ( $0 ~ "^"substr(cluster,4) ) { split($0, ib_uuid, " "); ss["IB#"ib_uuid[2]]=0; }; next }
             BEGIN { ss[cluster]=0; } { 
@@ -28,7 +28,7 @@ function get_clusters_sessions {
                         as[cluster]+=1; as[ib_mark]+=1;
                         if ( asd[$f["app-id"],cluster] < $f["duration-current"] ) {
                             asd[$f["app-id"],cluster]=$f["duration-current"]; asd[$f["app-id"],ib_mark]=$f["duration-current"];
-			                if ( $f["app-id"] ~ /(cl|wc)/ ) { asu[ib_mark]=$f["user-name"]" ("$f["session-id"]")"; }
+			                if ( $f["app-id"] ~ /(cl|wc)/ ) { asu[cluster]=$f["user-name"]" ("$f["session-id"]")"; }
                         } else if ( asd[$f["app-id"],ib_mark] < $f["duration-current"] ) { asd[$f["app-id"],ib_mark]=$f["duration-current"];
 			                if ( $f["app-id"] ~ /(cl|wc)/ ) { asu[ib_mark]=$f["user-name"]" ("$f["session-id"]")"; }
 	                    }
@@ -39,6 +39,29 @@ function get_clusters_sessions {
                         sc["ws",i]?sc["ws",i]:0,sc["hs",i]?sc["hs",i]:0,as[i]?as[i]:0,\
                         asd["cl",i]?asd["cl",i]:0,asd["bg",i]?asd["bg",i]:0,\
                         asd["ws",i]?asd["ws",i]:0,asd["hs",i]?asd["hs",i]:0,asu[i] } }' "${IB_CACHE}" -
+        else
+            awk -v cluster="CL#${CURR_CLSTR%%,*}" -v OFS=':' -F':' \
+            'BEGIN { ss[cluster]=0; } { 
+                if ( $0 ~ "^FMT#") { 
+                    split($0,a,"#|:"); for (i in a) { f[a[i]]=i-1 } 
+                } else {
+                    ss[cluster]+=1;
+                    if ( $f["app-id"] !~ /(cl|wc)/ ) { sc[$f["app-id"],cluster]+=1 }
+                    if ( $f["hibernate"] == "yes" ) { sc["hb",cluster]+=1 }
+                    if ( $f["duration-current"] != 0) {
+                        as[cluster]+=1;
+                        if ( asd[$f["app-id"],cluster] < $f["duration-current"] ) {
+                            asd[$f["app-id"],cluster]=$f["duration-current"];
+			                if ( $f["app-id"] ~ /(cl|wc)/ ) { asu[cluster]=$f["user-name"]" ("$f["session-id"]")"; }
+	                    }
+                    } 
+                } 
+            } END { for (i in ss) {
+                    print i,ss[i]?ss[i]:0,sc["bg",i]?sc["bg",i]:0,sc["hb",i]?sc["hb",i]:0,\
+                        sc["ws",i]?sc["ws",i]:0,sc["hs",i]?sc["hs",i]:0,as[i]?as[i]:0,\
+                        asd["cl",i]?asd["cl",i]:0,asd["bg",i]?asd["bg",i]:0,\
+                        asd["ws",i]?asd["ws",i]:0,asd["hs",i]?asd["hs",i]:0,asu[i] } }'
+        fi )
     done
 
 }
