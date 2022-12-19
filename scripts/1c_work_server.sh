@@ -8,7 +8,7 @@
 #
 
 WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
-source "${WORK_DIR}"/1c_common_module.sh 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
+source "${WORK_DIR}/1c_common_module.sh" 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
 # Коды завершения процедуры архивирования файлов технологического журнала
 export DUMP_CODE_0=0   # Архивированение файлов ТЖ выполнено успешно
@@ -39,10 +39,10 @@ function get_calls_info {
 
     put_brack_line
 
-    cat ${LOG_DIR}/rphost_*/${LOG_FILE}.log 2>/dev/null | awk "/CALL,.*(Context|Module)/" | \
+    cat "${LOG_DIR}"/rphost_*/"${LOG_FILE}.log" 2>/dev/null | awk "/CALL,.*(Context|Module)/" | \
 	sed -re 's/,Module=(.*),Method=/,Context=ОбщийМодуль.ФоновыйВызов : ОбщийМодуль.\1.Модуль./' | \
         sed -re "s/[0-9]+:[0-9]+.[0-9]+-//; s/,Method=[^,]+//; s/,[a-zA-Z:]+=/,/g" | \
-        awk -F, -v mode=${MODE} '{ if ($4) {count[$4"->"$5]+=1; durations[$4"->"$5]+=$1; \
+        awk -F, -v mode="${MODE}" '{ if ($4) {count[$4"->"$5]+=1; durations[$4"->"$5]+=$1; \
             cpus[$4"->"$5]+=$9; iobytes[$4"->"$5]+=$7+$8; duration[$4]+=$1; cpu[$4]+=$9; \
             if ( mempeak[$4"->"$5] < $6 ) { mempeak[$4"->"$5]=$6; } } } \
         END { for ( i in count ) { \
@@ -61,7 +61,7 @@ function get_calls_info {
             else if ( mode == "iobytes" ) { printf "%11.2f | %9.2f | %9.2f | %6d | %s\n", \
                 iobytes[i]/1024/1024, durations[i]/1000000, cpus[i]/1000000, count[i], i } \
             } }' | \
-        sort -rn | head -n ${TOP_LIMIT} | awk -v mode=${MODE} -F"@" '{ if ( mode == "lazy" ) { print $2 } else { print $0 } }'
+        sort -rn | head -n ${TOP_LIMIT} | awk -v mode="${MODE}" -F"@" '{ if ( mode == "lazy" ) { print $2 } else { print $0 } }'
 }
 
 
@@ -72,10 +72,10 @@ function get_locks_info {
     WAIT_LIMIT=${1}
 
     function save_logs {
-        if [[ $(echo ${1} | grep -ic ${HOSTNAME}) -ne 0 ]]; then
-            DUMP_RESULT=$(dump_logs ${LOG_DIR} ${LOG_FILE})
+        if [[ $(echo "${1}" | grep -ic "${HOSTNAME}") -ne 0 ]]; then
+            DUMP_RESULT=$(dump_logs "${LOG_DIR}" "${LOG_FILE}")
         else
-            DUMP_RESULT=$(zabbix_get -s ${1} -k 1c.ws.dump_logs[${LOG_DIR},${LOG_FILE}] 2>/dev/null)
+            DUMP_RESULT=$(zabbix_get -s "${1}" -k 1c.ws.dump_logs["${LOG_DIR}","${LOG_FILE}"] 2>/dev/null)
             [[ -z ${DUMP_RESULT} || ${DUMP_RESULT} -eq ${DUMP_CODE_2} ]] && DUMP_RESULT=${DUMP_CODE_3}
         fi
 
@@ -85,9 +85,9 @@ function get_locks_info {
         [[ -n ${DUMP_RESULT} ]] && echo "[${1} (${DUMP_RESULT})] ${DUMP_TEXT}" && unset DUMP_RESULT
     }
 
-    echo "lock: $(cat ${LOG_DIR}/rphost_*/${LOG_FILE}.log 2>/dev/null | grep -c ',TLOCK,')"
+    echo "lock: $(cat "${LOG_DIR}"/rphost_*/"${LOG_FILE}.log" 2>/dev/null | grep -c ',TLOCK,')"
 
-    RESULT=($(cat ${LOG_DIR}/rphost_*/${LOG_FILE}.log 2>/dev/null | \
+    RESULT=($(cat "${LOG_DIR}"/rphost_*/"${LOG_FILE}.log" 2>/dev/null | \
         awk "/(TDEADLOCK|TTIMEOUT|TLOCK.*,WaitConnections=[0-9]+)/" | \
         sed -re "s/[0-9]{2}:[0-9]{2}.[0-9]{6}-//; s/,[a-zA-Z\:]+=/,/g" | \
         awk -F"," -v lts=${WAIT_LIMIT} 'BEGIN {dl=0; to=0; lw=0} { if ($2 == "TDEADLOCK") {dl+=1} \
@@ -102,7 +102,7 @@ function get_locks_info {
     if [[ "${RESULT[1]%<*}" != 0 || "${RESULT[3]%<*}" != 0 ||
         $( awk -v value="${RESULT[5]%<*}" -v limit="${WAIT_LIMIT}" 'BEGIN { print ( value > limit ) }' ) == 1 ]]; then
 
-        shift; make_ras_params ${@}
+        shift; make_ras_params "${@}"
 
         check_clusters_cache
 
@@ -118,45 +118,54 @@ function get_locks_info {
     fi
 
     export -f dump_logs
-    execute_tasks save_logs $(echo ${SRV_LIST[@]} | perl -pe 's/ /\n/g' | sort -u)
+    execute_tasks save_logs $(echo "${SRV_LIST[@]}" | perl -pe 's/ /\n/g' | sort -u)
 
-    find ${LOG_DIR%/*}/problem_log/ -mtime +${STORE_PERIOD} -name "*.tgz" -delete 2>/dev/null
+    find "${LOG_DIR%/*}/problem_log/" -mtime +${STORE_PERIOD} -name "*.tgz" -delete 2>/dev/null
 }
 
 function get_excps_info {
 
-    for PROCESS in ${PROCESS_NAMES[@]}; do
-        EXCP_COUNT=$(cat ${LOG_DIR}/${PROCESS}_*/${LOG_FILE}.log 2>/dev/null | grep -c ",EXCP,")
-        echo ${PROCESS}: $([[ -n ${EXCP_COUNT} ]] && echo ${EXCP_COUNT} || echo 0)
+    for PROCESS in "${PROCESS_NAMES[@]}"; do
+        EXCP_COUNT=$(cat "${LOG_DIR}"/"${PROCESS}"_*/"${LOG_FILE}.log" 2>/dev/null | grep -c ",EXCP,")
+        echo "${PROCESS}: $([[ -n ${EXCP_COUNT} ]] && echo "${EXCP_COUNT}" || echo 0)"
     done
 }
 
 function get_memory_counts {
 
-    MEMORY_PAGE_SIZE=$(getconf PAGE_SIZE)
     RPHOST_PID_HASH="${TMPDIR}/1c_rphost_pid_hash"
 
-    for PROCESS in ${PROCESS_NAMES[@]}; do
-        unset PID_LIST
-        if [ -z ${IS_WINDOWS} ]; then
-            PROC_INFO[0]="$(pgrep -xd, ${PROCESS})"
-            (( PROC_INFO[1]=$(echo -n ${PROC_INFO[0]} | xargs -P2 -i -d, cat /proc/{}/statm | \
-                awk 'BEGIN { mem=0 } { mem+=$2 } END { print mem }')*${MEMORY_PAGE_SIZE} )) ;
-        else
-            PROC_INFO=( $(wmic path win32_process where "caption like '${PROCESS}%'" \
-                get processid,workingsetsize /format:csv | awk -F, \
-                    '/.*,[0-9]+,[0-9]+/ { if (pl=="") {pl=$2} else {pl=pl","$2}; pm+=$3 } 
-                    END {print pl" "pm }') );
-        fi
-
-        if [[ ${PROCESS} == "rphost" ]]; then 
-            RPHOST_OLD_HASH=$(cat ${RPHOST_PID_HASH} 2>/dev/null)
-            echo ${PROC_INFO[0]} | md5sum | cut -f1 -d\  > ${RPHOST_PID_HASH}
-            [[ ${RPHOST_OLD_HASH} == $(cat ${RPHOST_PID_HASH}) ]]
-            CHANGE=${?}
-        fi
-        echo ${PROCESS}: $(echo ${PROC_INFO[0]//,/ } | wc -w) ${PROC_INFO[1]} ${CHANGE}
-    done
+    if [[ -z "${IS_WINDOWS}" ]]; then
+        ps -hwwp "$( pgrep -d, 'ragent|rphost|rmngr' )" -o comm,pid,rss,cmd -k pid |
+            sed -re 's/^([^ ]+) +([0-9]+) +([0-9]+) +/\1,\2,\3,/'
+    else
+        wmic path win32_process where "caption like 'ragent%' or caption like 'rmngr%' or caption like 'rphost%'" \
+            get caption,processid,workingsetsize,commandline /format:csv |
+            sed -re 's/^[^,]+,([^,]+),([^,]+),([^,]+),(.*)/\1,\3,\4,\2/'
+    fi | awk -F, -v mem_in_kb="${IS_WINDOWS:-1024}" -v pid_hash="$( cat "${RPHOST_PID_HASH}" 2>/dev/null )" \
+        '/.*,[0-9]+,[0-9]+/ {
+            proc_name[$1]=gensub(/[.].+/,"","g",$1)
+            proc_pids[$1][$2]
+            proc[$1,"memory"]+=$3 
+            } END {
+                for ( pn in proc_name ) { 
+                    proc_flag=""; pid_list=""
+                    switch (pn) {
+                        case /ragent.*/:
+                            if ($4 ~ /(\/|-)debug(\s|$)/ ) proc_flag=1; else proc_flag=0
+                            break
+                        case /rphost.*/:
+                            for (i in proc_pids[pn]) pid_list=pid_list?pid_list","i:i
+                            hash_command="echo "pid_list" | md5sum | sed \"s/ .*//\""
+                            (hash_command | getline new_hash) > 0
+                            close(hash_command)
+                            if ( pid_hash == new_hash ) { proc_flag=0 } else { proc_flag=1 }
+                            print new_hash > "'"${RPHOST_PID_HASH}"'"
+                            break
+                    }
+                    print proc_name[pn]":",length(proc_pids[pn]),proc[pn,"memory"]*mem_in_kb,proc_flag
+                }
+            }'
 
 }
 
@@ -167,7 +176,7 @@ function dump_logs {
     if [[ -f ${1%/*}/problem_log/${1##*/}-${2}.tgz ]]; then
         DUMP_RESULT=${DUMP_CODE_1}
     else
-        cd ${1} 2>/dev/null && tar czf ../problem_log/${1##*/}-${2}.tgz ./rphost_*/${2}.log && \
+        cd "${1}" 2>/dev/null && tar czf "../problem_log/${1##*/}-${2}.tgz" ./rphost_*/"${2}".log && \
         DUMP_RESULT=${DUMP_CODE_0} || DUMP_RESULT=${DUMP_CODE_2}
     fi
 
@@ -176,15 +185,18 @@ function dump_logs {
 }
 
 function get_physical_memory {
-    [ -z ${IS_WINDOWS} ] && free -b | grep -m1 "^[^ ]" | awk '{ print $2 }' ||
+    if [[ -z ${IS_WINDOWS} ]]; then
+        free -b | grep -m1 "^[^ ]" | awk '{ print $2 }'
+    else
         wmic computersystem get totalphysicalmemory | awk "/^[0-9]/"
+    fi
 }
 
 function get_available_perfomance {
 
     check_clusters_cache
 
-    ( execute_tasks get_processes_perfomance $( pop_clusters_list ) ) | grep -i ${HOSTNAME} |
+    ( execute_tasks get_processes_perfomance $( pop_clusters_list ) ) | grep -i "${HOSTNAME}" |
         awk -F: '{ apc+=1; aps+=$2 } END { if ( apc > 0) { print aps/apc } else { print "0" } }'
 
 }
@@ -193,14 +205,14 @@ case ${1} in
     calls | locks | excps) check_log_dir ${2} ${1};
         export LOG_FILE=$(date --date="last hour" "+%y%m%d%H");
         export LOG_DIR="${2%/}/zabbix/${1}" ;;&
-    memory | excps) PROCESS_NAMES=(ragent rmngr rphost) ;;&
-    calls) shift 2; get_calls_info ${@} ;;
-    locks) shift 2; get_locks_info ${@} ;;
-    excps) shift 2; get_excps_info ${@} ;;
+    excps) PROCESS_NAMES=(ragent rmngr rphost) ;;&
+    calls) shift 2; get_calls_info "${@}" ;;
+    locks) shift 2; get_locks_info "${@}" ;;
+    excps) shift 2; get_excps_info "${@}" ;;
     memory) get_memory_counts ;;
     ram) get_physical_memory ;;
-    dump_logs) shift; dump_logs ${@} ;;
-    perfomance) shift; make_ras_params ${@}; get_available_perfomance ;;
+    dump_logs) shift; dump_logs "${@}" ;;
+    perfomance) shift; make_ras_params "${@}"; get_available_perfomance ;;
     *) error "${ERROR_UNKNOWN_MODE}" ;;
 esac
 

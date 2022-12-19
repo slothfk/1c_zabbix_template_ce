@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2021-10-13T07:24:47Z</date>
+    <date>2022-12-19T09:47:17Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -337,13 +337,43 @@
                     <preprocessing>
                         <step>
                             <type>REGEX</type>
-                            <params>ragent: (\d+) \d+
+                            <params>ragent: (\d+) \d+ \d+
 \1</params>
                         </step>
                     </preprocessing>
                     <master_item>
                         <key>1c.ws.memory</key>
                     </master_item>
+                </item>
+                <item>
+                    <name>[1С/Агент сервера] Режим отладки</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.ws.ragent.debug</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <applications>
+                        <application>
+                            <name>[1С] Информация</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>ragent: \d+ \d+ (\d)
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.ws.memory</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}=1</expression>
+                            <name>[1С/Рабочий сервер] Включен режим отладки</name>
+                            <priority>AVERAGE</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>[1С/Агент сервера] Количество исключений</name>
@@ -384,7 +414,7 @@
                     <preprocessing>
                         <step>
                             <type>REGEX</type>
-                            <params>ragent: \d+ (\d+)
+                            <params>ragent: \d+ (\d+) \d+
 \1</params>
                         </step>
                     </preprocessing>
