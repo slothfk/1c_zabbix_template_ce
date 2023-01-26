@@ -1,23 +1,30 @@
 ---
 
-- hosts: 1c
+- hosts: srv1c
+  gather_facts: no
+  become: yes
   roles:
     - general
 
-- hosts: 1c_ws
+- hosts: srv1c_ws
+  become: yes
   roles:
-    - 1c_ws
+    - srv1c_ws
 
-- hosts: 1c_ls
+- hosts: srv1c_ls
+  become: yes
   roles:
-    - 1c_ls
+    - srv1c_ls
 
-- hosts: 1c_cs
+- hosts: srv1c_cs
+  gather_facts: no
+  become: yes
   roles:
-    - 1c_cs
+    - srv1c_cs
 
 - hosts: hosts_to_restart
   gather_facts: no
+  become: yes
   tasks:
     - name: Restart zabbix agent
       service:

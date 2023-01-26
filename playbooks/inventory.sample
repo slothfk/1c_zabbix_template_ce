@@ -1,17 +1,17 @@
 # Общая группа серверов 1С Предприятия
-[1c:children]
-1c_cs
-1c_ls
-1c_ws
+[srv1c:children]
+srv1c_cs
+srv1c_ls
+srv1c_ws
 
 # Группа центральных серверов 1С Предприятия
-[1c_cs]
+[srv1c_cs]
 localhost
 
 # Группа серверов лицензирования 1С Предприятия
-[1c_ls]
+[srv1c_ls]
 localhost
 
 # Группа рабочих серверов 1С Предприятия
-[1c_ws]
+[srv1c_ws]
 localhost
