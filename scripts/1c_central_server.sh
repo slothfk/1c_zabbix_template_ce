@@ -23,7 +23,7 @@ function get_clusters_sessions {
                     if ( $f["app-id"] ~ /(cl|wc)/ ) { app_id="cl" } else { app_id = $f["app-id"] }
                     ib_mark="IB#"$f["infobase"];
                     ss[cluster]++; ss[ib_mark]++;
-                    if ( app_id == "cl" ) { sc["cl",cluster]++; sc["cl",ib_mark]++ }
+                    if ( app_id != "cl" ) { sc[app_id,cluster]++; sc[app_id,ib_mark]++ }
                     if ( $f["hibernate"] == "yes" ) { sc["hb",cluster]++; sc["hb",ib_mark]++ }
                     if ( $f["duration-current"] != 0) {
                         as[cluster]++; as[ib_mark]++;
@@ -48,7 +48,7 @@ function get_clusters_sessions {
                 } else {
                     if ( $f["app-id"] ~ /(cl|wc)/ ) { app_id="cl" } else { app_id = $f["app-id"] }
                     ss[cluster]++;
-                    if ( app_id == "cl" ) { sc["cl",cluster]++ }
+                    if ( app_id != "cl" ) { sc[app_id,cluster]++ }
                     if ( $f["hibernate"] == "yes" ) { sc["hb",cluster]++ }
                     if ( $f["duration-current"] != 0) {
                         as[cluster]++;
