@@ -24,6 +24,7 @@ function get_clusters_sessions {
                     ib_mark="IB#"$f["infobase"];
                     ss[cluster]++; ss[ib_mark]++;
                     if ( app_id == "cl" ) { sc["cl",cluster]++; sc["cl",ib_mark]++ }
+		    if ( app_id == "bg" ) { sc["bg",cluster]++; sc["bg",ib_mark]++ }
                     if ( $f["hibernate"] == "yes" ) { sc["hb",cluster]++; sc["hb",ib_mark]++ }
                     if ( $f["duration-current"] != 0) {
                         as[cluster]++; as[ib_mark]++;
