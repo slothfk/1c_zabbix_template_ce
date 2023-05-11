@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2022-12-19T09:47:17Z</date>
+    <date>2023-05-23T13:03:10Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -41,7 +41,6 @@
                     <name>[1С/Серверные вызовы] ТОП{$TOP_LIST_SIZE} по суммарному количеству</name>
                     <key>1c.ws.calls[{$LOG_DIR},count,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
-                    <history>30d</history>
                     <trends>0</trends>
                     <status>DISABLED</status>
                     <value_type>TEXT</value_type>
@@ -55,7 +54,6 @@
                     <name>[1С/Серверные вызовы] ТОП{$TOP_LIST_SIZE}  по суммарному процессорному времени</name>
                     <key>1c.ws.calls[{$LOG_DIR},cpu,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
-                    <history>30d</history>
                     <trends>0</trends>
                     <status>DISABLED</status>
                     <value_type>TEXT</value_type>
@@ -69,7 +67,6 @@
                     <name>[1С/Серверные вызовы] ТОП{$TOP_LIST_SIZE} по суммарной длительности</name>
                     <key>1c.ws.calls[{$LOG_DIR},duration,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
-                    <history>30d</history>
                     <trends>0</trends>
                     <status>DISABLED</status>
                     <value_type>TEXT</value_type>
@@ -83,7 +80,6 @@
                     <name>[1С/Серверные вызовы] ТОП{$TOP_LIST_SIZE} по средней длительности</name>
                     <key>1c.ws.calls[{$LOG_DIR},dur_avg,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
-                    <history>30d</history>
                     <trends>0</trends>
                     <status>DISABLED</status>
                     <value_type>TEXT</value_type>
@@ -97,7 +93,6 @@
                     <name>[1С/Серверные вызовы] ТОП{$TOP_LIST_SIZE} по суммарному вводу-выводу</name>
                     <key>1c.ws.calls[{$LOG_DIR},iobytes,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
-                    <history>30d</history>
                     <trends>0</trends>
                     <status>DISABLED</status>
                     <value_type>TEXT</value_type>
@@ -111,7 +106,6 @@
                     <name>[1С/Серверные вызовы] ТОП{$TOP_LIST_SIZE} &quot;ленивых&quot; вызовов</name>
                     <key>1c.ws.calls[{$LOG_DIR},lazy,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
-                    <history>30d</history>
                     <trends>0</trends>
                     <status>DISABLED</status>
                     <value_type>TEXT</value_type>
@@ -125,7 +119,6 @@
                     <name>[1С/Серверные вызовы] ТОП{$TOP_LIST_SIZE} по максимальной памяти за вызов</name>
                     <key>1c.ws.calls[{$LOG_DIR},memory,{$TOP_LIST_SIZE}]</key>
                     <delay>1h</delay>
-                    <history>30d</history>
                     <trends>0</trends>
                     <status>DISABLED</status>
                     <value_type>TEXT</value_type>
@@ -157,8 +150,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ws.locks.deadlock</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Управляемые блокировки</name>
@@ -172,7 +163,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                     <triggers>
                         <trigger>
@@ -187,8 +178,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ws.locks.lock</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Управляемые блокировки</name>
@@ -202,7 +191,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                     <triggers>
                         <trigger>
@@ -217,8 +206,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ws.locks.timeout</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Управляемые блокировки</name>
@@ -232,7 +219,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                     <triggers>
                         <trigger>
@@ -247,8 +234,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ws.locks.wait</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <value_type>FLOAT</value_type>
                     <units>s</units>
                     <applications>
@@ -264,7 +249,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                        <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                     <triggers>
                         <trigger>
@@ -276,9 +261,8 @@
                 </item>
                 <item>
                     <name>[1С/Блокировки] Сводка</name>
-                    <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    <key>1c.ws.locks[{$LOG_DIR},{$MAX_LOCK_WAIT},{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     <delay>1h</delay>
-                    <history>30d</history>
                     <trends>0</trends>
                     <status>DISABLED</status>
                     <value_type>TEXT</value_type>
@@ -311,9 +295,7 @@
                 <item>
                     <name>[1С/Рабочий процесс] Доступная производительность</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>1c.ws.perfs[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
-                    <history>30d</history>
-                    <trends>90d</trends>
+                    <key>1c.ws.perfs[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     <value_type>FLOAT</value_type>
                     <description>Среднее значение доступной производительности рабочих процессов данного сервера</description>
                     <applications>
@@ -327,8 +309,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ws.ragent.count</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Производительность</name>
@@ -350,8 +330,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ws.ragent.debug</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Информация</name>
@@ -380,8 +358,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ws.ragent.excps</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Ошибки</name>
@@ -403,8 +379,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ws.ragent.memory</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <units>B</units>
                     <applications>
                         <application>
@@ -427,8 +401,6 @@
                     <type>ZABBIX_ACTIVE</type>
                     <key>1c.ws.ram</key>
                     <delay>1h</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <units>B</units>
                     <applications>
                         <application>
@@ -441,8 +413,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ws.rmngr.count</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Производительность</name>
@@ -464,8 +434,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ws.rmngr.excps</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Ошибки</name>
@@ -487,8 +455,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ws.rmngr.memory</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <units>B</units>
                     <applications>
                         <application>
@@ -511,8 +477,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ws.rphost.change</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Устойчивость системы</name>
@@ -537,8 +501,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ws.rphost.count</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Производительность</name>
@@ -560,8 +522,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ws.rphost.excps</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Ошибки</name>
@@ -583,8 +543,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ws.rphost.memory</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <units>B</units>
                     <applications>
                         <application>
@@ -624,9 +582,9 @@
                     <description>Пароль пользователя администратора кластера</description>
                 </macro>
                 <macro>
-                    <macro>{$RAS_PORT}</macro>
+                    <macro>{$RAS_PORTS}</macro>
                     <value>1545</value>
-                    <description>Сетевой порт службы RAS</description>
+                    <description>Порты сервиса RAS (если используется несколько сервисов, то указываются через запятую)</description>
                 </macro>
                 <macro>
                     <macro>{$RAS_TIMEOUT}</macro>
@@ -881,7 +839,7 @@
                     <yaxisside>RIGHT</yaxisside>
                     <item>
                         <host>Template App 1C Enterprise Work Server</host>
-                        <key>1c.ws.perfs[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                        <key>1c.ws.perfs[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </item>
                 </graph_item>
                 <graph_item>

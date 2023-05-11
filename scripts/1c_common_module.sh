@@ -2,7 +2,7 @@
 #
 # Мониторинг 1С Предприятия 8.3 (общие переменные и функции)
 #
-# (c) 2019-2022, Алексей Ю. Федотов
+# (c) 2019-2023, Алексей Ю. Федотов
 #
 # Email: fedotov@kaminsoft.ru
 #
@@ -22,10 +22,8 @@ export USR1CV8="usr1cv8"
 [[ -z ${IS_WINDOWS} ]] && HOSTNAME=$(hostname -s) || HOSTNAME=$(hostname)
 export HOSTNAME
 
-# Добавление пути к бинарным файлам 1С Предприятия
-[[ -z ${IS_WINDOWS} ]] && RAC_PATH="$( { find /opt/1C/v8* /opt/1cv8/ -name rac ; } 2>/dev/null | tail -n1 )" ||
-    RAC_PATH="$(ls -d /c/Program\ Files*/1cv8/8.* | tail -n1)/bin/"
-export RAC_PATH
+# Добавление пути к бинарным файлам 1С Предприятия в переменную PATH
+RAC_PATH="$( find /opt/1C/ /opt/1cv8/ /c/Program\ Files*/1cv8/ -regextype awk -regex ".*/rac([.]exe)?" -name "rac*" -print -quit  2>/dev/null )"
 
 if [[ -n ${RAC_PATH} ]]; then
     export PATH="${PATH}:${RAC_PATH%/*}"
@@ -40,14 +38,14 @@ fi
 export CLSTR_CACHE="${TMPDIR}/1c_clusters_cache"
 
 # Параметры взаимодействия с сервисом RAS
-RAS_PORT="1545"
+RAS_PORTS="1545"
 RAS_TIMEOUT="1.5"
 RAS_AUTH=""
 
-# Максимальное число параллельных потоков
+# Максимальное число параллельных потоков (половина от числа ядер ЦПУ)
 MAX_THREADS=$(( $(nproc) / 2 )) && [[ ${MAX_THREADS} -eq 0 ]] && MAX_THREADS=1 
 
-# Общие для всех скрпитов тексты ошибок
+# Общие для всех скриптов тексты ошибок
 export ERROR_UNKNOWN_MODE="Неизвестный режим работы скрипта!"
 export ERROR_UNKNOWN_PARAM="Неизвестный параметр для данного режима работы скрипта!"
 
@@ -60,7 +58,7 @@ function put_brack_line {
     [[ -n ${1} ]] && LIMIT=${1} || LIMIT=80
     [[ -n ${2} ]] && CHAR=${2} || CHAR="-"
 
-    printf "%*s\n" ${LIMIT} ${CHAR} | sed "s/ /${CHAR}/g"
+    printf "%*s\n" "${LIMIT}" "${CHAR}" | sed "s/ /${CHAR}/g"
 }
 
 # Выполнить серию команд ${1} с параметром, являющимся элементом массива ${@}, следующим за ${1}
@@ -98,45 +96,49 @@ function get_license_list {
 #  * ${4} - пароль пользователя администратора кластера
 function make_ras_params {
 
-    [[ -n ${1} ]] && RAS_PORT=${1}
+    [[ -n ${1} ]] && RAS_PORTS=${1}
 
     [[ -n ${2} ]] && RAS_TIMEOUT=${2}
 
     [[ -n ${3} ]] && RAS_AUTH="--cluster-user=${3}"
     [[ -n ${4} ]] && RAS_AUTH+=" --cluster-pwd=${4}"
 
-    export RAS_PORT RAS_TIMEOUT RAS_AUTH
+    export RAS_PORTS RAS_TIMEOUT RAS_AUTH
 
+}
+
+# Сохранить список UUID кластеров во временный файл
+function push_clusters_uuid {
+    CURR_CLSTR=$( timeout -s HUP "${RAS_TIMEOUT}" rac cluster list "${1%%:*}:${RAS_PORT}" 2>/dev/null | 
+        awk -v FS=' +: +' '/^($|cluster|name|port)/ { if ($1){ print $2 } else {print "==="} }' |
+        awk -v FS='\n' -v RS='={3}\n' -v OFS=',' -v ORS=';' '$1=$1' )
+
+    [[ -n ${CURR_CLSTR} ]] && echo "${1%%:*}:${RAS_PORT}#${CURR_CLSTR}" | sed 's/,;/;/g'
 }
 
 # Сохранить список кластеров во временный файл
 function push_clusters_list {
 
-    # Сохранить список UUID кластеров во временный файл
-    function push_clusters_uuid {
-        CURR_CLSTR=$( timeout -s HUP "${RAS_TIMEOUT}" rac cluster list "${1%%:*}:${RAS_PORT}" 2>/dev/null | 
-            awk -v FS=' +: +' '/^($|cluster|name|port)/ { if ($1){ print $2 } else {print "==="} }' |
-            awk -v FS='\n' -v RS='={3}\n' -v OFS=',' -v ORS=';' '$1=$1' )
-
-        [[ -n ${CURR_CLSTR} ]] && echo "${1%%:*}:${CURR_CLSTR}" | sed 's/,;/;/g' >> ${CLSTR_CACHE}
-    }
-
-    cat /dev/null > ${CLSTR_CACHE}
-
-    execute_tasks push_clusters_uuid "${@}"
+    if echo ${$} > "${CACHE_FILENAME}.lock" 2>/dev/null; then
+        trap 'rm -f "${CACHE_FILENAME}.lock"; exit ${?}' INT TERM EXIT
+        execute_tasks push_clusters_uuid "${@}" >| "${CACHE_FILENAME}"
+        rm -f "${CACHE_FILENAME}.lock"
+    fi
 
 }
 
-# Вывести список кластеров из временного файла:
+# Вывести список кластеров из временных файлов:
 #  - если в первом параметре указано self, то выводится только список кластеров текущего сервера
 function pop_clusters_list {
 
-    [[ ! -f ${CLSTR_CACHE} ]] && error "Не найден файл списка кластеров!"
+    find "${TMPDIR}" -maxdepth 1 -regextype awk -regex ".*_(${RAS_PORTS//,/|})" -name "$( basename "${CLSTR_CACHE}" )_*" | \
+        grep -qv "^$" || error "Не найдено ни одного файла списка кластеров!"
 
+    # ВАЖНО: Для этого блока включается extglob (возможно имеет смысл переделать)
     if [[ -n ${1} && ${1} == "self" ]]; then
-        grep -i "^${HOSTNAME}" "${CLSTR_CACHE}" | cut -d: -f2
+        grep -i "^${HOSTNAME}" "${CLSTR_CACHE}_"?(${RAS_PORTS//,/|}) | sed -re 's/^([/][^:]+:)?//'
     else
-        cat "${CLSTR_CACHE}" 
+        cat "${CLSTR_CACHE}_"?(${RAS_PORTS//,/|}) 
     fi | sed 's/ /<sp>/g; s/"//g'
 
 }
@@ -145,11 +147,9 @@ function pop_clusters_list {
 #  - если в первом параметре указано self, то выводится только список кластеров текущего сервера
 function get_clusters_list {
 
-    pop_clusters_list "${1}" | perl -pe 's/.*[:]//; s/;[^\n]/\n/; s/;//' | \
-        awk 'BEGIN {FS=","; print "{\"data\":[" }
-            {print "{\"{#CLSTR_UUID}\":\""$1"\",\"{#CLSTR_NAME}\":\""$3"\"}," }
-            END { print "]}" }' | \
-        perl -pe 's/\n//;' | perl -pe 's/(.*),]}/\1]}\n/; s/<sp>/ /g'
+    pop_clusters_list "${1}" | awk -F, -v RS=";\n?" -v ORS="" 'BEGIN {print "{\"data\":[" }
+        { sub(".*:",""); print (NR!=1?",":"")"{\"{#CLSTR_UUID}\":\""$1"\",\"{#CLSTR_NAME}\":\""$3"\"}" }
+        END {ORS="\n"; print "]}" }' | sed 's/<sp>/ /g'
 
 }
 
@@ -158,7 +158,7 @@ function check_clusters_cache {
 
     # Получим список менеджеров кластеров, в которых участвует данный сервер, следующего вида:
     #   <имя_сервера>:<номер_порта_0>[|<номер_порта_1>[|..<номер_порта_N>]]
-    readarray -t RMNGR_LIST < <( if [ -z ${IS_WINDOWS} ]; then pgrep -ax rphost; else
+    readarray -t RMNGR_LIST < <( if [ -z "${IS_WINDOWS}" ]; then pgrep -ax rphost; else
         wmic path win32_process where "caption like 'rphost%'" get CommandLine | grep rphost; fi |
         sed -r 's/.*-regport ([^ ]+).*/\0|\1/; s/.*-reghost ([^ ]+).*\|/\1:/' | sort -u |
         awk -F: '{ if ( clstr_list[$1]== "" ) { clstr_list[$1]=$2 } \
@@ -170,35 +170,42 @@ function check_clusters_cache {
     #   - если количество строк во временном файле отличается от количества элементов
     #     списка менеджеров кластеров
     #   - если временный файл старше 1 часа
-    if [[ -e ${CLSTR_CACHE} ]]; then
-        if [[ ${1} == "lost" ]]; then
-            cp ${CLSTR_CACHE} ${CLSTR_CACHE}.${$} && trap "rm -f "${CLSTR_CACHE}.${$}"; exit 1" 1 2 3 15
-            for CURR_RMNGR in "${RMNGR_LIST[@]}"; do
-                CURR_LOST=$( grep "^${CURR_RMNGR%:*}" ${CLSTR_CACHE}.${$} | \
-                    sed -re "s/[^:^;]+,(${CURR_RMNGR#*:}),[^;]+;//" )
-                sed -i -re "s/^${CURR_RMNGR%:*}.*$/${CURR_LOST}/; /[^:]+:$/d" ${CLSTR_CACHE}.${$}
-            done
-            grep -v "^$" ${CLSTR_CACHE}.${$} || [[ ${#RMNGR_LIST[@]} -ne $(grep -vc "^$" ${CLSTR_CACHE}) ]] && 
+    set -o noclobber
+    for RAS_PORT in ${RAS_PORTS//,/ }; do
+        CACHE_FILENAME="${CLSTR_CACHE}_${RAS_PORT}"
+        export RAS_PORT CACHE_FILENAME
+        if [[ -e ${CACHE_FILENAME} ]]; then
+            if [[ ${1} == "lost" ]]; then
+                cp "${CACHE_FILENAME}" "${CACHE_FILENAME}.${$}" && trap 'rm -f "${CACHE_FILENAME}.${$}"; exit ${?}' INT TERM EXIT
+                for CURR_RMNGR in "${RMNGR_LIST[@]}"; do
+                    CURR_LOST=$( grep "^${CURR_RMNGR%:*}" "${CACHE_FILENAME}.${$}" | \
+                        sed -re "s/[^:^;]+,(${CURR_RMNGR#*:}),[^;]+;//" )
+                    sed -i -re "s/^${CURR_RMNGR%:*}.*$/${CURR_LOST}/; /[^:]+:$/d" "${CACHE_FILENAME}.${$}"
+                done
+                grep -v "^$" "${CACHE_FILENAME}.${$}" || [[ ${#RMNGR_LIST[@]} -ne $(grep -vc "^$" "${CACHE_FILENAME}") ]] && 
+                    push_clusters_list "${RMNGR_LIST[@]}"
+                rm -f "${CACHE_FILENAME}.${$}" &>/dev/null   
+            elif [[ ${#RMNGR_LIST[@]} -ne $(grep -vc "^$" "${CACHE_FILENAME}") ||
+                $(date -r "${CACHE_FILENAME}" "+%s") -lt $(date -d "last hour" "+%s") ]]; then
                 push_clusters_list "${RMNGR_LIST[@]}"
-            rm -f ${CLSTR_CACHE}.${$} &>/dev/null   
-        elif [[ ${#RMNGR_LIST[@]} -ne $(grep -vc "^$" ${CLSTR_CACHE}) ||
-            $(date -r ${CLSTR_CACHE} "+%s") -lt $(date -d "last hour" "+%s") ]]; then
+            fi
+        else
             push_clusters_list "${RMNGR_LIST[@]}"
         fi
-    else
-        push_clusters_list "${RMNGR_LIST[@]}"
-    fi
+    done
 
 }
 
+# Доступная производительность процессов рабочих серверов
+# Выводит список:
+#   <имя_хоста>:<средняя_производительность>
 function get_processes_perfomance {
 
-    CLSTR_LIST=${1#*:}
-    [[ $( expr index "${1}" : ) -eq 0 ]] && RAS_HOST=${HOSTNAME} || RAS_HOST=${1%:*}
+    CLSTR_LIST=${1#*#}
 
     for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
         timeout -s HUP "${RAS_TIMEOUT}" rac process list "--cluster=${CURR_CLSTR%%,*}" \
-            ${RAS_AUTH} "${RAS_HOST}:${RAS_PORT}" 2>/dev/null | \
+            ${RAS_AUTH} "${1%#*}" 2>/dev/null | \
             awk '/^(host|available-perfomance|$)/' | perl -pe "s/.*: ([^.]+).*\n/\1:/" | \
             awk -F: '{ apc[$1]+=1; aps[$1]+=$2 } END { for (i in apc) { print i":"aps[i]/apc[i] } }'
     done
@@ -208,7 +215,7 @@ function get_processes_perfomance {
 # Получить каталог кластера (при условии одного сервиса 1С)
 # TODO: Обрабатывать ситуацию с несколькоими сервисами 1С
 function get_server_directory {
-    if [ -z ${IS_WINDOWS} ]; then
+    if [ -z "${IS_WINDOWS}" ]; then
         SRV1CV8_DATA="$(pgrep -a ragent | sed -r 's/.*-d ([^ ]+).*/\1/' )"
         # Если каталог кластера не задан в параметре, то установим значение по умолчанию
         [[ -z ${SRV1CV8_DATA} ]] && SRV1CV8_DATA="$(awk -v uid="^$(awk '/Uid/ {print $2}' /proc/"$(pgrep ragent)"/status 2>/dev/null)$" -F: \
@@ -248,13 +255,12 @@ function get_infobases_list {
 #  сколько имеется кластеров на указанном (<имя_сервера>) сервере 1С Предприятия
 function get_clusters_infobases {
     
-    RMNGR_HOST=${1%%:*}
-    CLUSTERS_LIST=${1#*:}
-    [[ ${RMNGR_HOST} == "${CLUSTERS_LIST}" ]] && RMNGR_HOST=${HOSTNAME}
+    RMNGR_HOST=${1%%#*}
+    CLUSTERS_LIST=${1#*#}
 
     for CURRENT_CLUSTER in ${CLUSTERS_LIST//;/ }; do
         readarray -t BASE_LIST < <( timeout -s HUP "${RAS_TIMEOUT}" rac infobase summary list \
-            --cluster "${CURRENT_CLUSTER%%,*}" ${RAS_AUTH} "${RMNGR_HOST}:${RAS_PORT}" | \
+            --cluster "${CURRENT_CLUSTER%%,*}" ${RAS_AUTH} "${RMNGR_HOST}" | \
             awk -v FS=' +: +' '/^(infobase|name|)(\s|$)/ { if ( $2 ) { print $2 } else { print "===" } }' | 
                 awk -v FS='\n' -v RS='={3}\n' -v OFS='|' '$1=$1' | sed 's/|$//' )
         for CURRENT_BASE in "${BASE_LIST[@]}"; do
@@ -278,7 +284,7 @@ function get_sessions_list {
     LICENSE_FORMAT="session:rmngr-address"
 
     timeout -s HUP "${RAS_TIMEOUT}" rac session list --cluster="${CLUSTER_UUID}" \
-        ${RAS_AUTH} "${SERVER_NAME}:${RAS_PORT}" 2>/dev/null |
+        ${RAS_AUTH} "${SERVER_NAME}" 2>/dev/null |
         awk -v FS=' +: +' -v format=${SESSION_FORMAT} \
         'BEGIN { print "FMT#"format"\n" } ( $0 ~ "^("gensub(":","|","g",format)"|)($| )" ) { if ( $1 == "app-id" ) {
             switch ($2) {
@@ -293,7 +299,7 @@ function get_sessions_list {
             awk -F':' -v OFS=":" -v format="${LICENSE_FORMAT#*:}" 'FNR==NR{licenses[$1]=$2; next} ($1 in licenses || $0 ~ "^FMT#") { 
                 if ( $0 ~ "^FMT#" ) { print $0":"format } else { print $0,licenses[$1] } }' \
             <( timeout -s HUP "${RAS_TIMEOUT}" rac session list --licenses --cluster="${CLUSTER_UUID}" \
-                ${RAS_AUTH} "${SERVER_NAME}:${RAS_PORT}" 2>/dev/null |
+                ${RAS_AUTH} "${SERVER_NAME}" 2>/dev/null |
                 awk -v format="${LICENSE_FORMAT}" '( $0 ~ "^("gensub(":","|","g",format)"|)($| )" ) { print $3}' |
                 awk -v RS='' -v OFS=':' '$1=$1' | sort -u ) - ; fi )
 

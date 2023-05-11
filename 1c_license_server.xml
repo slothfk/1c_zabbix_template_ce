@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2022-10-10T06:00:08Z</date>
+    <date>2023-05-23T12:55:03Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -53,8 +53,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ls.license.client</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Программные лицензии</name>
@@ -68,7 +66,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                        <key>1c.ls.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                     <triggers>
                         <trigger>
@@ -85,8 +83,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ls.license.file</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Программные лицензии</name>
@@ -108,8 +104,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ls.license.total</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Программные лицензии</name>
@@ -123,7 +117,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                        <key>1c.ls.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                 </item>
                 <item>
@@ -131,8 +125,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ls.license.uniq</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Программные лицензии</name>
@@ -146,7 +138,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                        <key>1c.ls.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                 </item>
                 <item>
@@ -154,8 +146,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ls.license.used</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Программные лицензии</name>
@@ -169,7 +159,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                        <key>1c.ls.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                 </item>
                 <item>
@@ -177,8 +167,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ls.license.user</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Программные лицензии</name>
@@ -200,8 +188,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.ls.license.webclient</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Программные лицензии</name>
@@ -215,7 +201,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                        <key>1c.ls.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                 </item>
                 <item>
@@ -235,7 +221,7 @@
                 <item>
                     <name>[1С/Лицензии] Активные сеансы</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    <key>1c.ls.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     <history>0</history>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
@@ -255,7 +241,6 @@
                     <type>ZABBIX_ACTIVE</type>
                     <key>1c.ls.clusters.discovery</key>
                     <delay>1h</delay>
-                    <status>DISABLED</status>
                     <lifetime>90d</lifetime>
                     <item_prototypes>
                         <item_prototype>
@@ -263,8 +248,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.ls.license.client[cluster,{#CLSTR_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <applications>
                                 <application>
                                     <name>[1С] Программные лицензии</name>
@@ -278,7 +261,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.ls.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -299,7 +282,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.ls.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -320,7 +303,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.ls.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -328,8 +311,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.ls.license.used[cluster,{#CLSTR_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <applications>
                                 <application>
                                     <name>[1С] Программные лицензии</name>
@@ -343,7 +324,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.ls.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -351,8 +332,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.ls.license.webclient[cluster,{#CLSTR_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <applications>
                                 <application>
                                     <name>[1С] Программные лицензии</name>
@@ -366,7 +345,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.ls.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
@@ -421,9 +400,8 @@
                 <discovery_rule>
                     <name>[1С/Лицензии] Информационные  базы</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>1c.ls.infobases.discovery[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    <key>1c.ls.infobases.discovery[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     <delay>1h</delay>
-                    <status>DISABLED</status>
                     <item_prototypes>
                         <item_prototype>
                             <name>[1С/Инфобаза/{#IB_NAME}] Количество лицензий на клиенте</name>
@@ -443,7 +421,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.ls.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -464,7 +442,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.ls.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -485,7 +463,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.ls.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -506,7 +484,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.ls.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -527,7 +505,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.ls.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.ls.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
@@ -592,9 +570,9 @@
                     <description>Пароль пользователя администратора кластера</description>
                 </macro>
                 <macro>
-                    <macro>{$RAS_PORT}</macro>
+                    <macro>{$RAS_PORTS}</macro>
                     <value>1545</value>
-                    <description>Сетевой порт службы RAS</description>
+                    <description>Порты сервиса RAS (если используется несколько сервисов, то указываются через запятую)</description>
                 </macro>
                 <macro>
                     <macro>{$RAS_TIMEOUT}</macro>

@@ -2,12 +2,16 @@
 #
 # Мониторинг 1С Предприятия 8.3 (рабочий сервер)
 #
-# (c) 2019-2020, Алексей Ю. Федотов
+# (c) 2019-2023, Алексей Ю. Федотов
 #
 # Email: fedotov@kaminsoft.ru
 #
 
 WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
+
+# Включить опцию extglob если отключена (используется в 1c_common_module.sh)
+shopt -q extglob || shopt -s extglob
+
 source "${WORK_DIR}/1c_common_module.sh" 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
 # Коды завершения процедуры архивирования файлов технологического журнала
@@ -61,7 +65,7 @@ function get_calls_info {
             else if ( mode == "iobytes" ) { printf "%11.2f | %9.2f | %9.2f | %6d | %s\n", \
                 iobytes[i]/1024/1024, durations[i]/1000000, cpus[i]/1000000, count[i], i } \
             } }' | \
-        sort -rn | head -n ${TOP_LIMIT} | awk -v mode="${MODE}" -F"@" '{ if ( mode == "lazy" ) { print $2 } else { print $0 } }'
+        sort -rn | head -n "${TOP_LIMIT}" | awk -v mode="${MODE}" -F"@" '{ if ( mode == "lazy" ) { print $2 } else { print $0 } }'
 }
 
 
@@ -87,15 +91,15 @@ function get_locks_info {
 
     echo "lock: $(cat "${LOG_DIR}"/rphost_*/"${LOG_FILE}.log" 2>/dev/null | grep -c ',TLOCK,')"
 
-    RESULT=($(cat "${LOG_DIR}"/rphost_*/"${LOG_FILE}.log" 2>/dev/null | \
+    read -ar RESULT < <(cat "${LOG_DIR}"/rphost_*/"${LOG_FILE}.log" 2>/dev/null | \
         awk "/(TDEADLOCK|TTIMEOUT|TLOCK.*,WaitConnections=[0-9]+)/" | \
         sed -re "s/[0-9]{2}:[0-9]{2}.[0-9]{6}-//; s/,[a-zA-Z\:]+=/,/g" | \
-        awk -F"," -v lts=${WAIT_LIMIT} 'BEGIN {dl=0; to=0; lw=0} { if ($2 == "TDEADLOCK") {dl+=1} \
+        awk -F"," -v lts="${WAIT_LIMIT}" 'BEGIN {dl=0; to=0; lw=0} { if ($2 == "TDEADLOCK") {dl+=1} \
             else if ($2 == "TTIMEOUT") { to+=1 } \
             else { lw+=$1; lws[$4"->"$6]+=$1; } } \
             END { print "timeout: "to"<nl>"; print "deadlock: "dl"<nl>"; print "wait: "lw/1000000"<nl>"; \
             if ( lw > 0 ) { print "Ожидания на блокировках (установлен порог "lts" сек):<nl>"; \
-            for ( i in lws ) { print "> "i" - "lws[i]/1000000" сек.<nl>" } } }'))
+            for ( i in lws ) { print "> "i" - "lws[i]/1000000" сек.<nl>" } } }')
 
     echo "${RESULT[@]}" | perl -pe 's/<nl>\s?/\n/g'
 
@@ -107,10 +111,10 @@ function get_locks_info {
         check_clusters_cache
 
         for CURRENT_HOST in $( pop_clusters_list ); do
-            CLSTR_LIST=${CURRENT_HOST#*:}
+            CLSTR_LIST=${CURRENT_HOST#*#}
             for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
-                SRV_LIST+=( $(timeout -s HUP ${RAS_TIMEOUT} rac server list --cluster=${CURR_CLSTR%,*} \
-                    ${RAS_AUTH} ${CURRENT_HOST%:*}:${RAS_PORT} 2>/dev/null| grep agent-host | sort -u | \
+                SRV_LIST+=( $(timeout -s HUP "${RAS_TIMEOUT}" rac server list --cluster="${CURR_CLSTR%,*}" \
+                    ${RAS_AUTH} "${CURRENT_HOST%#*}" 2>/dev/null| grep agent-host | sort -u | \
                     sed -r "s/.*: (.*)$/\1/; s/\"//g") )
             done
         done
@@ -180,7 +184,7 @@ function dump_logs {
         DUMP_RESULT=${DUMP_CODE_0} || DUMP_RESULT=${DUMP_CODE_2}
     fi
 
-    echo ${DUMP_RESULT}
+    echo "${DUMP_RESULT}"
 
 }
 
@@ -202,7 +206,7 @@ function get_available_perfomance {
 }
 
 case ${1} in
-    calls | locks | excps) check_log_dir ${2} ${1};
+    calls | locks | excps) check_log_dir "${2}" "${1}";
         export LOG_FILE=$(date --date="last hour" "+%y%m%d%H");
         export LOG_DIR="${2%/}/zabbix/${1}" ;;&
     excps) PROCESS_NAMES=(ragent rmngr rphost) ;;&

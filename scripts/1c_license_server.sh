@@ -8,6 +8,10 @@
 #
 
 WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
+
+# Включить опцию extglob если отключена (используется в 1c_common_module.sh)
+shopt -q extglob || shopt -s extglob
+
 source "${WORK_DIR}/1c_common_module.sh" 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
 function licenses_summary {
@@ -33,10 +37,10 @@ function license_info {
 
 function get_license_counts {
 
-    CLSTR_LIST=${1##*:}
+    CLSTR_LIST=${1##*#}
 
     for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
-        get_sessions_list "${1%%:*}" "${CURR_CLSTR%%,*}" license | ( if [[ -s ${IB_CACHE} ]]; then
+        get_sessions_list "${1%#*}" "${CURR_CLSTR%%,*}" license | ( if [[ -s ${IB_CACHE} ]]; then
             awk -F':' -v OFS=':' -v hostname="${HOSTNAME,,}" -v cluster="CL#${CURR_CLSTR%%,*}" \
                 'FNR==NR{ if ($0 ~ "^"substr(cluster,4)) { split($0, ib_uuid, " "); sc["IB#"ib_uuid[2]]=0 }; next}
                 BEGIN { sc[cluster]=0 } {
@@ -120,7 +124,7 @@ case ${1} in
     info) licenses_summary ;;
     used) shift; make_ras_params "${@}"; used_license ;;
     infobases) shift; make_ras_params "${@}"; get_infobases_list;;
-    clusters) get_clusters_list ;;
+    clusters) shift; make_ras_params "${@}"; get_clusters_list ;;
     check) check_clusters_disconnection ;;
     *) error "${ERROR_UNKNOWN_MODE}" ;;
 esac

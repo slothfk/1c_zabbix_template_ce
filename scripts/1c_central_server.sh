@@ -2,18 +2,24 @@
 #
 # Мониторинг 1С Предприятия 8.3 (центральный сервер)
 #
-# (c) 2020-2022, Алексей Ю. Федотов
+# (c) 2020-2023, Алексей Ю. Федотов
 #
 # Email: fedotov@kaminsoft.ru
 #
 
 WORK_DIR=$(dirname "${0}" | sed -r 's/\\/\//g; s/^(.{1}):/\/\1/')
+
+# Включить опцию extglob если отключена (используется в 1c_common_module.sh)
+shopt -q extglob || shopt -s extglob
+
 source "${WORK_DIR}/1c_common_module.sh" 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
 function get_clusters_sessions {
 
-    for CURR_CLSTR in ${1//;/ }; do
-        get_sessions_list "${HOSTNAME}" "${CURR_CLSTR%%,*}" | ( if [[ -s ${IB_CACHE} ]]; then
+    CLSTR_LIST=${1##*#}
+
+    for CURR_CLSTR in ${CLSTR_LIST//;/ }; do
+        get_sessions_list "${1%#*}" "${CURR_CLSTR%%,*}" | ( if [[ -s ${IB_CACHE} ]]; then
             awk -v cluster="CL#${CURR_CLSTR%%,*}" -v OFS=':' -F':' \
             'FNR==NR{ if ( $0 ~ "^"substr(cluster,4) ) { split($0, ib_uuid, " "); ss["IB#"ib_uuid[2]]=0; }; next }
             BEGIN { ss[cluster]=0; } { 
@@ -101,7 +107,7 @@ function get_infobases_restrictions {
 case ${1} in
     sessions) shift; make_ras_params "${@}"; get_session_amounts ;;
     infobases) shift 2; make_ras_params "${@}"; get_infobases_list self;;
-    clusters) get_clusters_list self ;;
+    clusters) shift; make_ras_params "${@}"; get_clusters_list self ;;
     ib_restrict) get_infobases_restrictions ;;
     *) error "${ERROR_UNKNOWN_MODE}" ;;
 esac

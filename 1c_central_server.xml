@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2021-10-11T09:04:50Z</date>
+    <date>2023-05-23T13:07:32Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -50,8 +50,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.cs.sessions.as</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <description>Число сеансов, имеющих активный серверный вызов</description>
                     <applications>
                         <application>
@@ -66,7 +64,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                        <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                 </item>
                 <item>
@@ -74,8 +72,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.cs.sessions.bg</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Сеансы</name>
@@ -89,7 +85,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                        <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                 </item>
                 <item>
@@ -97,8 +93,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.cs.sessions.bgd</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <value_type>FLOAT</value_type>
                     <units>s</units>
                     <description>Максимальное значение длительности среди серверных вызовов фоновых заданий, выполняющихся в настоящий момент</description>
@@ -119,7 +113,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                        <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                 </item>
                 <item>
@@ -127,8 +121,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.cs.sessions.cld</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <value_type>FLOAT</value_type>
                     <units>s</units>
                     <description>Максимальное значение длительности среди пользовательских (интерактивных) серверных вызовов, выполняющихся в настоящий момент</description>
@@ -149,7 +141,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                        <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                 </item>
                 <item>
@@ -157,8 +149,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.cs.sessions.hb</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Сеансы</name>
@@ -172,7 +162,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                        <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                 </item>
                 <item>
@@ -180,8 +170,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.cs.sessions.hsd</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <value_type>FLOAT</value_type>
                     <units>s</units>
                     <description>Максимальное значение длительности среди серверных вызовов http-сервисов, выполняющихся в настоящий момент</description>
@@ -202,7 +190,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                        <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                 </item>
                 <item>
@@ -210,8 +198,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.cs.sessions.http</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Сеансы</name>
@@ -225,7 +211,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                        <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                 </item>
                 <item>
@@ -233,8 +219,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.cs.sessions.total</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Сеансы</name>
@@ -248,7 +232,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                        <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                 </item>
                 <item>
@@ -256,8 +240,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.cs.sessions.ws</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <applications>
                         <application>
                             <name>[1С] Сеансы</name>
@@ -271,7 +253,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                        <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                 </item>
                 <item>
@@ -279,8 +261,6 @@
                     <type>DEPENDENT</type>
                     <key>1c.cs.sessions.wsd</key>
                     <delay>0</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
                     <value_type>FLOAT</value_type>
                     <units>s</units>
                     <description>Максимальное значение длительности среди серверных вызовов веб-сервисов, выполняющихся в настоящий момент</description>
@@ -301,13 +281,13 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                        <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
                 </item>
                 <item>
                     <name>[1С/Центральный сервер] Текущие сеансы</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     <history>0</history>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
@@ -317,28 +297,6 @@
                         </application>
                     </applications>
                 </item>
-                <item>
-                    <name>[1С/Центральный сервер] Статус сервиса RAS</name>
-                    <key>net.tcp.service[tcp,,{$RAS_PORT}]</key>
-                    <delay>30s</delay>
-                    <history>30d</history>
-                    <trends>90d</trends>
-                    <applications>
-                        <application>
-                            <name>[1С] Доступность</name>
-                        </application>
-                    </applications>
-                    <valuemap>
-                        <name>Service state</name>
-                    </valuemap>
-                    <triggers>
-                        <trigger>
-                            <expression>{last()}=0</expression>
-                            <name>[1С/RAS] Сервис недоступен на {HOST.NAME}</name>
-                            <priority>HIGH</priority>
-                        </trigger>
-                    </triggers>
-                </item>
             </items>
             <discovery_rules>
                 <discovery_rule>
@@ -347,15 +305,12 @@
                     <key>1c.cs.clusters.discovery</key>
                     <delay>1h</delay>
                     <status>DISABLED</status>
-                    <lifetime>7d</lifetime>
                     <item_prototypes>
                         <item_prototype>
                             <name>[1С/Кластер/{#CLSTR_NAME}] Количество активных сеансов</name>
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.as[{#CLSTR_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <description>Число сеансов кластера, имеющих активный серверный вызов</description>
                             <applications>
                                 <application>
@@ -370,7 +325,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -378,8 +333,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.bgd[{#CLSTR_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <value_type>FLOAT</value_type>
                             <units>s</units>
                             <description>Максимальное значение длительности сред серверных вызовов фоновых заданий, выполняющихся в настоящий момент в данном кластере</description>
@@ -400,7 +353,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -408,8 +361,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.bg[{#CLSTR_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <applications>
                                 <application>
                                     <name>[1С] Сеансы</name>
@@ -423,7 +374,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -431,8 +382,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.cld[{#CLSTR_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <value_type>FLOAT</value_type>
                             <units>s</units>
                             <description>Максимальное значение длительности среди пользовательских (интерактивных) серверных вызовов, выполняющихся в настоящий момент в данном кластере</description>
@@ -453,7 +402,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -461,8 +410,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.hb[{#CLSTR_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <applications>
                                 <application>
                                     <name>[1С] Сеансы</name>
@@ -476,7 +423,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -484,8 +431,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.hsd[{#CLSTR_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <value_type>FLOAT</value_type>
                             <units>s</units>
                             <description>Максимальное значение длительности сред серверных вызовов http-сервисов, выполняющихся в настоящий момент в данном кластере</description>
@@ -506,7 +451,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -514,8 +459,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.hs[{#CLSTR_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <applications>
                                 <application>
                                     <name>[1С] Сеансы</name>
@@ -529,7 +472,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -537,8 +480,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.total[{#CLSTR_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <applications>
                                 <application>
                                     <name>[1С] Сеансы</name>
@@ -552,7 +493,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -560,8 +501,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.wsd[{#CLSTR_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <value_type>FLOAT</value_type>
                             <units>s</units>
                             <description>Максимальное значение длительности сред серверных вызовов веб-сервисов, выполняющихся в настоящий момент в данном кластере</description>
@@ -582,7 +521,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -590,8 +529,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.ws[{#CLSTR_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <applications>
                                 <application>
                                     <name>[1С] Сеансы</name>
@@ -605,7 +542,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
@@ -708,17 +645,14 @@
                 <discovery_rule>
                     <name>[1С/Центральный сервер] Информационные базы</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>1c.cs.infobases.discovery[{$IBNAME_WITH_CLSTR},{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                    <key>1c.cs.infobases.discovery[{$IBNAME_WITH_CLSTR},{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     <delay>1h</delay>
-                    <lifetime>7d</lifetime>
                     <item_prototypes>
                         <item_prototype>
                             <name>[1С/Инфобаза/{#IB_NAME}] Блокировка регламентных заданий</name>
                             <type>DEPENDENT</type>
                             <key>1c.cs.ib.sched_deny[{#IB_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <applications>
                                 <application>
                                     <name>[1С] Информация</name>
@@ -747,8 +681,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.ib.sess_deny[{#IB_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <applications>
                                 <application>
                                     <name>[1С] Информация</name>
@@ -777,7 +709,7 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.asu[{#IB_UUID}]</key>
                             <delay>0</delay>
-                            <history>7d</history>
+                            <history>14d</history>
                             <trends>0</trends>
                             <value_type>TEXT</value_type>
                             <description>Пользовательский сеанс (имя пользователя, номер сеанса) с самым долгим активным текущим вызовом (время вызова текущее)</description>
@@ -794,7 +726,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -802,8 +734,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.as[{#IB_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <description>Число сеансов информационной базы, имеющих активный серверный вызов</description>
                             <applications>
                                 <application>
@@ -818,7 +748,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -826,8 +756,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.bgd[{#IB_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <value_type>FLOAT</value_type>
                             <units>s</units>
                             <description>Максимальное значение длительности среди серверных вызовов фоновых заданий, выполняющихся в настоящий момент в данной информационной базе</description>
@@ -848,7 +776,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -856,8 +784,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.bg[{#IB_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <applications>
                                 <application>
                                     <name>[1С] Сеансы</name>
@@ -871,7 +797,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -879,8 +805,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.cld[{#IB_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <value_type>FLOAT</value_type>
                             <units>s</units>
                             <description>Максимальное значение длительности среди пользовательских (интерактивных) серверных вызовов, выполняющихся в настоящий момент в данной информационной базе</description>
@@ -901,7 +825,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                             <trigger_prototypes>
                                 <trigger_prototype>
@@ -916,8 +840,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.hb[{#IB_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <applications>
                                 <application>
                                     <name>[1С] Сеансы</name>
@@ -931,7 +853,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -939,8 +861,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.hsd[{#IB_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <value_type>FLOAT</value_type>
                             <units>s</units>
                             <description>Максимальное значение длительности среди серверных вызовов http-сервисов, выполняющихся в настоящий момент в данной информационной базе</description>
@@ -961,7 +881,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -969,8 +889,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.hs[{#IB_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <applications>
                                 <application>
                                     <name>[1С] Сеансы</name>
@@ -984,7 +902,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -992,8 +910,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.total[{#IB_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <applications>
                                 <application>
                                     <name>[1С] Сеансы</name>
@@ -1007,7 +923,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -1015,8 +931,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.wsd[{#IB_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <value_type>FLOAT</value_type>
                             <units>s</units>
                             <description>Максимальное значение длительности среди серверных вызовов веб-сервисов, выполняющихся в настоящий момент в данной информационной базе</description>
@@ -1037,7 +951,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -1045,8 +959,6 @@
                             <type>DEPENDENT</type>
                             <key>1c.cs.sessions.ws[{#IB_UUID}]</key>
                             <delay>0</delay>
-                            <history>30d</history>
-                            <trends>90d</trends>
                             <applications>
                                 <application>
                                     <name>[1С] Сеансы</name>
@@ -1060,7 +972,7 @@
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>1c.cs.sessions[{$RAS_PORT},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                                <key>1c.cs.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
@@ -1123,7 +1035,6 @@
                                 </graph_item>
                                 <graph_item>
                                     <sortorder>2</sortorder>
-                                    <drawtype>GRADIENT_LINE</drawtype>
                                     <color>2774A4</color>
                                     <item>
                                         <host>Template App 1C Enterprise Central Server</host>
@@ -1161,6 +1072,34 @@
                         </graph_prototype>
                     </graph_prototypes>
                 </discovery_rule>
+                <discovery_rule>
+                    <name>[1С/Центральный сервер] Сервисы RAS</name>
+                    <key>1c.cs.ras.discovery[{$RAS_PORTS}]</key>
+                    <delay>1h</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>[1С/Центральный сервер] Статус сервиса RAS (порт {#RAS_PORT})</name>
+                            <type>SIMPLE</type>
+                            <key>net.tcp.service[tcp,,{#RAS_PORT}]</key>
+                            <delay>30s</delay>
+                            <applications>
+                                <application>
+                                    <name>[1С] Доступность</name>
+                                </application>
+                            </applications>
+                            <valuemap>
+                                <name>Service state</name>
+                            </valuemap>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}=0</expression>
+                                    <name>[1С/Центральный сервер] Недоступен сервис RAS на порту {#RAS_PORT}</name>
+                                    <priority>HIGH</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
             </discovery_rules>
             <macros>
                 <macro>
@@ -1178,9 +1117,9 @@
                     <description>Пароль администратора кластера</description>
                 </macro>
                 <macro>
-                    <macro>{$RAS_PORT}</macro>
+                    <macro>{$RAS_PORTS}</macro>
                     <value>1545</value>
-                    <description>Порт сервиса RAS</description>
+                    <description>Порты сервиса RAS (если используется несколько сервисов, то указываются через запятую)</description>
                 </macro>
                 <macro>
                     <macro>{$RAS_TIMEOUT}</macro>
