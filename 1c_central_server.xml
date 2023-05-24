@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2023-05-23T13:07:32Z</date>
+    <date>2023-05-24T05:04:04Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -302,7 +302,7 @@
                 <discovery_rule>
                     <name>[1С/Центральный сервер] Кластеры</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>1c.cs.clusters.discovery</key>
+                    <key>1c.cs.clusters.discovery[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     <delay>1h</delay>
                     <status>DISABLED</status>
                     <item_prototypes>

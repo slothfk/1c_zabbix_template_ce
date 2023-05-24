@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2023-05-23T12:55:03Z</date>
+    <date>2023-05-24T05:03:30Z</date>
     <groups>
         <group>
             <name>Templates (Kaminsoft)</name>
@@ -239,7 +239,7 @@
                 <discovery_rule>
                     <name>[1С/Лицензии] Кластеры</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>1c.ls.clusters.discovery</key>
+                    <key>1c.ls.clusters.discovery[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     <delay>1h</delay>
                     <lifetime>90d</lifetime>
                     <item_prototypes>
