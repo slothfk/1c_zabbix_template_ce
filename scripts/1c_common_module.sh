@@ -212,21 +212,21 @@ function get_processes_perfomance {
 
 }
 
-# Получить каталог кластера (при условии одного сервиса 1С)
-# TODO: Обрабатывать ситуацию с несколькоими сервисами 1С
+# Получить каталоги серверов 1С
 function get_server_directory {
     if [ -z "${IS_WINDOWS}" ]; then
-        SRV1CV8_DATA="$(pgrep -a ragent | sed -r 's/.*-d ([^ ]+).*/\1/' )"
-        # Если каталог кластера не задан в параметре, то установим значение по умолчанию
-        [[ -z ${SRV1CV8_DATA} ]] && SRV1CV8_DATA="$(awk -v uid="^$(awk '/Uid/ {print $2}' /proc/"$(pgrep ragent)"/status 2>/dev/null)$" -F: \
-            '$3 ~ uid {print $6}' /etc/passwd)/.1cv8/1C/1cv8"
+        pgrep -a ragent | sed -r 's/.*-d ([^ ]+).*/\1/'
     else
-        SRV1CV8_DATA="$(wmic path win32_process where "caption like 'ragent.exe'" get commandline /format:csv | \
-            awk -F, '/ragent/ { print $2 }' | sed -re 's/.*-d "([^"]+).*/\1/; s/^/\//; s/\\/\//g; s/://')"
-        #TODO: Задавать значение SRV1CV8_DATA в случае если не удалось определить из строки запуска
-        #        (такое возможно при ручном запуске ragent)
-    fi
-    echo "${SRV1CV8_DATA}"
+        wmic path win32_process where "caption like 'ragent.exe'" get commandline /format:csv | \
+            awk -F, '/ragent/ { print $2 }' | sed -re 's/.*-d "([^"]+).*/\1/; s/^/\//; s/\\/\//g; s/://'
+    fi | sed -re 's/(.*)[/]$/\1/' | sort -u | grep -v "^$"
+    #TODO: Возможно имеет смысл задавать значение SRV1CV8_DATA в случае если его не удалось определить из строки запуска
+    # т.е. в списке значений будет пресутствовать пустая строка
+    # - для Linux, пустую строку можно заменить значением полученным в результате работы похжей команды
+    #   $(awk -v uid="^$(awk '/Uid/ {print $2}' /proc/"$(pgrep ragent)"/status 2>/dev/null)$" -F: \
+    #     '$3 ~ uid {print $6}' /etc/passwd)/.1cv8/1C/1cv8"
+    #   ВАЖНО: однако следует учитывать имено pid процесса ragent-а у которого не указан каталог сервера!
+    # - для Windows, остуствие указанного каталога сервера возможно толькопри ручном запуске ragent
 }
 
 # Cписок информационных баз в виде json + файл кэша (идентификаторы: кластер, информационная база)
