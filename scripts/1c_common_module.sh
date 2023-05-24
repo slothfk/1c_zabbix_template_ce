@@ -148,7 +148,7 @@ function pop_clusters_list {
 function get_clusters_list {
 
     pop_clusters_list "${1}" | awk -F, -v RS=";\n?" -v ORS="" 'BEGIN {print "{\"data\":[" }
-        { sub(".*:",""); print (NR!=1?",":"")"{\"{#CLSTR_UUID}\":\""$1"\",\"{#CLSTR_NAME}\":\""$3"\"}" }
+        { sub(".*#",""); print (NR!=1?",":"")"{\"{#CLSTR_UUID}\":\""$1"\",\"{#CLSTR_NAME}\":\""$3"\"}" }
         END {ORS="\n"; print "]}" }' | sed 's/<sp>/ /g'
 
 }
