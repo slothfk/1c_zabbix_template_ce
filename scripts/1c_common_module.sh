@@ -301,7 +301,7 @@ function get_sessions_list {
             <( timeout -s HUP "${RAS_TIMEOUT}" rac session list --licenses --cluster="${CLUSTER_UUID}" \
                 ${RAS_AUTH} "${SERVER_NAME}" 2>/dev/null |
                 awk -v format="${LICENSE_FORMAT}" '( $0 ~ "^("gensub(":","|","g",format)"|)($| )" ) { print $3}' |
-                awk -v RS='' -v OFS=':' '$1=$1' | sort -u ) - ; fi )
+                awk -v RS='' -v OFS=':' '$1=$1' ) - | sort -u; fi )
 
 }
 
