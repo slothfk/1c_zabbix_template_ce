@@ -294,14 +294,14 @@ function get_sessions_list {
                 case "WSConnection": print "ws"; break;
                 case "HTTPServiceConnection": print "hs"; break; 
                 default: print $2; }
-        } else { if ($1 == "user-name" && $2 == "" ) {print "empty" } else { print $2; } } }' |
+        } else { if ($1 == "user-name" && $2 == "" ) { print "empty" } else { print $2; } } }' |
         awk -F':' -v RS='' -v OFS=':' '$1=$1' | ( if [[ ${3} != "license" ]]; then cat; else
-            awk -F':' -v OFS=":" -v format="${LICENSE_FORMAT#*:}" 'FNR==NR{licenses[$1]=$2; next} ($1 in licenses || $0 ~ "^FMT#") { 
-                if ( $0 ~ "^FMT#" ) { print $0":"format } else { print $0,licenses[$1] } }' \
+            awk -F':' -v OFS=":" -v format="${LICENSE_FORMAT#*:}" 'FNR==NR{licenses[$1]=gensub("^[^:]+(:|$)","","g",$0); next} 
+                ($1 in licenses || $0 ~ "^FMT#") { if ( $0 ~ "^FMT#" ) { print $0,format } else { print $0,licenses[$1] } }' \
             <( timeout -s HUP "${RAS_TIMEOUT}" rac session list --licenses --cluster="${CLUSTER_UUID}" \
                 ${RAS_AUTH} "${SERVER_NAME}" 2>/dev/null |
-                awk -v format="${LICENSE_FORMAT}" '( $0 ~ "^("gensub(":","|","g",format)"|)($| )" ) { print $3}' |
-                awk -v RS='' -v OFS=':' '$1=$1' ) - | sort -u; fi )
+                awk -v FS=' +: +' -v format="${LICENSE_FORMAT}" '( $0 ~ "^("gensub(":","|","g",format)"|)($| )" ) { print $2 }' |
+                awk -v RS='' -v OFS=':' '$1=$1' ) - ; fi )
 
 }
 
