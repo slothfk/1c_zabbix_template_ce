@@ -50,7 +50,7 @@ function get_license_counts {
                     print;
                     if ( $0 ~ "^FMT#") { 
                         split($0,a,"#|:"); for (i in a) { f[a[i]]=i-1 } 
-                    } else {
+                    } else if ( length(f) > 0 ) {
                         ib_mark="IB#"$f["infobase"];
                         sc[cluster]++; sc[ib_mark]++; uc[cluster][$f["user-name"]]; uc[ib_mark][$f["user-name"]];
                         if ( index(tolower($f["rmngr-address"]), hostname) > 0 ) { hc[cluster]++; hc[ib_mark]++; }
@@ -68,7 +68,7 @@ function get_license_counts {
                     print;
                     if ( $0 ~ "^FMT#") { 
                         split($0,a,"#|:"); for (i in a) { f[a[i]]=i-1 } 
-                    } else {
+                    } else if ( length(f) > 0 ) {
                         sc[cluster]++; uc[cluster][$f["user-name"]];
                         if ( index(tolower($f["rmngr-address"]), hostname) > 0 ) { hc[cluster]++ }
                         if ($f["app-id"] == "wc") { wc[cluster]++ }

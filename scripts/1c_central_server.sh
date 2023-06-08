@@ -25,7 +25,7 @@ function get_clusters_sessions {
             BEGIN { ss[cluster]=0; } { 
                 if ( $0 ~ "^FMT#") { 
                     split($0,a,"#|:"); for (i in a) { f[a[i]]=i-1 } 
-                } else {
+                } else if ( length(f) > 0 ) {
                     if ( $f["app-id"] ~ /(cl|wc)/ ) { app_id="cl" } else { app_id = $f["app-id"] }
                     ib_mark="IB#"$f["infobase"];
                     ss[cluster]++; ss[ib_mark]++;
@@ -51,7 +51,7 @@ function get_clusters_sessions {
             'BEGIN { ss[cluster]=0; } { 
                 if ( $0 ~ "^FMT#") { 
                     split($0,a,"#|:"); for (i in a) { f[a[i]]=i-1 } 
-                } else {
+                } else if ( length(f) > 0 ) {
                     if ( $f["app-id"] ~ /(cl|wc)/ ) { app_id="cl" } else { app_id = $f["app-id"] }
                     ss[cluster]++;
                     if ( app_id != "cl" ) { sc[app_id,cluster]++ }
