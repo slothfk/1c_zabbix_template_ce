@@ -32,16 +32,16 @@ function license_check {
 #  файла "старого формата" функция может возвращать "пустой результат"
 function get_licenses_info {
     ( find /var/1C/licenses/ "${ALLUSERSPROFILE}/Application\ Data/1C/licenses" "${ALLUSERSPROFILE}/1C/licenses" -maxdepth 1 -name "*.lic" \
-        -exec awk '/^(Номер продукта|Product code|Срок действия|Valid till)/ \
-            { str[FILENAME]=str[FILENAME]?str[FILENAME]":"gensub("^[^:]+[:] *","","g",$0):FILENAME":"gensub("^[^:]+[:] *","","g",$0) } \
-            END { for (i in str) { print str[i] }}' {} \; 2>/dev/null ) | 
+        -exec awk '/^(Номер продукта|Product code|Срок действия|Valid till)/ {
+            str[FILENAME]=str[FILENAME]?str[FILENAME]":"gensub("^[^:]+[:] *","","g",$0):FILENAME":"gensub("^[^:]+[:] *","","g",$0)
+        } END { for (i in str) { print str[i] }}' {} \; 2>/dev/null ) | 
     xargs -I license_file basename license_file | 
     sed -re 's/(0{7}10{3}1)5/\10/;
         s/(0{7}[10]0)10{3}/\10500/;
         s/:[0-9]{9}0*/:/;
         s/^([^:]+[:][^:]*[:])([0-9]{2})[.]([0-9]{2})[.]([0-9]{4}).*/\1\4\3\2/' | 
-    awk -F: -v OFS=':' '{ if ($2) { client+=$2 } else {server++ }; print $1,$2?$2:"s",gensub("^[^:]+:[^:]*:","","g",$0) } \
-        END { print "summary",server?server:0,client?client:0 }'
+    awk -F: -v OFS=':' '{ if ($2) { client+=$2 } else {server++ }; print $1,$2?$2:"s",gensub("^[^:]+:[^:]*:","","g",$0)
+        } END { print "summary",server?server:0,client?client:0 }'
 }
 
 # Возвращает список файлов программных лицензий в формате json

@@ -27,11 +27,3 @@
   with_items:
     - 1c_license_server.sh
     - 1c_license_files.sh
-
-- name: Copy script for license files
-  copy:
-    src: 1c_license_files.sh
-    dest: /var/lib/zabbix/scripts/
-    owner: zabbix
-    group: zabbix
-    mode: 0755    
