@@ -1,0 +1,1 @@
+../../../../scripts/1c_license_files.sh

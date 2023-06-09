@@ -4,28 +4,34 @@
 #- name: Install required packages
 - include: "install-{{ ansible_os_family }}.yml"
 
-- name: Copy userparameter for license server
+- name: Copy zabbix userparameter files for license server
   copy:
-    src: userparameter_1c-ls.conf
+    src: '{{ item }}'
     dest: /etc/zabbix/zabbix_agentd.d/
     owner: root
     group: root
     mode: 0644
+  with_items:
+    - userparameter_1c-ls.conf
+    - userparameter_1c-lf.conf
   notify:
     - Add host to group for restart zabbix agent
 
-- name: Copy main script for license server
+- name: Copy scripts for license server
   copy:
-    src: 1c_license_server.sh
+    src: '{{ item }}'
     dest: /var/lib/zabbix/scripts/
     owner: zabbix
     group: zabbix
     mode: 0755
+  with_items:
+    - 1c_license_server.sh
+    - 1c_license_files.sh
 
-- name: Make cron job for license info
+- name: Copy script for license files
   copy:
-    src: 1c_ls_license_info.sh
-    dest: /etc/cron.hourly/1c_ls_license_info
-    owner: root
-    group: root
-    mode: 0755
+    src: 1c_license_files.sh
+    dest: /var/lib/zabbix/scripts/
+    owner: zabbix
+    group: zabbix
+    mode: 0755    

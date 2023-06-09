@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2023-05-24T05:03:30Z</date>
+    <date>2023-06-09T12:47:54Z</date>
     <groups>
         <group>
-            <name>Templates (Kaminsoft)</name>
+            <name>Templates/Applications</name>
+        </group>
+        <group>
+            <name>Templates/Kaminsoft</name>
         </group>
     </groups>
     <templates>
@@ -14,19 +17,19 @@
             <description>Шаблон для мониторинга сервиса лицензирования сервера 1С Предприятия&#13;
 &#13;
 Подробнее https://slothfk.github.io/1c_zabbix_template_ce/</description>
+            <templates>
+                <template>
+                    <name>Template App 1C License Files</name>
+                </template>
+            </templates>
             <groups>
                 <group>
-                    <name>Templates (Kaminsoft)</name>
+                    <name>Templates/Applications</name>
+                </group>
+                <group>
+                    <name>Templates/Kaminsoft</name>
                 </group>
             </groups>
-            <applications>
-                <application>
-                    <name>[1С] Информация</name>
-                </application>
-                <application>
-                    <name>[1С] Программные лицензии</name>
-                </application>
-            </applications>
             <items>
                 <item>
                     <name>[1С/Сервер лицензирования] Проверка кластеров</name>
@@ -77,27 +80,6 @@
                             <manual_close>YES</manual_close>
                         </trigger>
                     </triggers>
-                </item>
-                <item>
-                    <name>[1С/Лицензии] Количество файлов пользовательских лицензий</name>
-                    <type>DEPENDENT</type>
-                    <key>1c.ls.license.file</key>
-                    <delay>0</delay>
-                    <applications>
-                        <application>
-                            <name>[1С] Программные лицензии</name>
-                        </application>
-                    </applications>
-                    <preprocessing>
-                        <step>
-                            <type>REGEX</type>
-                            <params>(\d+):\d+
-\1</params>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>1c.ls.licenses</key>
-                    </master_item>
                 </item>
                 <item>
                     <name>[1С/Лицензии] Общее количество сеансов</name>
@@ -163,27 +145,6 @@
                     </master_item>
                 </item>
                 <item>
-                    <name>[1С/Лицензии] Количество лицензированных сеансов</name>
-                    <type>DEPENDENT</type>
-                    <key>1c.ls.license.user</key>
-                    <delay>0</delay>
-                    <applications>
-                        <application>
-                            <name>[1С] Программные лицензии</name>
-                        </application>
-                    </applications>
-                    <preprocessing>
-                        <step>
-                            <type>REGEX</type>
-                            <params>\d+:(\d+)
-\1</params>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>1c.ls.licenses</key>
-                    </master_item>
-                </item>
-                <item>
                     <name>[1С/Лицензии] Количество веб-клиентов</name>
                     <type>DEPENDENT</type>
                     <key>1c.ls.license.webclient</key>
@@ -203,20 +164,6 @@
                     <master_item>
                         <key>1c.ls.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                     </master_item>
-                </item>
-                <item>
-                    <name>[1С/Лицензии] Сводная информация</name>
-                    <type>TRAP</type>
-                    <key>1c.ls.licenses</key>
-                    <delay>0</delay>
-                    <history>0</history>
-                    <trends>0</trends>
-                    <value_type>TEXT</value_type>
-                    <applications>
-                        <application>
-                            <name>[1С] Программные лицензии</name>
-                        </application>
-                    </applications>
                 </item>
                 <item>
                     <name>[1С/Лицензии] Активные сеансы</name>
@@ -689,23 +636,182 @@
                 </screen>
             </screens>
         </template>
+        <template>
+            <template>Template App 1C License Files</template>
+            <name>Template App 1C License Files</name>
+            <description>Мониторинг файлов программных лицензий 1С</description>
+            <groups>
+                <group>
+                    <name>Templates/Kaminsoft</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>[1С] Информация</name>
+                </application>
+                <application>
+                    <name>[1С] Программные лицензии</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>[1С/Лицензии] Число клиентских лицензий</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.licenses.clients</key>
+                    <delay>0</delay>
+                    <applications>
+                        <application>
+                            <name>[1С] Программные лицензии</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>summary:\d+:(\d+)
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.licenses.info</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>[1С/Лицензии] Сводная информация</name>
+                    <key>1c.licenses.info</key>
+                    <delay>1h</delay>
+                    <history>0</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>[1С] Информация</name>
+                        </application>
+                        <application>
+                            <name>[1С] Программные лицензии</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>[1С/Лицензии] Число серверных лицензий</name>
+                    <type>DEPENDENT</type>
+                    <key>1c.licenses.servers</key>
+                    <delay>0</delay>
+                    <applications>
+                        <application>
+                            <name>[1С] Программные лицензии</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>summary:(\d+):(\d+)
+\1</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>1c.licenses.info</key>
+                    </master_item>
+                </item>
+            </items>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>[1C/Лицензии] Файлы лицензий</name>
+                    <key>1c.licenses.discovery</key>
+                    <delay>1h</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>[1С/Лицензии] Состояние файла лицензии ({#FILE})</name>
+                            <key>1c.license.check[{#PIN}-{#NUMBER}]</key>
+                            <delay>1h</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>[1С] Программные лицензии</name>
+                                </application>
+                            </applications>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{str(Ok,#3)}=0</expression>
+                                    <name>[1С/Лицензии] Файл лицензии {#FILE} не прошел проверку</name>
+                                    <priority>HIGH</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Лицензии] Срок действия ({#FILE})</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.license.deadline[{#FILE}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>[1С] Программные лицензии</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>{#FILE}:\w+:(.*)
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.licenses.info</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{date()}&gt;{last()}</expression>
+                                    <name>[1С/Лицензии] Истек срок действия лицензии ({#FILE})</name>
+                                    <priority>HIGH</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Лицензии] Тип лицензии ({#FILE})</name>
+                            <type>DEPENDENT</type>
+                            <key>1c.license.type[{#FILE}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>[1С] Программные лицензии</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>REGEX</type>
+                                    <params>{#FILE}:(\w+)
+\1</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>1c.licenses.info</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+            </discovery_rules>
+        </template>
     </templates>
     <triggers>
         <trigger>
-            <expression>{Template App 1C Enterprise License Server:1c.ls.license.used.last()}&gt;={Template App 1C Enterprise License Server:1c.ls.license.user.last()}</expression>
+            <expression>{Template App 1C Enterprise License Server:1c.ls.license.used.last()}&gt;={Template App 1C Enterprise License Server:1c.licenses.clients.last()}</expression>
             <name>[1С/Лицензии] Использованы все доступные клиентские лицензии</name>
             <priority>HIGH</priority>
             <manual_close>YES</manual_close>
         </trigger>
         <trigger>
-            <expression>{Template App 1C Enterprise License Server:1c.ls.license.used.last()}/{Template App 1C Enterprise License Server:1c.ls.license.user.last()}&gt;{$LIC_UTIL_LIMIT}</expression>
+            <expression>{Template App 1C Enterprise License Server:1c.ls.license.used.last()}/{Template App 1C Enterprise License Server:1c.licenses.clients.last()}&gt;{$LIC_UTIL_LIMIT}</expression>
             <name>[1С/Лицензии] Количество использованных лицензий близко к максимальному</name>
-            <priority>WARNING</priority>
+            <priority>AVERAGE</priority>
             <manual_close>YES</manual_close>
             <dependencies>
                 <dependency>
                     <name>[1С/Лицензии] Использованы все доступные клиентские лицензии</name>
-                    <expression>{Template App 1C Enterprise License Server:1c.ls.license.used.last()}&gt;={Template App 1C Enterprise License Server:1c.ls.license.user.last()}</expression>
+                    <expression>{Template App 1C Enterprise License Server:1c.ls.license.used.last()}&gt;={Template App 1C Enterprise License Server:1c.licenses.clients.last()}</expression>
                 </dependency>
             </dependencies>
         </trigger>
@@ -720,18 +826,10 @@
     <graphs>
         <graph>
             <name>[1С/Лицензии] Использование активированных лицензий</name>
-            <width>600</width>
+            <height>300</height>
             <ymin_type_1>FIXED</ymin_type_1>
             <graph_items>
                 <graph_item>
-                    <color>F63100</color>
-                    <item>
-                        <host>Template App 1C Enterprise License Server</host>
-                        <key>1c.ls.license.user</key>
-                    </item>
-                </graph_item>
-                <graph_item>
-                    <sortorder>1</sortorder>
                     <drawtype>GRADIENT_LINE</drawtype>
                     <color>1B5E20</color>
                     <item>
@@ -740,7 +838,7 @@
                     </item>
                 </graph_item>
                 <graph_item>
-                    <sortorder>2</sortorder>
+                    <sortorder>1</sortorder>
                     <color>FFFFFF</color>
                     <item>
                         <host>Template App 1C Enterprise License Server</host>
@@ -748,7 +846,7 @@
                     </item>
                 </graph_item>
                 <graph_item>
-                    <sortorder>3</sortorder>
+                    <sortorder>2</sortorder>
                     <color>FC6EA3</color>
                     <item>
                         <host>Template App 1C Enterprise License Server</host>
@@ -756,7 +854,7 @@
                     </item>
                 </graph_item>
                 <graph_item>
-                    <sortorder>4</sortorder>
+                    <sortorder>3</sortorder>
                     <color>6C59DC</color>
                     <item>
                         <host>Template App 1C Enterprise License Server</host>
@@ -764,11 +862,19 @@
                     </item>
                 </graph_item>
                 <graph_item>
-                    <sortorder>5</sortorder>
+                    <sortorder>4</sortorder>
                     <color>F7941D</color>
                     <item>
                         <host>Template App 1C Enterprise License Server</host>
                         <key>1c.ls.license.total</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>5</sortorder>
+                    <color>FF0000</color>
+                    <item>
+                        <host>Template App 1C Enterprise License Server</host>
+                        <key>1c.licenses.clients</key>
                     </item>
                 </graph_item>
             </graph_items>

@@ -14,27 +14,6 @@ shopt -q extglob || shopt -s extglob
 
 source "${WORK_DIR}/1c_common_module.sh" 2>/dev/null || { echo "ОШИБКА: Не найден файл 1c_common_module.sh!" ; exit 1; }
 
-function licenses_summary {
-
-    RING_TOOL=$(check_ring_license) && export RING_TOOL || exit 1
-        
-    ( execute_tasks license_info $(get_license_list "${RING_TOOL}") ) | \
-        awk 'BEGIN { files=0; users=0 } 
-            { files+=1; users+=$1 } 
-            END { print files":"users }'
-
-}
-
-function license_info {
-
-    CURRENT_CODE=$( "${RING_TOOL}" license info --send-statistics false --name "${1}" | \
-        sed -re 's/(0{7}10{3}1)5/\10/; s/(0{7}[10]0)10{3}/\10500/' | \
-        awk -F':' '/0{7}[10]0(0{3}[35]|00[125]0|0[135]00)/ { print $2; exit}' )
-
-    [[ -n ${CURRENT_CODE} ]] && echo "${CURRENT_CODE:10}"
-
-}
-
 function get_license_counts {
 
     CLSTR_LIST=${1##*#}
@@ -121,10 +100,10 @@ function check_clusters_disconnection {
 }
 
 case ${1} in
-    info) licenses_summary ;;
-    used) shift; make_ras_params "${@}"; used_license ;;
-    infobases) shift; make_ras_params "${@}"; get_infobases_list;;
-    clusters) shift; make_ras_params "${@}"; get_clusters_list ;;
+    used|infobases|clusters) shift; make_ras_params "${@}" ;;&
+    used) used_license ;;
+    infobases) get_infobases_list;;
+    clusters) get_clusters_list ;;
     check) check_clusters_disconnection ;;
     *) error "${ERROR_UNKNOWN_MODE}" ;;
 esac

@@ -4,23 +4,29 @@
 #- name: Install required packages
 - include: "install-{{ ansible_os_family }}.yml"
 
-- name: Copy userparameter for work server
+- name: Copy zabbix userparameter files for work server
   copy:
-    src: userparameter_1c-ws.conf
+    src: '{{ item }}'
     dest: /etc/zabbix/zabbix_agentd.d/
     owner: root
     group: root
     mode: 0644
+  with_items:
+    - userparameter_1c-ws.conf
+    - userparameter_1c-lf.conf
   notify:
     - Add host to group for restart zabbix agent
 
-- name: Copy main script for work server
+- name: Copy scripts for work server
   copy:
-    src: 1c_work_server.sh
+    src: '{{ item }}'
     dest: /var/lib/zabbix/scripts/
     owner: zabbix
     group: zabbix
     mode: 0755
+  with_items:
+    - 1c_work_server.sh
+    - 1c_license_files.sh
 
 - name: Make directory for 1C tech log
   file:
