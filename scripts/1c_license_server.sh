@@ -67,19 +67,28 @@ function used_license {
 
     export MAX_THREADS=0 # Отключаем ограничение по количеству параллельно выполняемых задач
     check_clusters_cache
+    readarray LIC_LIST < <( find /var/1C/licenses "${ALLUSERSPROFILE}/Application\ Data/1C/licenses" "${ALLUSERSPROFILE}/1C/licenses" \
+        -maxdepth 1 -name "*.lic" -exec basename {} \; 2>/dev/null )
 
     ( execute_tasks get_license_counts $( pop_clusters_list ) ) | \
-        awk -F: -v OFS=':' -v hostname="${HOSTNAME,,}" '{
+        awk -F: -v OFS=':' -v hostname="${HOSTNAME,,}" -v lic_list="${LIC_LIST[*]}" '{
             switch ($0) {
                 case /^FMT#/: split($0,a,"#|:"); for (i in a) { f[a[i]]=i-1 }; break
                 case /^(IB|CL)#/: print; break
                 default:
                     sc++; uc[$f["user-name"]]; 
-                    if ( index(tolower($f["rmngr-address"]), hostname) > 0 ) { hc++ }
+                    if ( index(tolower($f["rmngr-address"]), hostname) > 0 ) { 
+                        hc++;
+                        lic[gensub("\"","","g",$f["full-name"])]++;
+                    }
                     if ($f["app-id"] == "wc") { wc++ }
                     if ($f["rmngr-address"] == "") { cc++ }
             }
         } END {
+            split(lic_list, lic_files, " ");
+            for ( i in lic_files ) {
+                print "LIC#"lic_files[i],lic[lic_files[i]]?lic[lic_files[i]]:0
+            }
             print "summary",hc?hc:0,length(uc),sc?sc:0,cc?cc:0,wc?wc:0
         }'
 

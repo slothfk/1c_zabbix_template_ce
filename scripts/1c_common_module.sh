@@ -274,8 +274,8 @@ function get_sessions_list {
     SERVER_NAME=${1}
     CLUSTER_UUID=${2}
 
-    SESSION_FORMAT="session:session-id:infobase:user-name:app-id:hibernate:duration-current"
-    LICENSE_FORMAT="session:rmngr-address"
+    SESSION_FORMAT="session:session-id:infobase:user-name:app-id:hibernate:duration-current:data-separation"
+    LICENSE_FORMAT="session:full-name:rmngr-address"
 
     timeout -s HUP "${RAS_TIMEOUT}" rac session list --cluster="${CLUSTER_UUID}" \
         ${RAS_AUTH} "${SERVER_NAME}" 2>/dev/null |
@@ -294,7 +294,8 @@ function get_sessions_list {
                 ($1 in licenses || $0 ~ "^FMT#") { if ( $0 ~ "^FMT#" ) { print $0,format } else { print $0,licenses[$1] } }' \
             <( timeout -s HUP "${RAS_TIMEOUT}" rac session list --licenses --cluster="${CLUSTER_UUID}" \
                 ${RAS_AUTH} "${SERVER_NAME}" 2>/dev/null |
-                awk -v FS=' +: +' -v format="${LICENSE_FORMAT}" '( $0 ~ "^("gensub(":","|","g",format)"|)($| )" ) { print $2 }' |
+                awk -v FS=' +: +' -v format="${LICENSE_FORMAT}" '( $0 ~ "^("gensub(":","|","g",format)"|)($| )" ) { 
+                    if ( $1 == "full-name" ) { print gensub("[^\"].*/", "", "g", $2) } else { print $2 } }' |
                 awk -v RS='' -v OFS=':' '$1=$1' ) - ; fi )
 
 }
