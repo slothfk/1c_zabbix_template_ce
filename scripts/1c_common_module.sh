@@ -295,7 +295,7 @@ function get_sessions_list {
             <( timeout -s HUP "${RAS_TIMEOUT}" rac session list --licenses --cluster="${CLUSTER_UUID}" \
                 ${RAS_AUTH} "${SERVER_NAME}" 2>/dev/null |
                 awk -v FS=' +: +' -v format="${LICENSE_FORMAT}" '( $0 ~ "^("gensub(":","|","g",format)"|)($| )" ) { 
-                    if ( $1 == "full-name" ) { print gensub("[^\"].*/", "", "g", $2) } else { print $2 } }' |
+                    if ( $1 == "full-name" ) { value=gensub("[^\"].*/", "", "g", $2) } else { value=$2 }; print value||(!$1)?value:"n/a" }' |
                 awk -v RS='' -v OFS=':' '$1=$1' ) - ; fi )
 
 }

@@ -34,7 +34,7 @@ function get_license_counts {
                         sc[cluster]++; sc[ib_mark]++; uc[cluster][$f["user-name"]]; uc[ib_mark][$f["user-name"]];
                         if ( index(tolower($f["rmngr-address"]), hostname) > 0 ) { hc[cluster]++; hc[ib_mark]++; }
                         if ($f["app-id"] == "wc") { wc[cluster]++; wc[ib_mark]++; }
-                        if ($f["rmngr-address"] == "") { cc[cluster]++; cc[ib_mark]++; }
+                        if ($f["rmngr-address"] == "n/a") { cc[cluster]++; cc[ib_mark]++; }
                     }
                 } END { 
                     for (i in sc) { 
@@ -51,7 +51,7 @@ function get_license_counts {
                         sc[cluster]++; uc[cluster][$f["user-name"]];
                         if ( index(tolower($f["rmngr-address"]), hostname) > 0 ) { hc[cluster]++ }
                         if ($f["app-id"] == "wc") { wc[cluster]++ }
-                        if ($f["rmngr-address"] == "") { cc[cluster]++ }
+                        if ($f["rmngr-address"] == "n/a") { cc[cluster]++ }
                     }
                 } END { 
                     for (i in sc) { 
@@ -82,7 +82,7 @@ function used_license {
                         lic[gensub("\"","","g",$f["full-name"])]++;
                     }
                     if ($f["app-id"] == "wc") { wc++ }
-                    if ($f["rmngr-address"] == "") { cc++ }
+                    if ($f["rmngr-address"] == "n/a") { cc++ }
             }
         } END {
             split(lic_list, lic_files, " ");
