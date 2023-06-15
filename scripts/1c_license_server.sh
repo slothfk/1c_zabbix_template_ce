@@ -94,28 +94,30 @@ function used_license {
 
 }
 
-function check_clusters_disconnection {
+# Проверяет наличие процессов сервера 1С для кластера по указанным параметрам:
+#  - ${1} - должен принимать заничение rmngr или rphost
+#  - ${2} - UUID кластера, к которому подключен сервер лицензирования
+function check_cluster_process {
 
-    LOST_CLSTR=$( check_clusters_cache lost | sed 's/ /<sp>/g; s/"//g' )
-    
-    if [[ -n ${LOST_CLSTR} ]]; then
-        echo "Произошло отключение от кластера (сервер, имя):"
-        for CURR_RMNGR in ${LOST_CLSTR}; do
-            for CURR_CLSTR in ${CURR_RMNGR//;/ }; do
-                echo "${CURR_RMNGR%:*} - ${CURR_CLSTR##*,}" | sed 's/<sp>/ /g'
-            done
-        done
+    RAC_PARAM=$(echo "${1}" | sed 's/rmngr/manager/; s/rphost/process/')
+    PROCESS_UUID=$(timeout -s HUP "${RAS_TIMEOUT}" rac "${RAC_PARAM}" list  --cluster "${2}"  ${RAS_AUTH} \
+        "$(awk -F# -v cluster="${2}" '$0 ~ cluster { print $1 }' "${CLSTR_CACHE}_"?("${RAS_PORTS//,/|}"))" 2>/dev/null | 
+        awk -v FS=" +: *" -v filter="${RAC_PARAM}" '( $0 ~ "^("filter"|host|)( |$)" ) { print $2}' | 
+        awk -v RS='' -v OFS=':' '$1=$1' | awk -F":" -v hostname="${HOSTNAME}" '( $0 ~ ":"hostname ) { print $1 }')
+    if [[ -z ${PROCESS_UUID} ]]; then
+        echo 0
     else
-        echo "OK"
+        pgrep "${1}" -a | grep -c "${PROCESS_UUID}"
     fi
 
 }
 
 case ${1} in
-    used|infobases|clusters) shift; make_ras_params "${@}" ;;&
+    process) CLSTR_UUID=${2}; CHECK_MODE=${3} ; shift 2 ;;&
+    used|infobases|clusters|process) shift; make_ras_params "${@}" ;;&
     used) used_license ;;
     infobases) get_infobases_list;;
     clusters) get_clusters_list ;;
-    check) check_clusters_disconnection ;;
+    process) check_cluster_process "${CHECK_MODE}" "${CLSTR_UUID}" ;;
     *) error "${ERROR_UNKNOWN_MODE}" ;;
 esac

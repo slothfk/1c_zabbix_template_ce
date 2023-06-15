@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2023-06-09T12:47:54Z</date>
+    <date>2023-06-15T18:45:43Z</date>
     <groups>
         <group>
             <name>Templates/Applications</name>
@@ -30,27 +30,12 @@
                     <name>Templates/Kaminsoft</name>
                 </group>
             </groups>
+            <applications>
+                <application>
+                    <name>[1С] Доступность</name>
+                </application>
+            </applications>
             <items>
-                <item>
-                    <name>[1С/Сервер лицензирования] Проверка кластеров</name>
-                    <type>ZABBIX_ACTIVE</type>
-                    <key>1c.ls.check</key>
-                    <history>30d</history>
-                    <trends>0</trends>
-                    <value_type>TEXT</value_type>
-                    <applications>
-                        <application>
-                            <name>[1С] Информация</name>
-                        </application>
-                    </applications>
-                    <triggers>
-                        <trigger>
-                            <expression>{str(OK)}=0</expression>
-                            <name>[1С/Сервер лицензирования] Отключение от кластера</name>
-                            <priority>HIGH</priority>
-                        </trigger>
-                    </triggers>
-                </item>
                 <item>
                     <name>[1С/Лицензии] Количество лицензий на клиенте</name>
                     <type>DEPENDENT</type>
@@ -295,7 +280,35 @@
                                 <key>1c.ls.sessions[{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
                             </master_item>
                         </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Процесс менеджера кластера</name>
+                            <type>ZABBIX_ACTIVE</type>
+                            <key>1c.ls.process[{#CLSTR_UUID},rmngr,{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            <applications>
+                                <application>
+                                    <name>[1С] Доступность</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>[1С/Кластер/{#CLSTR_NAME}] Рабочий процесс кластера</name>
+                            <type>ZABBIX_ACTIVE</type>
+                            <key>1c.ls.process[{#CLSTR_UUID},rphost,{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}]</key>
+                            <applications>
+                                <application>
+                                    <name>[1С] Доступность</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
                     </item_prototypes>
+                    <trigger_prototypes>
+                        <trigger_prototype>
+                            <expression>{Template App 1C Enterprise License Server:1c.ls.process[{#CLSTR_UUID},rmngr,{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}].last()}=0 or {Template App 1C Enterprise License Server:1c.ls.process[{#CLSTR_UUID},rphost,{$RAS_PORTS},{$RAS_TIMEOUT},{$RAS_USER},{$RAS_PASS}].last()}=0</expression>
+                            <name>[1С/Сервер лицензирования] Нарушена связь с кластером {#CLSTR_NAME}</name>
+                            <priority>HIGH</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger_prototype>
+                    </trigger_prototypes>
                     <graph_prototypes>
                         <graph_prototype>
                             <name>[1С/Кластер/{#CLSTR_NAME}] Использование активированных лицензий</name>
