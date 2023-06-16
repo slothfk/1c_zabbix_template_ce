@@ -107,7 +107,11 @@ function check_cluster_process {
     if [[ -z ${PROCESS_UUID} ]]; then
         echo 0
     else
-        pgrep "${1}" -a | grep -c "${PROCESS_UUID}"
+        if [[ -z ${IS_WINDOWS} ]]; then
+            pgrep "${1}" -a
+        else 
+            wmic path win32_process where "caption like '${1}.exe'" get commandline /format:csv
+        fi | grep -c -P "${PROCESS_UUID}|${2}"
     fi
 
 }
