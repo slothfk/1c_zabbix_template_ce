@@ -113,7 +113,7 @@ function push_clusters_uuid {
 # Сохранить список кластеров во временный файл
 function push_clusters_list {
 
-    if echo ${$} > "${CACHE_FILENAME}.lock" 2>/dev/null; then
+    if echo ${$} 2>/dev/null > "${CACHE_FILENAME}.lock"; then
         trap 'rm -f "${CACHE_FILENAME}.lock"; exit ${?}' INT TERM EXIT
         execute_tasks push_clusters_uuid "${@}" >| "${CACHE_FILENAME}"
         rm -f "${CACHE_FILENAME}.lock"
