@@ -115,7 +115,8 @@ function push_clusters_list {
 
     if echo ${$} > "${CACHE_FILENAME}.lock" 2>/dev/null; then
         trap 'rm -f "${CACHE_FILENAME}.lock"; exit ${?}' INT TERM EXIT
-        execute_tasks push_clusters_uuid "${@}" >| "${CACHE_FILENAME}"
+        execute_tasks push_clusters_uuid "${@}" |
+        if [[ -z ${IS_WINDOWS} ]]; then cat; else iconv -f CP866 -t UTF-8; fi >| "${CACHE_FILENAME}"
         rm -f "${CACHE_FILENAME}.lock"
     fi
 
@@ -125,7 +126,7 @@ function push_clusters_list {
 #  - если в первом параметре указано self, то выводится только список кластеров текущего сервера
 function pop_clusters_list {
 
-    find "${TMPDIR}" -maxdepth 1 -regextype awk -regex ".*_(${RAS_PORTS//,/|})" -name "$( basename "${CLSTR_CACHE}" )_*" | \
+    find "${TMPDIR}" -maxdepth 1 -regextype awk -regex ".*_(${RAS_PORTS//,/|})" -name "$( basename "${CLSTR_CACHE}" )_*" |
         grep -qv "^$" || error "Не найдено ни одного файла списка кластеров!"
 
     # ВАЖНО: Для этого блока включается extglob (возможно имеет смысл переделать)
@@ -254,7 +255,8 @@ function get_clusters_infobases {
 
     for CURRENT_CLUSTER in ${CLUSTERS_LIST//;/ }; do
         readarray -t BASE_LIST < <( timeout -s HUP "${RAS_TIMEOUT}" rac infobase summary list \
-            --cluster "${CURRENT_CLUSTER%%,*}" ${RAS_AUTH} "${RMNGR_HOST}" | \
+            --cluster "${CURRENT_CLUSTER%%,*}" ${RAS_AUTH} "${RMNGR_HOST}" 2>/dev/null |
+            if [[ -z ${IS_WINDOWS} ]]; then cat; else iconv -f CP866 -t UTF-8; fi |
             awk -v FS=' +: +' '/^(infobase|name|)(\s|$)/ { if ( $2 ) { print $2 } else { print "===" } }' | 
                 awk -v FS='\n' -v RS='={3}\n' -v OFS='|' '$1=$1' | sed 's/|$//' )
         for CURRENT_BASE in "${BASE_LIST[@]}"; do
@@ -278,7 +280,7 @@ function get_sessions_list {
     LICENSE_FORMAT="session:full-name:rmngr-address"
 
     timeout -s HUP "${RAS_TIMEOUT}" rac session list --cluster="${CLUSTER_UUID}" \
-        ${RAS_AUTH} "${SERVER_NAME}" 2>/dev/null |
+        ${RAS_AUTH} "${SERVER_NAME}" 2>/dev/null | if [[ -z ${IS_WINDOWS} ]]; then cat; else iconv -f CP866 -t UTF-8; fi |
         awk -v FS=' +: +' -v format=${SESSION_FORMAT} \
         'BEGIN { print "FMT#"format"\n" } ( $0 ~ "^("gensub(":","|","g",format)"|)($| )" ) { if ( $1 == "app-id" ) {
             switch ($2) {
