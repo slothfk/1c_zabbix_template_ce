@@ -111,7 +111,7 @@ function check_cluster_process {
             pgrep "${1}" -a
         else 
             wmic path win32_process where "caption like '${1}.exe'" get commandline /format:csv
-        fi | grep -c -P "${PROCESS_UUID}|${2}"
+        fi | awk "/${PROCESS_UUID}|${2}/ { count++ } END { print count?count:0 }"
     fi
 
 }
