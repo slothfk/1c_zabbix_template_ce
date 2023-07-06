@@ -16,7 +16,7 @@ function error {
 export USR1CV8="usr1cv8"
 
 # Тип операционной системы GNU/Linux или MS Windows
-[[ "$(uname -s)" != "Linux" ]] && IS_WINDOWS=1
+[[ "$(uname -s)" != "Linux" ]] && { IS_WINDOWS=1; export IS_WINDOWS; }
 
 # Имя сервера, используемое в кластере 1С Предприятия
 [[ -z ${IS_WINDOWS} ]] && HOSTNAME=$(hostname -s) || HOSTNAME=$(hostname)
