@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2023-05-23T13:03:10Z</date>
+    <date>2023-07-07T07:48:53Z</date>
     <groups>
         <group>
-            <name>Templates (Kaminsoft)</name>
+            <name>Templates/Applications</name>
+        </group>
+        <group>
+            <name>Templates/Kaminsoft</name>
         </group>
     </groups>
     <templates>
@@ -16,7 +19,10 @@
 Подробнее https://slothfk.github.io/1c_zabbix_template_ce/</description>
             <groups>
                 <group>
-                    <name>Templates (Kaminsoft)</name>
+                    <name>Templates/Applications</name>
+                </group>
+                <group>
+                    <name>Templates/Kaminsoft</name>
                 </group>
             </groups>
             <applications>
@@ -610,6 +616,21 @@
     </templates>
     <triggers>
         <trigger>
+            <expression>{Template App 1C Enterprise Work Server:1c.ws.ragent.count.last()}&gt;{Template App 1C Enterprise Work Server:1c.ws.rmngr.count.last()}&gt;0 or {Template App 1C Enterprise Work Server:1c.ws.ragent.count.last()}&gt;{Template App 1C Enterprise Work Server:1c.ws.rphost.count.last()}&gt;0</expression>
+            <name>[1С/Агент сервера] Аномальное число процессов</name>
+            <priority>AVERAGE</priority>
+            <dependencies>
+                <dependency>
+                    <name>[1С/Менеджер кластера] Нет запущенных процессов</name>
+                    <expression>{Template App 1C Enterprise Work Server:1c.ws.rmngr.count.last()}=0 and {Template App 1C Enterprise Work Server:1c.ws.ragent.count.last()}&gt;0</expression>
+                </dependency>
+                <dependency>
+                    <name>[1С/Рабочий процесс] Нет запущенных процессов</name>
+                    <expression>{Template App 1C Enterprise Work Server:1c.ws.rphost.count.last()}=0 and {Template App 1C Enterprise Work Server:1c.ws.ragent.count.last()}&gt;0</expression>
+                </dependency>
+            </dependencies>
+        </trigger>
+        <trigger>
             <expression>{Template App 1C Enterprise Work Server:1c.ws.ragent.excps.last()}/{Template App 1C Enterprise Work Server:1c.ws.ragent.count.avg(3600)}&gt;{$EXCP_THRESHOLD}</expression>
             <name>[1С/Агент сервера] Количество исключений свыше {$EXCP_THRESHOLD}</name>
             <priority>AVERAGE</priority>
@@ -633,6 +654,12 @@
             <expression>{Template App 1C Enterprise Work Server:1c.ws.rmngr.count.last()}=0 and {Template App 1C Enterprise Work Server:1c.ws.ragent.count.last()}&gt;0</expression>
             <name>[1С/Менеджер кластера] Нет запущенных процессов</name>
             <priority>HIGH</priority>
+            <dependencies>
+                <dependency>
+                    <name>[1С/Кластер] Отсутствуют все процессы кластера</name>
+                    <expression>{Template App 1C Enterprise Work Server:1c.ws.ragent.count.last()}=0 and {Template App 1C Enterprise Work Server:1c.ws.rmngr.count.last()}=0 and {Template App 1C Enterprise Work Server:1c.ws.rphost.count.last()}=0</expression>
+                </dependency>
+            </dependencies>
         </trigger>
         <trigger>
             <expression>{Template App 1C Enterprise Work Server:1c.ws.rphost.excps.last()}/{Template App 1C Enterprise Work Server:1c.ws.rphost.count.avg(3600)}&gt;{$EXCP_THRESHOLD}</expression>
@@ -643,6 +670,12 @@
             <expression>{Template App 1C Enterprise Work Server:1c.ws.rphost.count.last()}=0 and {Template App 1C Enterprise Work Server:1c.ws.ragent.count.last()}&gt;0</expression>
             <name>[1С/Рабочий процесс] Нет запущенных процессов</name>
             <priority>HIGH</priority>
+            <dependencies>
+                <dependency>
+                    <name>[1С/Кластер] Отсутствуют все процессы кластера</name>
+                    <expression>{Template App 1C Enterprise Work Server:1c.ws.ragent.count.last()}=0 and {Template App 1C Enterprise Work Server:1c.ws.rmngr.count.last()}=0 and {Template App 1C Enterprise Work Server:1c.ws.rphost.count.last()}=0</expression>
+                </dependency>
+            </dependencies>
         </trigger>
         <trigger>
             <expression>{Template App 1C Enterprise Work Server:1c.ws.rphost.memory.last()}/{Template App 1C Enterprise Work Server:1c.ws.ram.last()}&gt;{$RPHOST_MAX_MEM}</expression>
