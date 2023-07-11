@@ -4,7 +4,7 @@
     <date>2023-05-24T05:04:04Z</date>
     <groups>
         <group>
-            <name>Templates (Kaminsoft)</name>
+            <name>Templates/Kaminsoft</name>
         </group>
     </groups>
     <templates>
@@ -16,7 +16,7 @@
 Подробнее https://slothfk.github.io/1c_zabbix_template_ce/</description>
             <groups>
                 <group>
-                    <name>Templates (Kaminsoft)</name>
+                    <name>Templates/Kaminsoft</name>
                 </group>
             </groups>
             <applications>
