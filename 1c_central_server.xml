@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2023-05-24T05:04:04Z</date>
+    <date>2023-07-13T05:09:00Z</date>
     <groups>
         <group>
-            <name>Templates (Kaminsoft)</name>
+            <name>Templates/Applications</name>
+        </group>
+        <group>
+            <name>Templates/Kaminsoft</name>
         </group>
     </groups>
     <templates>
@@ -16,7 +19,10 @@
 Подробнее https://slothfk.github.io/1c_zabbix_template_ce/</description>
             <groups>
                 <group>
-                    <name>Templates (Kaminsoft)</name>
+                    <name>Templates/Applications</name>
+                </group>
+                <group>
+                    <name>Templates/Kaminsoft</name>
                 </group>
             </groups>
             <applications>
