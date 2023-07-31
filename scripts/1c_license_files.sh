@@ -19,9 +19,9 @@ source "${WORK_DIR}/1c_common_module.sh" 2>/dev/null || { echo "ОШИБКА: Н
 #  - в качестве превого параметра указывается путь до утилиты ring
 #  - в качестве второго параметра указывается имя лицензии
 function license_check {
-    [[ -z ${1} ]] && error "${ERROR_UNKNOWN_PARAM}"
+    [[ -z "${1}" ]] && error "${ERROR_UNKNOWN_PARAM}"
 
-    RESULT=$(${1} license validate --name "${2}" --send-statistics false 2>/dev/null) && echo "Ok" || echo "${RESULT}"
+    RESULT=$("${1}" license validate --name "${2}" --send-statistics false 2>/dev/null) && echo "Ok" || echo "${RESULT}"
 }
 
 # Возвращает сводную информацию по файлам лицензий
