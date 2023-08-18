@@ -1080,13 +1080,14 @@
                 </discovery_rule>
                 <discovery_rule>
                     <name>[1С/Центральный сервер] Сервисы RAS</name>
-                    <key>1c.cs.ras.discovery[{$RAS_PORTS}]</key>
+                    <type>SCRIPT</type>
+                    <key>1c.cs.ras.discovery</key>
                     <delay>1h</delay>
+                    <params>return value</params>
                     <item_prototypes>
                         <item_prototype>
                             <name>[1С/Центральный сервер] Статус сервиса RAS (порт {#RAS_PORT})</name>
-                            <type>SIMPLE</type>
-                            <key>net.tcp.service[tcp,,{#RAS_PORT}]</key>
+                            <key>net.tcp.service[tcp,127.0.0.1,{#RAS_PORT}]</key>
                             <delay>30s</delay>
                             <applications>
                                 <application>
@@ -1105,6 +1106,30 @@
                             </trigger_prototypes>
                         </item_prototype>
                     </item_prototypes>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <parameters>
+                                <parameter>[\s\S]*</parameter>
+                                <parameter>{#RAS_PORT},{$RAS_PORTS}</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>STR_REPLACE</type>
+                            <parameters>
+                                <parameter>,</parameter>
+                                <parameter>\n</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>CSV_TO_JSON</type>
+                            <parameters>
+                                <parameter/>
+                                <parameter/>
+                                <parameter>1</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>                    
                 </discovery_rule>
             </discovery_rules>
             <macros>

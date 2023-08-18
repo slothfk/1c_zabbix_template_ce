@@ -101,7 +101,7 @@ function check_cluster_process {
 
     RAC_PARAM=$(echo "${1}" | sed 's/rmngr/manager/; s/rphost/process/')
     PROCESS_UUID=$(timeout -s HUP "${RAS_TIMEOUT}" rac "${RAC_PARAM}" list  --cluster "${2}"  ${RAS_AUTH} \
-        "$(awk -F# -v cluster="${2}" '$0 ~ cluster { print $1 }' "${CLSTR_CACHE}_"?("${RAS_PORTS//,/|}"))" 2>/dev/null | 
+        "$(awk -F# -v cluster="${2}" '$0 ~ cluster { print $1 }' ${CLSTR_CACHE}_?(${RAS_PORTS//,/|}))" 2>/dev/null | 
         awk -v FS=" +: *" -v filter="${RAC_PARAM}" '( $0 ~ "^("filter"|host|)( |$)" ) { print $2}' | 
         awk -v RS='' -v OFS=':' '$1=$1' | awk -F":" -v hostname="${HOSTNAME}" '( $0 ~ ":"hostname ) { print $1 }')
     if [[ -z ${PROCESS_UUID} ]]; then
