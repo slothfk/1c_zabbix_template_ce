@@ -34,7 +34,7 @@ function get_licenses_info {
     ( find /var/1C/licenses/ "${ALLUSERSPROFILE}/Application\ Data/1C/licenses" "${ALLUSERSPROFILE}/1C/licenses" -maxdepth 1 -name "*.lic" \
         -exec awk '/^(Номер продукта|Product code|Срок действия|Valid till)/ {
             str[FILENAME]=str[FILENAME]?str[FILENAME]":"gensub("^[^:]+[:] *","","g",$0):FILENAME":"gensub("^[^:]+[:] *","","g",$0)
-        } END { for (i in str) { print str[i] }}' {} \; 2>/dev/null ) | 
+        } END { for (i in str) { print str[i] }}' {} \; 2>/dev/null ) | sed -re 's/\r//g' |
     xargs -I license_file basename license_file | 
     sed -re 's/(0{7}10{3}1)5/\10/;
         s/(0{7}[10]0)10{3}/\10500/;
