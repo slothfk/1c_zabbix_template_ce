@@ -138,28 +138,33 @@ function get_excps_info {
 function get_memory_counts {
 
     RPHOST_PID_HASH="${TMPDIR}/1c_rphost_pid_hash"
+    PROC_REGEX="$(echo "${PROCESS_NAMES[*]}" | sed 's/ /|/g')"
 
     if [[ -z "${IS_WINDOWS}" ]]; then
-        ps -hwwp "$( pgrep -d, 'ragent|rphost|rmngr' )" -o comm,pid,rss,cmd -k pid |
+        PROC_PIDS="$( pgrep -d, "${PROC_REGEX}" )"
+        ps -hwwp "${PROC_PIDS:-1}" -o comm,pid,rss,cmd -k pid |
             sed -re 's/^([^ ]+) +([0-9]+) +([0-9]+) +/\1,\2,\3,/'
     else
         wmic path win32_process where "caption like 'ragent%' or caption like 'rmngr%' or caption like 'rphost%'" \
-            get caption,processid,workingsetsize,commandline /format:csv |
+            get caption,processid,workingsetsize,commandline /format:csv 2>/dev/null |
             sed -re 's/^[^,]+,([^,]+),([^,]+),([^,]+),(.*)/\1,\3,\4,\2/'
-    fi | awk -F, -v mem_in_kb="${IS_WINDOWS:-1024}" -v pid_hash="$( cat "${RPHOST_PID_HASH}" 2>/dev/null )" \
-        '/.*,[0-9]+,[0-9]+/ {
-            proc_name[$1]=gensub(/[.].+/,"","g",$1)
-            proc_pids[$1][$2]
-            proc[$1,"memory"]+=$3 
+    fi | awk -F, -v proc_regex="${PROC_REGEX}" -v mem_in_kb="${IS_WINDOWS:-1024}" -v pid_hash="$( cat "${RPHOST_PID_HASH}" 2>/dev/null )" \
+        'BEGIN { split(proc_regex, proc_names, "|"); proc_regex+="[^,]*,[0-9]+,[0-9]+" } 
+        $0 ~ proc_regex {
+            proc_name=gensub(/[.].+/,"","g",$1)
+            proc_pids[proc_name][$2]
+            proc[proc_name,"memory"]+=$3 
             } END {
-                for ( pn in proc_name ) { 
-                    proc_flag=""; pid_list=""
-                    switch (pn) {
-                        case /ragent.*/:
+                for ( i in proc_names ) { 
+                    proc_flag=""; pid_list=""; proc_name=proc_names[i]
+                    switch (proc_name) {
+                        case "ragent":
                             if ($4 ~ /(\/|-)debug(\s|$)/ ) proc_flag=1; else proc_flag=0
                             break
-                        case /rphost.*/:
-                            for (i in proc_pids[pn]) pid_list=pid_list?pid_list","i:i
+                        case "rphost":
+                            if ( length(proc_pids[proc_name]) > 0 ) {
+                                for (j in proc_pids[proc_name]) pid_list=pid_list?pid_list","j:j
+                            }
                             hash_command="echo "pid_list" | md5sum | sed \"s/ .*//\""
                             (hash_command | getline new_hash) > 0
                             close(hash_command)
@@ -167,7 +172,7 @@ function get_memory_counts {
                             print new_hash > "'"${RPHOST_PID_HASH}"'"
                             break
                     }
-                    print proc_name[pn]":",length(proc_pids[pn]),proc[pn,"memory"]*mem_in_kb,proc_flag
+                    print proc_name":",length(proc_pids[proc_name]),proc[proc_name,"memory"]*mem_in_kb,proc_flag
                 }
             }'
 
@@ -209,7 +214,7 @@ case ${1} in
     calls | locks | excps) check_log_dir "${2}" "${1}";
         export LOG_FILE=$(date --date="last hour" "+%y%m%d%H");
         export LOG_DIR="${2%/}/zabbix/${1}" ;;&
-    excps) PROCESS_NAMES=(ragent rmngr rphost) ;;&
+    excps|memory) PROCESS_NAMES=(ragent rmngr rphost) ;;&
     calls) shift 2; get_calls_info "${@}" ;;
     locks) shift 2; get_locks_info "${@}" ;;
     excps) shift 2; get_excps_info "${@}" ;;
