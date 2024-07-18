@@ -12,7 +12,7 @@
 - name: Copy userparameter for central server
   copy:
     src: userparameter_1c-cs.conf
-    dest: /etc/zabbix/zabbix_agentd.d/
+    dest: '{{ zabbix_configs }}'
     owner: root
     group: root
     mode: 0644

@@ -7,7 +7,7 @@
 - name: Copy zabbix userparameter files for work server
   copy:
     src: '{{ item }}'
-    dest: /etc/zabbix/zabbix_agentd.d/
+    dest: '{{ zabbix_configs }}'
     owner: root
     group: root
     mode: 0644
