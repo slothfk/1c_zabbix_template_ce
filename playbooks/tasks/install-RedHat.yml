@@ -1,4 +1,4 @@
 - name: Install required packages
-  apt:
+  yum:
     name: '{{ packages }}'
-    state: latest
+    state: 'latest'
