@@ -113,13 +113,17 @@ function push_clusters_uuid {
 # Сохранить список кластеров во временный файл
 function push_clusters_list {
 
-    if echo ${$} 2>/dev/null > "${CACHE_FILENAME}.lock"; then
-        trap 'rm -f "${CACHE_FILENAME}.lock"; exit ${?}' INT TERM EXIT
-        execute_tasks push_clusters_uuid "${@}" |
-        if [[ -z ${IS_WINDOWS} ]]; then cat; else iconv -f CP866 -t UTF-8; fi >| "${CACHE_FILENAME}"
-        rm -f "${CACHE_FILENAME}.lock"
+    if [[ -f "${CACHE_FILENAME}.lock" ]]; then  
+	if   ps -p $(cat "${CACHE_FILENAME}.lock")  > /dev/null 2>&1; then
+	    exit 1	
+	fi 
     fi
-
+    echo ${$} 2>/dev/null > "${CACHE_FILENAME}.lock"
+    trap 'rm -f "${CACHE_FILENAME}.lock"; exit ${?}' INT TERM EXIT
+    execute_tasks push_clusters_uuid "${@}" |
+    if [[ -z ${IS_WINDOWS} ]]; then cat; else iconv -f CP866 -t UTF-8; fi >| "${CACHE_FILENAME}"
+    rm -f "${CACHE_FILENAME}.lock"
+    
 }
 
 # Вывести список кластеров из временных файлов:
