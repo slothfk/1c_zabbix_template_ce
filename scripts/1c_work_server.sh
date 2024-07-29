@@ -197,7 +197,7 @@ function get_physical_memory {
     if [[ -z ${IS_WINDOWS} ]]; then
         free -b | grep -m1 "^[^ ]" | awk '{ print $2 }'
     else
-        wmic computersystem get totalphysicalmemory | awk "/^[0-9]/"
+        wmic computersystem get totalphysicalmemory /format:csv | awk -F, '/[0-9]+/ {print $2}'
     fi
 }
 

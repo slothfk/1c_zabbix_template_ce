@@ -154,7 +154,7 @@ function check_clusters_cache {
     # Получим список менеджеров кластеров, в которых участвует данный сервер, следующего вида:
     #   <имя_сервера>:<номер_порта_0>[|<номер_порта_1>[|..<номер_порта_N>]]
     readarray -t RMNGR_LIST < <( if [ -z "${IS_WINDOWS}" ]; then pgrep -ax rphost; else
-        wmic path win32_process where "caption like 'rphost%'" get CommandLine | grep rphost; fi |
+        wmic path win32_process where "caption like 'rphost%'" get CommandLine /format:csv | grep rphost; fi |
         sed -r 's/.*-regport ([^ ]+).*/\0|\1/; s/.*-reghost ([^ ]+).*\|/\1:/' | sort -u |
         awk -F: '{ if ( clstr_list[$1]== "" ) { clstr_list[$1]=$2 } \
             else { clstr_list[$1]=clstr_list[$1]"|"$2 } } \
