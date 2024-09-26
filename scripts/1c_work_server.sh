@@ -91,14 +91,14 @@ function get_locks_info {
 
     echo "lock: $(cat "${LOG_DIR}"/rphost_*/"${LOG_FILE}.log" 2>/dev/null | grep -c ',TLOCK,')"
 
-    read -ar RESULT < <(cat "${LOG_DIR}"/rphost_*/"${LOG_FILE}.log" 2>/dev/null | \
-        awk "/(TDEADLOCK|TTIMEOUT|TLOCK.*,WaitConnections=[0-9]+)/" | \
-        sed -re "s/[0-9]{2}:[0-9]{2}.[0-9]{6}-//; s/,[a-zA-Z\:]+=/,/g" | \
-        awk -F"," -v lts="${WAIT_LIMIT}" 'BEGIN {dl=0; to=0; lw=0} { if ($2 == "TDEADLOCK") {dl+=1} \
-            else if ($2 == "TTIMEOUT") { to+=1 } \
-            else { lw+=$1; lws[$4"->"$6]+=$1; } } \
-            END { print "timeout: "to"<nl>"; print "deadlock: "dl"<nl>"; print "wait: "lw/1000000"<nl>"; \
-            if ( lw > 0 ) { print "Ожидания на блокировках (установлен порог "lts" сек):<nl>"; \
+    readarray -t RESULT < <(cat "${LOG_DIR}"/rphost_*/"${LOG_FILE}.log" 2>/dev/null |
+        awk "/(TDEADLOCK|TTIMEOUT|TLOCK.*,WaitConnections=[0-9]+)/" |
+        sed -re "s/[0-9]{2}:[0-9]{2}.[0-9]{6}-//; s/,[a-zA-Z\:]+=/,/g" |
+        awk -F"," -v lts="${WAIT_LIMIT}" 'BEGIN {dl=0; to=0; lw=0} { if ($2 == "TDEADLOCK") {dl+=1}
+            else if ($2 == "TTIMEOUT") { to+=1 }
+            else { lw+=$1; lws[$4"->"$6]+=$1; } }
+            END { print "timeout: "to"<nl>"; print "deadlock: "dl"<nl>"; print "wait: "lw/1000000"<nl>";
+            if ( lw > 0 ) { print "Ожидания на блокировках (установлен порог "lts" сек):<nl>";
             for ( i in lws ) { print "> "i" - "lws[i]/1000000" сек.<nl>" } } }')
 
     echo "${RESULT[@]}" | perl -pe 's/<nl>\s?/\n/g'
