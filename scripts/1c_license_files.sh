@@ -50,7 +50,7 @@ function get_license_list {
     [[ -z ${1} ]] && error "${ERROR_UNKNOWN_PARAM}"
     
     "${1}" license list --send-statistics false 2>/dev/null | 
-        sed -re 's/([0-9]+)[-]([0-9]+)[^"]+"([0-9]+[.]lic)".*/\1 \2 \3/' | 
+        sed -re '/^$/d; s/([0-9]+)[-]([0-9]+)[^"]+"([0-9]+[.]lic)".*/\1 \2 \3/' | 
         awk -F' ' -v ORS='' 'BEGIN { print "{\"data\":[" } 
             { print (NR!=1?",":"")"{ \"{#NUMBER}\":\""$2"\",\"{#PIN}\":\""$1"\",\"{#FILE}\":\""$3"\" }" } 
         END { print "]}" }'
